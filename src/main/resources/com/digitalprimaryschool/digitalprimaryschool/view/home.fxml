@@ -1,14 +1,105 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
+<ScrollPane fitToWidth="true" styleClass="workspace-scroll" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <VBox styleClass="workspace-container" spacing="30.0">
+        <padding>
+            <Insets top="30.0" right="35.0" bottom="30.0" left="35.0"/>
+        </padding>
 
-</AnchorPane>
+        <HBox alignment="CENTER_LEFT">
+            <VBox HBox.hgrow="ALWAYS">
+                <Label text="Tableau de bord" styleClass="page-title"/>
+                <Label text="Bienvenue, voici un aperçu de votre établissement" styleClass="page-subtitle"/>
+            </VBox>
+            <HBox alignment="CENTER" styleClass="user-profile-badge">
+                <Label text="AD" styleClass="user-avatar-text"/>
+            </HBox>
+        </HBox>
+
+        <GridPane hgap="20.0" vgap="20.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="25.0" />
+                <ColumnConstraints percentWidth="25.0" />
+                <ColumnConstraints percentWidth="25.0" />
+                <ColumnConstraints percentWidth="25.0" />
+            </columnConstraints>
+            <children>
+                <VBox styleClass="kpi-card" GridPane.columnIndex="0">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Total élèves" styleClass="kpi-title"/>
+                            <Label text="1,245" styleClass="kpi-value"/>
+                        </VBox>
+                        <HBox styleClass="kpi-icon-wrapper, bg-blue" alignment="CENTER"><Label text="&#xE716;" styleClass="kpi-icon-style"/></HBox>
+                    </HBox>
+                    <Label text="↑ 12 cette semaine" styleClass="kpi-trend-positive"/>
+                </VBox>
+                <VBox styleClass="kpi-card" GridPane.columnIndex="1">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Enseignants" styleClass="kpi-title"/>
+                            <Label text="68" styleClass="kpi-value"/>
+                        </VBox>
+                        <HBox styleClass="kpi-icon-wrapper, bg-orange" alignment="CENTER"><Label text="&#xE7BE;" styleClass="kpi-icon-style"/></HBox>
+                    </HBox>
+                    <Label text="+ 2 ce mois" styleClass="kpi-trend-positive"/>
+                </VBox>
+                <VBox styleClass="kpi-card" GridPane.columnIndex="2">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Classes actives" styleClass="kpi-title"/>
+                            <Label text="42" styleClass="kpi-value"/>
+                        </VBox>
+                        <HBox styleClass="kpi-icon-wrapper, bg-purple" alignment="CENTER"><Label text="&#xE80F;" styleClass="kpi-icon-style"/></HBox>
+                    </HBox>
+                    <Label text="Stable" styleClass="kpi-trend-neutral"/>
+                </VBox>
+                <VBox styleClass="kpi-card" GridPane.columnIndex="3">
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <VBox HBox.hgrow="ALWAYS">
+                            <Label text="Taux de présence" styleClass="kpi-title"/>
+                            <Label text="93.2%" styleClass="kpi-value"/>
+                        </VBox>
+                        <HBox styleClass="kpi-icon-wrapper, bg-green" alignment="CENTER"><Label text="&#xE9D2;" styleClass="kpi-icon-style"/></HBox>
+                    </HBox>
+                    <Label text="↑ 1.5% vs sem. dernière" styleClass="kpi-trend-positive"/>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <GridPane hgap="25.0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50.0" />
+                <ColumnConstraints percentWidth="50.0" />
+            </columnConstraints>
+            <children>
+                <VBox styleClass="chart-card" GridPane.columnIndex="0">
+                    <Label text="Présence hebdomadaire" styleClass="chart-card-title"/>
+                    <BarChart fx:id="attendanceChart" legendVisible="false" prefHeight="280.0">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" /></yAxis>
+                    </BarChart>
+                </VBox>
+                <VBox styleClass="chart-card" GridPane.columnIndex="1">
+                    <Label text="Moyenne générale" styleClass="chart-card-title"/>
+                    <LineChart fx:id="performanceChart" legendVisible="false" prefHeight="280.0">
+                        <xAxis><CategoryAxis side="BOTTOM" /></xAxis>
+                        <yAxis><NumberAxis side="LEFT" lowerBound="10.0" upperBound="16.0" /></yAxis>
+                    </LineChart>
+                </VBox>
+            </children>
+        </GridPane>
+    </VBox>
+</ScrollPane>

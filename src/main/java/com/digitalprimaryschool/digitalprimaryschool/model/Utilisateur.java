@@ -1,30 +1,67 @@
-/***********************************************************************
- * Module:  Utilisateur.java
- * Author:  DJALEU YURI
- * Purpose: Defines the Class Utilisateur
- ***********************************************************************/
+package com.digitalprimaryschool.digitalprimaryschool.model;
 
 import java.util.*;
 
-/** @pdOid 8e578d67-11ec-48cb-a80a-4878125bbc33 */
-public class Utilisateur {
-   /** @pdOid 0c33a048-9e72-4ce7-8b59-24ef0b81e537 */
+public class Utilisateur extends BaseModel{
    private String idUtilisateur;
-   /** @pdOid 49008b34-1bc6-485c-8437-d21bea4e67fe */
    private String username;
-   /** @pdOid 94d70147-772d-4707-91f0-e30c9fc88392 */
    private String motDePasseUtilisateur;
-   /** @pdOid dc439f8a-325e-4d24-86ef-9e8fcd9e7b14 */
-   private int role;
-   
-   /** @pdOid 147d0b3d-f92a-4144-bdc7-2f979090d23a */
-   public void seConnecter() {
-      // TODO: implement
-   }
-   
-   /** @pdOid 806ed322-e1ae-4a01-95cb-6f3efcb2cae4 */
-   public void seDeconnecter() {
-      // TODO: implement
+   private Boolean isLogged;
+   private String role; // Remonté pour une meilleure lisibilité
+
+   public Utilisateur(){
+      super();
+      this.idUtilisateur = UUID.randomUUID().toString();
+      this.isLogged = false;
    }
 
+   // Encapsulation (Getters & Setters)
+   public String getIdUtilisateur() {
+      return idUtilisateur;
+   }
+
+   public void setIdUtilisateur(String idUtilisateur) {
+      this.idUtilisateur = idUtilisateur;
+   }
+
+   public String getUsername() {
+      return username;
+   }
+
+   public void setUsername(String username) {
+      this.username = username;
+   }
+
+   public String getMotDePasseUtilisateur() {
+      return motDePasseUtilisateur;
+   }
+
+   public void setMotDePasseUtilisateur(String motDePasseUtilisateur) {
+      this.motDePasseUtilisateur = motDePasseUtilisateur;
+   }
+
+   public Boolean getIsLogged() {
+      return isLogged;
+   }
+
+   public void setIsLogged(Boolean isLogged) {
+      this.isLogged = isLogged;
+   }
+
+   public String getRole() {
+      return role;
+   }
+
+   public void setRole(String role) {
+      this.role = role;
+   }
+
+   // --- Méthodes métiers ---
+   public void seConnecter() {
+      this.isLogged = true;
+   }
+
+   public void seDeconnecter() {
+      this.isLogged = false;
+   }
 }

@@ -1,28 +1,58 @@
-/***********************************************************************
- * Module:  Tranche.java
- * Author:  DJALEU YURI
- * Purpose: Defines the Class Tranche
- ***********************************************************************/
+//package com.digitalprimaryschool.digitalprimaryschool.model;
+//
+//import java.util.*;
+//
+//public class Tranche {
+//   private String idTranche;
+//   private String libelleTranche;
+//   private Double montantTranche;
+//   private Date dateEcheance;
+//   private boolean estPaye;
+//
+//
+//   //Constructeur
+//   public Tranche(){
+//      this.idTranche = UUID.randomUUID().toString();
+//   }
+//   public int calculerRetard() {
+//      // TODO: implement
+//      return 0;
+//   }
+//
+//}
 
-import java.util.*;
+package com.digitalprimaryschool.digitalprimaryschool.model;
 
-/** @pdOid 74b28dbd-2bd8-46bf-939c-4f977efa986a */
-public class Tranche {
-   /** @pdOid 9295618c-7729-4cd9-85e4-ec1bda65aba6 */
+import java.util.UUID;
+
+public class Tranche extends BaseModel {
    private String idTranche;
-   /** @pdOid e6d0c543-eaff-43b1-9b88-c4a50f58e3f1 */
    private String libelleTranche;
-   /** @pdOid b13caf3f-bf58-45d4-a16a-4618936f6838 */
    private Double montantTranche;
-   /** @pdOid 7aaae7db-6dab-4d8f-b1a2-dbbeeb2e95c6 */
-   private Date dateEcheance;
-   /** @pdOid 88fecc1a-2caa-4bf6-85c6-a7783dc0852a */
+   private String dateEcheance;
    private boolean estPaye;
-   
-   /** @pdOid a5be39b6-7bab-48f3-a54a-ca6d201f7c9d */
-   public int calculerRetard() {
-      // TODO: implement
-      return 0;
+   private String idPaiement;
+
+   public Tranche(){
+      super();
+      this.idTranche = UUID.randomUUID().toString();
    }
 
+   public String getIdTranche() { return idTranche; }
+   public void setIdTranche(String idTranche) { this.idTranche = idTranche; }
+
+   public String getLibelleTranche() { return libelleTranche; }
+   public void setLibelleTranche(String libelleTranche) { this.libelleTranche = libelleTranche; }
+
+   public Double getMontantTranche() { return montantTranche; }
+   public void setMontantTranche(Double montantTranche) { this.montantTranche = montantTranche; }
+
+   public String getDateEcheance() { return dateEcheance; }
+   public void setDateEcheance(String dateEcheance) { this.dateEcheance = dateEcheance; }
+
+   public boolean isEstPaye() { return estPaye; }
+   public void setEstPaye(boolean estPaye) { this.estPaye = estPaye; }
+
+   public String getIdPaiement() { return idPaiement; }
+   public void setIdPaiement(String idPaiement) { this.idPaiement = idPaiement; }
 }

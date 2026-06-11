@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
+
+<!--
+    DocumentsParametres.fxml – Module Documents (impression) + Administration
+    Contrôleur : DocumentsParametresController.java
+    Deux sous-onglets : Aperçu documents | Paramètres système
+-->
+<BorderPane
+    xmlns="http://javafx.com/javafx/17"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="cm.siantou.ecole.controller.DocumentsParametresController"
+    styleClass="workspace"
+    style="-fx-padding: 0;">
+
+    <!-- ── En-tête de page ──────────────────────────────── -->
+    <top>
+        <VBox spacing="16" style="-fx-padding: 28 32 16 32; -fx-background-color: #F8FAFC;">
+
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Documents &amp; Paramètres" styleClass="breadcrumb-label" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="4">
+                    <Label text="Documents &amp; Administration" styleClass="page-title" />
+                    <Label text="Aperçu avant impression, configuration système, sauvegarde"
+                           styleClass="page-subtitle" />
+                </VBox>
+            </HBox>
+
+            <!-- Onglets principaux -->
+            <HBox spacing="0">
+                <ToggleButton
+                    fx:id="btnOngletDocuments"
+                    text="🖨️  Documents"
+                    style="-fx-background-color: #1E3A8A; -fx-text-fill: #FFFFFF;
+                           -fx-font-weight: bold; -fx-background-radius: 8 0 0 8;
+                           -fx-padding: 10 24; -fx-font-size: 13px; -fx-cursor: hand;"
+                    onAction="#onSwitchOnglet" />
+                <ToggleButton
+                    fx:id="btnOngletParametres"
+                    text="⚙️  Paramètres"
+                    style="-fx-background-color: #FFFFFF; -fx-text-fill: #475569;
+                           -fx-font-weight: bold; -fx-background-radius: 0 8 8 0;
+                           -fx-border-color: #CBD5E1; -fx-border-width: 1;
+                           -fx-padding: 10 24; -fx-font-size: 13px; -fx-cursor: hand;"
+                    onAction="#onSwitchOnglet" />
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- ── Contenu central ──────────────────────────────── -->
+    <center>
+        <!-- StackPane pour switcher entre les deux vues -->
+        <StackPane>
+
+            <!-- ════════════════════════════════════════════
+                 VUE 1 : DOCUMENTS
+                 ════════════════════════════════════════════ -->
+            <HBox
+                fx:id="vueDocuments"
+                spacing="16"
+                style="-fx-padding: 0 32 24 32;"
+                alignment="TOP_LEFT">
+
+                <!-- Panneau gauche : sélection du type de document -->
+                <VBox styleClass="card" prefWidth="280" spacing="16">
+
+                    <Label text="Type de document" styleClass="form-section-title" />
+                    <Pane styleClass="form-separator" />
+
+                    <VBox spacing="8">
+                        <Button
+                            fx:id="btnDocBulletin"
+                            text="📄  Bulletin trimestriel PDF"
+                            styleClass="doc-type-btn, active"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                        <Button
+                            fx:id="btnDocCertificat"
+                            text="🎓  Certificat de scolarité"
+                            styleClass="doc-type-btn"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                        <Button
+                            fx:id="btnDocRecu"
+                            text="🧾  Reçu de paiement"
+                            styleClass="doc-type-btn"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                        <Button
+                            fx:id="btnDocLettre"
+                            text="✉️  Lettre de rappel impayé"
+                            styleClass="doc-type-btn"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                        <Button
+                            fx:id="btnDocListeClasse"
+                            text="📋  Liste de classe"
+                            styleClass="doc-type-btn"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                        <Button
+                            fx:id="btnDocPalmares"
+                            text="🏆  Palmarès / Classement"
+                            styleClass="doc-type-btn"
+                            prefWidth="9999"
+                            onAction="#onSelectDocType" />
+                    </VBox>
+
+                    <Pane styleClass="form-separator" />
+
+                    <!-- Paramètres de génération -->
+                    <Label text="Paramètres de génération" styleClass="form-section-title" />
+
+                    <VBox spacing="10">
+
+                        <VBox spacing="4">
+                            <Label text="Classe" styleClass="field-label" />
+                            <ComboBox
+                                fx:id="cmbDocClasse"
+                                promptText="Toutes les classes"
+                                styleClass="combo-base"
+                                prefWidth="9999"
+                                onAction="#onParamDocChange" />
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Élève (optionnel)" styleClass="field-label" />
+                            <ComboBox
+                                fx:id="cmbDocEleve"
+                                promptText="Tous les élèves"
+                                styleClass="combo-base"
+                                prefWidth="9999"
+                                onAction="#onParamDocChange" />
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Séquence / Trimestre" styleClass="field-label" />
+                            <ComboBox
+                                fx:id="cmbDocSequence"
+                                styleClass="combo-base"
+                                prefWidth="9999"
+                                onAction="#onParamDocChange" />
+                        </VBox>
+
+                        <VBox spacing="4">
+                            <Label text="Langue du document" styleClass="field-label" />
+                            <ComboBox
+                                fx:id="cmbDocLangue"
+                                styleClass="combo-base"
+                                prefWidth="9999" />
+                        </VBox>
+
+                    </VBox>
+
+                    <Pane styleClass="form-separator" />
+
+                    <!-- Boutons -->
+                    <VBox spacing="8">
+                        <Button
+                            fx:id="btnGenererApercu"
+                            text="👁  Générer l'aperçu"
+                            styleClass="btn-primary"
+                            prefWidth="9999"
+                            onAction="#onGenererApercu" />
+                        <Button
+                            fx:id="btnImprimerDoc"
+                            text="🖨️  Imprimer"
+                            styleClass="btn-success"
+                            prefWidth="9999"
+                            onAction="#onImprimer" />
+                        <Button
+                            fx:id="btnExporterPDF"
+                            text="📥  Exporter en PDF"
+                            styleClass="btn-secondary"
+                            prefWidth="9999"
+                            onAction="#onExporterPDF" />
+                    </VBox>
+
+                </VBox>
+
+                <!-- Panneau droit : aperçu du document -->
+                <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="12">
+
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label text="Aperçu du document" styleClass="form-section-title" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblDocInfo" text="" styleClass="label-info" />
+                        <!-- Pagination -->
+                        <Button
+                            fx:id="btnPagePrec"
+                            text="◀"
+                            styleClass="btn-secondary"
+                            style="-fx-padding: 6 12;"
+                            onAction="#onPagePrecedente" />
+                        <Label fx:id="lblPagination" text="Page 1 / 1" styleClass="label-info" />
+                        <Button
+                            fx:id="btnPageSuiv"
+                            text="▶"
+                            styleClass="btn-secondary"
+                            style="-fx-padding: 6 12;"
+                            onAction="#onPageSuivante" />
+                    </HBox>
+
+                    <!-- Zone d'aperçu WebView (rendu HTML/CSS du bulletin) -->
+                    <StackPane
+                        styleClass="preview-pane"
+                        VBox.vgrow="ALWAYS"
+                        style="-fx-min-height: 500;">
+
+                        <!-- Placeholder si aucun aperçu -->
+                        <VBox
+                            fx:id="placeholderApercu"
+                            alignment="CENTER"
+                            spacing="12">
+                            <Label text="📄" style="-fx-font-size: 56px;" />
+                            <Label text="Aucun document sélectionné"
+                                   style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #94A3B8;" />
+                            <Label text="Choisissez un type de document et cliquez sur « Générer l'aperçu »."
+                                   styleClass="label-info"
+                                   wrapText="true"
+                                   style="-fx-text-alignment: center; -fx-max-width: 320;" />
+                        </VBox>
+
+                        <!-- WebView pour le rendu HTML du document -->
+                        <WebView
+                            fx:id="webViewApercu"
+                            visible="false"
+                            managed="false" />
+
+                    </StackPane>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- ════════════════════════════════════════════
+                 VUE 2 : PARAMÈTRES
+                 ════════════════════════════════════════════ -->
+            <ScrollPane
+                fx:id="vueParametres"
+                styleClass="scroll-pane-clean"
+                visible="false"
+                managed="false"
+                fitToWidth="true"
+                hbarPolicy="NEVER">
+
+                <VBox spacing="20" style="-fx-padding: 0 32 32 32;">
+
+                    <!-- ── Section : Année scolaire ──────── -->
+                    <VBox styleClass="param-section-card" spacing="16">
+                        <Label text="📅  Année scolaire" styleClass="param-section-title" />
+                        <Pane styleClass="form-separator" />
+
+                        <GridPane hgap="16" vgap="12">
+
+                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Libellé de l'année scolaire" styleClass="field-label" />
+                                <TextField
+                                    fx:id="txtAnneeScolaire"
+                                    promptText="Ex : 2025-2026"
+                                    styleClass="text-field-base"
+                                    prefWidth="220" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Date de début" styleClass="field-label" />
+                                <DatePicker
+                                    fx:id="dpDebutAnnee"
+                                    styleClass="date-picker-base"
+                                    prefWidth="220" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                                <Label text="Date de fin" styleClass="field-label" />
+                                <DatePicker
+                                    fx:id="dpFinAnnee"
+                                    styleClass="date-picker-base"
+                                    prefWidth="220" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Séquence en cours" styleClass="field-label" />
+                                <ComboBox
+                                    fx:id="cmbSeqEnCours"
+                                    styleClass="combo-base"
+                                    prefWidth="220" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Statut de l'année" styleClass="field-label" />
+                                <ComboBox
+                                    fx:id="cmbStatutAnnee"
+                                    styleClass="combo-base"
+                                    prefWidth="220" />
+                            </VBox>
+
+                        </GridPane>
+
+                        <HBox alignment="CENTER_RIGHT">
+                            <Button
+                                fx:id="btnSauvegarderAnnee"
+                                text="✔  Enregistrer"
+                                styleClass="btn-primary"
+                                onAction="#onSauvegarderAnnee" />
+                        </HBox>
+
+                    </VBox>
+
+                    <!-- ── Section : Établissement ───────── -->
+                    <VBox styleClass="param-section-card" spacing="16">
+                        <Label text="🏫  Informations de l'établissement" styleClass="param-section-title" />
+                        <Pane styleClass="form-separator" />
+
+                        <GridPane hgap="16" vgap="12">
+
+                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <Label text="Nom de l'école" styleClass="field-label" />
+                                <TextField fx:id="txtNomEcoleParam"
+                                           styleClass="text-field-base" prefWidth="300" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <Label text="Numéro d'autorisation MINEDUB" styleClass="field-label" />
+                                <TextField fx:id="txtNumAutorisationMinedub"
+                                           styleClass="text-field-base" prefWidth="200" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <Label text="Ville / Commune" styleClass="field-label" />
+                                <TextField fx:id="txtVilleEcoleParam"
+                                           styleClass="text-field-base" prefWidth="300" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <Label text="Téléphone" styleClass="field-label" />
+                                <TextField fx:id="txtTelEcole"
+                                           styleClass="text-field-base" prefWidth="200" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <Label text="Directeur(trice) de l'école" styleClass="field-label" />
+                                <TextField fx:id="txtNomDirecteur"
+                                           styleClass="text-field-base" prefWidth="300" />
+                            </VBox>
+
+                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                <Label text="Email de l'école" styleClass="field-label" />
+                                <TextField fx:id="txtEmailEcole"
+                                           styleClass="text-field-base" prefWidth="200" />
+                            </VBox>
+
+                        </GridPane>
+
+                        <HBox alignment="CENTER_RIGHT">
+                            <Button
+                                fx:id="btnSauvegarderEtablissement"
+                                text="✔  Enregistrer"
+                                styleClass="btn-primary"
+                                onAction="#onSauvegarderEtablissement" />
+                        </HBox>
+
+                    </VBox>
+
+                    <!-- ── Section : Gestion des utilisateurs ── -->
+                    <VBox styleClass="param-section-card" spacing="16">
+                        <HBox alignment="CENTER_LEFT">
+                            <Label text="👤  Gestion des utilisateurs"
+                                   styleClass="param-section-title" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button
+                                fx:id="btnNouvelUtilisateur"
+                                text="+ Nouvel utilisateur"
+                                styleClass="btn-primary"
+                                style="-fx-font-size: 12px; -fx-padding: 8 16;"
+                                onAction="#onNouvelUtilisateur" />
+                        </HBox>
+                        <Pane styleClass="form-separator" />
+
+                        <TableView
+                            fx:id="tblUtilisateurs"
+                            styleClass="table-view-base"
+                            prefHeight="200"
+                            columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                            <columns>
+                                <TableColumn fx:id="colUtilNom"        text="Nom complet"  prefWidth="200" />
+                                <TableColumn fx:id="colUtilLogin"      text="Identifiant"  prefWidth="160" />
+                                <TableColumn fx:id="colUtilRole"       text="Rôle"         prefWidth="140" />
+                                <TableColumn fx:id="colUtilDerniereConnexion" text="Dernière connexion" prefWidth="160" />
+                                <TableColumn fx:id="colUtilStatut"     text="Statut"       prefWidth="100"
+                                             style="-fx-alignment: CENTER;" />
+                                <TableColumn fx:id="colUtilActions"    text="Actions"      prefWidth="120"
+                                             sortable="false" />
+                            </columns>
+                            <placeholder>
+                                <Label text="Aucun utilisateur configuré." styleClass="label-info" />
+                            </placeholder>
+                        </TableView>
+
+                    </VBox>
+
+                    <!-- ── Section : Classes & Matières ──── -->
+                    <HBox spacing="16" alignment="TOP_LEFT">
+
+                        <!-- Gestion des classes -->
+                        <VBox styleClass="param-section-card" spacing="12" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="🎒  Classes" styleClass="param-section-title" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button
+                                    fx:id="btnNouvelleClasse"
+                                    text="+ Ajouter"
+                                    styleClass="btn-secondary"
+                                    style="-fx-font-size: 12px; -fx-padding: 6 14;"
+                                    onAction="#onNouvelleClasse" />
+                            </HBox>
+                            <Pane styleClass="form-separator" />
+                            <TableView
+                                fx:id="tblClasses"
+                                styleClass="table-view-base"
+                                prefHeight="180"
+                                columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                                <columns>
+                                    <TableColumn fx:id="colClasseLibelle" text="Libellé"     prefWidth="130" />
+                                    <TableColumn fx:id="colClasseNiveau"  text="Niveau"      prefWidth="90" />
+                                    <TableColumn fx:id="colClasseEffectif" text="Effectif"   prefWidth="70" />
+                                    <TableColumn fx:id="colClasseActions"  text=""           prefWidth="60"
+                                                 sortable="false" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                        <!-- Gestion des matières -->
+                        <VBox styleClass="param-section-card" spacing="12" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT">
+                                <Label text="📚  Matières" styleClass="param-section-title" />
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Button
+                                    fx:id="btnNouvelleMatiere"
+                                    text="+ Ajouter"
+                                    styleClass="btn-secondary"
+                                    style="-fx-font-size: 12px; -fx-padding: 6 14;"
+                                    onAction="#onNouvelleMatiere" />
+                            </HBox>
+                            <Pane styleClass="form-separator" />
+                            <TableView
+                                fx:id="tblMatieres"
+                                styleClass="table-view-base"
+                                prefHeight="180"
+                                columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+                                <columns>
+                                    <TableColumn fx:id="colMatLibelle"  text="Matière"       prefWidth="150" />
+                                    <TableColumn fx:id="colMatCoeff"    text="Coefficient"   prefWidth="90" />
+                                    <TableColumn fx:id="colMatNoteMax"  text="Note max"      prefWidth="80" />
+                                    <TableColumn fx:id="colMatActions"  text=""              prefWidth="60"
+                                                 sortable="false" />
+                                </columns>
+                            </TableView>
+                        </VBox>
+
+                    </HBox>
+
+                    <!-- ── Section : Sauvegarde & Restauration ── -->
+                    <VBox styleClass="param-section-card" spacing="16">
+                        <Label text="💾  Sauvegarde &amp; Restauration de la base de données"
+                               styleClass="param-section-title" />
+                        <Pane styleClass="form-separator" />
+
+                        <!-- Bannière info -->
+                        <HBox styleClass="alert-banner-warning" spacing="12" alignment="CENTER_LEFT">
+                            <Label text="ℹ️" style="-fx-font-size: 16px;" />
+                            <Label text="La sauvegarde crée une copie chiffrée de la base SQLite. Conservez les sauvegardes sur un support externe (clé USB, cloud)."
+                                   styleClass="alert-text-warning" wrapText="true" />
+                        </HBox>
+
+                        <HBox spacing="16" alignment="CENTER_LEFT">
+
+                            <VBox spacing="8" HBox.hgrow="ALWAYS">
+                                <Label text="Dernière sauvegarde réussie" styleClass="field-label" />
+                                <Label fx:id="lblDerniereSauvegarde"
+                                       text="Jamais effectuée"
+                                       styleClass="label-strong"
+                                       style="-fx-text-fill: #D97706;" />
+                                <Label text="Emplacement du dossier de sauvegarde" styleClass="field-label"
+                                       style="-fx-padding: 8 0 0 0;" />
+                                <HBox spacing="8">
+                                    <TextField
+                                        fx:id="txtDossierSauvegarde"
+                                        styleClass="text-field-base"
+                                        editable="false"
+                                        HBox.hgrow="ALWAYS" />
+                                    <Button
+                                        fx:id="btnChoisirDossier"
+                                        text="📂"
+                                        styleClass="btn-secondary"
+                                        onAction="#onChoisirDossierSauvegarde" />
+                                </HBox>
+                            </VBox>
+
+                            <VBox spacing="12" alignment="CENTER" prefWidth="220">
+                                <Button
+                                    fx:id="btnSauvegarderMaintenant"
+                                    text="💾  Sauvegarder maintenant"
+                                    styleClass="btn-primary"
+                                    prefWidth="220"
+                                    prefHeight="44"
+                                    onAction="#onSauvegarderMaintenant" />
+
+                                <Button
+                                    fx:id="btnRestaurerSauvegarde"
+                                    text="⚠️  Restaurer une sauvegarde"
+                                    styleClass="btn-danger"
+                                    prefWidth="220"
+                                    prefHeight="44"
+                                    onAction="#onRestaurerSauvegarde" />
+
+                                <Button
+                                    fx:id="btnPlanifierSauvegarde"
+                                    text="🕐  Planifier la sauvegarde"
+                                    styleClass="btn-secondary"
+                                    prefWidth="220"
+                                    onAction="#onPlanifierSauvegarde" />
+                            </VBox>
+
+                        </HBox>
+
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+
+        </StackPane>
+    </center>
+
+</BorderPane>

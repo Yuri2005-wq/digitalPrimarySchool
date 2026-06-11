@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    SuiviFinancier.fxml – Module Finance : Encaissements + Impayés
+    Contrôleur : SuiviFinancierController.java
+    Interface principale de l'Économe / Secrétaire
+-->
+<BorderPane
+    xmlns="http://javafx.com/javafx/17"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="cm.siantou.ecole.controller.SuiviFinancierController"
+    styleClass="workspace"
+    style="-fx-padding: 0;">
+
+    <!-- ── En-tête de page ──────────────────────────────── -->
+    <top>
+        <VBox spacing="16" style="-fx-padding: 28 32 16 32; -fx-background-color: #F8FAFC;">
+
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Finance" styleClass="breadcrumb-label" />
+                <Label text="›" styleClass="breadcrumb-label" />
+                <Label text="Suivi des paiements" styleClass="breadcrumb-current" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="0">
+                <VBox spacing="4">
+                    <Label text="Suivi Financier &amp; Impayés" styleClass="page-title" />
+                    <Label text="Enregistrement des encaissements et gestion des créances"
+                           styleClass="page-subtitle" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button
+                    fx:id="btnExporterFinance"
+                    text="📊  Exporter le rapport"
+                    styleClass="btn-secondary"
+                    onAction="#onExporter" />
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- ── Contenu central (SplitPane Haut/Bas) ─────────── -->
+    <center>
+        <VBox spacing="16" style="-fx-padding: 0 32 24 32;">
+
+            <!-- ══ RANGÉE 1 : KPI Financiers ══════════════ -->
+            <HBox spacing="16">
+
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="ENCAISSÉ CE MOIS" styleClass="card-title" />
+                    <Label fx:id="lblEncaisseMois" text="— FCFA"
+                           styleClass="montant-total-label" />
+                    <ProgressBar
+                        fx:id="progressEncaisse"
+                        progress="0"
+                        prefWidth="9999"
+                        styleClass="progress-bar-success" />
+                    <Label fx:id="lblPctEncaisse" text="0% de l'objectif mensuel"
+                           styleClass="label-info" />
+                </VBox>
+
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="TOTAL IMPAYÉS" styleClass="card-title" />
+                    <Label fx:id="lblTotalImpayes" text="— FCFA"
+                           styleClass="impaye-total-label" />
+                    <Label fx:id="lblNbElevesImpayes"
+                           text="— élève(s) concerné(s)"
+                           styleClass="label-info" />
+                </VBox>
+
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="PROCHAINES ÉCHÉANCES (7 jours)" styleClass="card-title" />
+                    <Label fx:id="lblEcheancesProches" text="—"
+                           style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #D97706;" />
+                    <Label fx:id="lblMontantEcheancesProches"
+                           text="— FCFA attendus"
+                           styleClass="label-info" />
+                </VBox>
+
+                <VBox styleClass="card" spacing="8" HBox.hgrow="ALWAYS">
+                    <Label text="TOTAL ENCAISSÉ (ANNUEL)" styleClass="card-title" />
+                    <Label fx:id="lblTotalAnnuel" text="— FCFA"
+                           style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1E3A8A;" />
+                    <Label fx:id="lblTauxAnnuel"
+                           text="Taux recouvrement annuel : —%"
+                           styleClass="label-info" />
+                </VBox>
+
+            </HBox>
+
+            <!-- ══ SECTION 2 : Saisie d'un encaissement ══ -->
+            <HBox spacing="16" alignment="TOP_LEFT">
+
+                <!-- Formulaire encaissement -->
+                <VBox styleClass="encaissement-card" spacing="16" prefWidth="440">
+
+                    <Label text="Enregistrer un paiement" styleClass="form-section-title" />
+                    <Pane styleClass="form-separator" />
+
+                    <!-- Recherche élève -->
+                    <VBox spacing="6">
+                        <HBox spacing="4">
+                            <Label text="Élève / Matricule" styleClass="field-label" />
+                            <Label text="*" styleClass="field-required" />
+                        </HBox>
+                        <HBox spacing="8">
+                            <TextField
+                                fx:id="txtRechercheEleveFinance"
+                                promptText="🔍  Nom ou matricule..."
+                                styleClass="search-field"
+                                prefWidth="280"
+                                onKeyReleased="#onRechercheEleveFinance" />
+                            <Button
+                                text="Chercher"
+                                styleClass="btn-secondary"
+                                style="-fx-font-size: 12px;"
+                                onAction="#onRechercheEleveFinance" />
+                        </HBox>
+                        <!-- Info élève sélectionné -->
+                        <HBox
+                            fx:id="paneInfoEleveSelectionne"
+                            styleClass="alert-banner-success"
+                            spacing="12"
+                            alignment="CENTER_LEFT"
+                            visible="false">
+                            <Label text="✅" />
+                            <VBox spacing="2">
+                                <Label fx:id="lblNomEleveSelectionne"
+                                       text=""
+                                       style="-fx-font-weight: bold; -fx-text-fill: #065F46;" />
+                                <Label fx:id="lblClasseEleveSelectionne"
+                                       text=""
+                                       styleClass="alert-text-success" />
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Tranche à régler -->
+                    <VBox spacing="6">
+                        <HBox spacing="4">
+                            <Label text="Tranche à régler" styleClass="field-label" />
+                            <Label text="*" styleClass="field-required" />
+                        </HBox>
+                        <ComboBox
+                            fx:id="cmbTrancheARegler"
+                            promptText="Sélectionner une tranche..."
+                            styleClass="combo-base"
+                            prefWidth="9999" />
+                    </VBox>
+
+                    <!-- Montant -->
+                    <HBox spacing="12">
+                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                            <HBox spacing="4">
+                                <Label text="Montant reçu (FCFA)" styleClass="field-label" />
+                                <Label text="*" styleClass="field-required" />
+                            </HBox>
+                            <TextField
+                                fx:id="txtMontantEncaisse"
+                                promptText="0"
+                                styleClass="text-field-base"
+                                prefWidth="9999" />
+                        </VBox>
+                        <VBox spacing="6" prefWidth="130">
+                            <Label text="Référence / Reçu N°" styleClass="field-label" />
+                            <TextField
+                                fx:id="txtReferenceEncaissement"
+                                promptText="Auto"
+                                styleClass="text-field-base"
+                                editable="false"
+                                style="-fx-background-color: #F1F5F9;" />
+                        </VBox>
+                    </HBox>
+
+                    <!-- Date du paiement -->
+                    <VBox spacing="6">
+                        <Label text="Date du paiement" styleClass="field-label" />
+                        <DatePicker
+                            fx:id="dpDatePaiement"
+                            styleClass="date-picker-base"
+                            prefWidth="9999" />
+                    </VBox>
+
+                    <!-- Mode de paiement -->
+                    <VBox spacing="8">
+                        <Label text="Mode de paiement" styleClass="field-label" />
+                        <HBox spacing="10">
+                            <ToggleButton
+                                fx:id="btnEspeces"
+                                text="💵  Espèces"
+                                styleClass="payment-method-btn"
+                                onAction="#onModeChange" />
+                            <ToggleButton
+                                fx:id="btnMobileMoney"
+                                text="📱  Mobile Money"
+                                styleClass="payment-method-btn"
+                                onAction="#onModeChange" />
+                            <ToggleButton
+                                fx:id="btnVirement"
+                                text="🏦  Virement"
+                                styleClass="payment-method-btn"
+                                onAction="#onModeChange" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Numéro de transaction Mobile Money (conditionnel) -->
+                    <VBox
+                        fx:id="paneNumTransaction"
+                        spacing="6"
+                        visible="false"
+                        managed="false">
+                        <Label text="N° de transaction" styleClass="field-label" />
+                        <TextField
+                            fx:id="txtNumTransaction"
+                            promptText="Ex : MTN-XXXXXXXX"
+                            styleClass="text-field-base" />
+                    </VBox>
+
+                    <!-- Observations -->
+                    <VBox spacing="6">
+                        <Label text="Observations" styleClass="field-label" />
+                        <TextArea
+                            fx:id="txtObsEncaissement"
+                            promptText="Optionnel..."
+                            styleClass="text-area-base"
+                            prefHeight="60"
+                            wrapText="true" />
+                    </VBox>
+
+                    <!-- Boutons -->
+                    <HBox spacing="10" alignment="CENTER_RIGHT" style="-fx-padding: 8 0 0 0;">
+                        <Button
+                            fx:id="btnAnnulerEncaissement"
+                            text="Annuler"
+                            styleClass="btn-secondary"
+                            onAction="#onAnnulerEncaissement" />
+                        <Button
+                            fx:id="btnEnregistrerEncaissement"
+                            text="✔  Valider le paiement"
+                            styleClass="btn-primary"
+                            onAction="#onEnregistrerEncaissement" />
+                    </HBox>
+
+                </VBox>
+
+                <!-- ══ Liste des impayés ══════════════════ -->
+                <VBox styleClass="card" spacing="12" HBox.hgrow="ALWAYS">
+
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label text="Élèves en situation d'impayé"
+                               styleClass="form-section-title" />
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <!-- Filtres rapides -->
+                        <ComboBox
+                            fx:id="cmbFiltreClasseImpayes"
+                            promptText="Toutes les classes"
+                            styleClass="filter-combo"
+                            prefWidth="160"
+                            onAction="#onFiltreImpayes" />
+
+                        <ComboBox
+                            fx:id="cmbFiltreStatutImpayes"
+                            styleClass="filter-combo"
+                            prefWidth="140"
+                            onAction="#onFiltreImpayes" />
+
+                        <TextField
+                            fx:id="txtRechercheImpaye"
+                            promptText="🔍 Rechercher..."
+                            styleClass="search-field"
+                            prefWidth="180"
+                            onKeyReleased="#onRechercheImpaye" />
+                    </HBox>
+
+                    <!-- Tableau des impayés -->
+                    <TableView
+                        fx:id="tblImpayes"
+                        styleClass="table-view-base"
+                        VBox.vgrow="ALWAYS"
+                        columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
+                        onMouseClicked="#onSelectImpaye">
+
+                        <columns>
+
+                            <TableColumn fx:id="colImpMatricule"
+                                         text="Matricule"
+                                         prefWidth="100" />
+
+                            <TableColumn fx:id="colImpNomPrenom"
+                                         text="Nom &amp; Prénom"
+                                         prefWidth="170" />
+
+                            <TableColumn fx:id="colImpClasse"
+                                         text="Classe"
+                                         prefWidth="70" />
+
+                            <TableColumn fx:id="colImpTranche"
+                                         text="Tranche"
+                                         prefWidth="80"
+                                         style="-fx-alignment: CENTER;" />
+
+                            <TableColumn fx:id="colImpMontantDu"
+                                         text="Montant dû (FCFA)"
+                                         prefWidth="130"
+                                         style="-fx-alignment: CENTER_RIGHT;" />
+
+                            <TableColumn fx:id="colImpEcheance"
+                                         text="Échéance"
+                                         prefWidth="100"
+                                         style="-fx-alignment: CENTER;" />
+
+                            <TableColumn fx:id="colImpRetard"
+                                         text="Retard (jours)"
+                                         prefWidth="100"
+                                         style="-fx-alignment: CENTER;" />
+
+                            <TableColumn fx:id="colImpStatut"
+                                         text="Statut"
+                                         prefWidth="100"
+                                         style="-fx-alignment: CENTER;" />
+
+                            <TableColumn fx:id="colImpActions"
+                                         text="Actions"
+                                         prefWidth="120"
+                                         sortable="false" />
+
+                        </columns>
+
+                        <placeholder>
+                            <VBox alignment="CENTER" spacing="8">
+                                <Label text="✅" style="-fx-font-size: 32px;" />
+                                <Label text="Aucun impayé détecté pour la sélection."
+                                       styleClass="label-info" />
+                            </VBox>
+                        </placeholder>
+
+                    </TableView>
+
+                    <!-- Actions groupées -->
+                    <HBox alignment="CENTER_RIGHT" spacing="10">
+                        <Label
+                            fx:id="lblNbImpayes"
+                            text="0 résultat(s)"
+                            styleClass="label-info" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button
+                            fx:id="btnGenererLettres"
+                            text="✉️  Générer lettres de rappel (sélection)"
+                            styleClass="btn-warning"
+                            onAction="#onGenererLettres" />
+                        <Button
+                            fx:id="btnExporterImpayes"
+                            text="📋  Exporter liste"
+                            styleClass="btn-secondary"
+                            style="-fx-font-size: 12px;"
+                            onAction="#onExporterImpayes" />
+                    </HBox>
+
+                </VBox>
+
+            </HBox>
+
+            <!-- ══ SECTION 3 : Historique des encaissements ══ -->
+            <VBox styleClass="card" spacing="12">
+
+                <HBox alignment="CENTER_LEFT" spacing="12">
+                    <Label text="Historique des encaissements" styleClass="form-section-title" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <DatePicker
+                        fx:id="dpFiltreDateDebut"
+                        promptText="Du..."
+                        styleClass="date-picker-base"
+                        prefWidth="140" />
+                    <DatePicker
+                        fx:id="dpFiltreDataFin"
+                        promptText="Au..."
+                        styleClass="date-picker-base"
+                        prefWidth="140" />
+                    <Button
+                        text="🔍 Filtrer"
+                        styleClass="btn-secondary"
+                        style="-fx-font-size: 12px;"
+                        onAction="#onFiltreHistorique" />
+                </HBox>
+
+                <TableView
+                    fx:id="tblHistoriqueEncaissements"
+                    styleClass="table-view-base"
+                    prefHeight="200"
+                    columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
+
+                    <columns>
+                        <TableColumn fx:id="colHistRef"      text="Référence"         prefWidth="120" />
+                        <TableColumn fx:id="colHistDate"     text="Date"              prefWidth="110" />
+                        <TableColumn fx:id="colHistEleve"    text="Élève"             prefWidth="180" />
+                        <TableColumn fx:id="colHistClasse"   text="Classe"            prefWidth="80" />
+                        <TableColumn fx:id="colHistTranche"  text="Tranche"           prefWidth="80" />
+                        <TableColumn fx:id="colHistMontant"  text="Montant (FCFA)"    prefWidth="130"
+                                     style="-fx-alignment: CENTER_RIGHT;" />
+                        <TableColumn fx:id="colHistMode"     text="Mode paiement"     prefWidth="130" />
+                        <TableColumn fx:id="colHistOperateur" text="Opérateur"        prefWidth="120" />
+                        <TableColumn fx:id="colHistActions"  text="Actions"           prefWidth="100"
+                                     sortable="false" />
+                    </columns>
+
+                    <placeholder>
+                        <Label text="Aucun encaissement enregistré." styleClass="label-info" />
+                    </placeholder>
+
+                </TableView>
+
+            </VBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>

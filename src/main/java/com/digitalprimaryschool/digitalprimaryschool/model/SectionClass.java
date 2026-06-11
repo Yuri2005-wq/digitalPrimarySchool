@@ -1,6 +1,6 @@
 package com.digitalprimaryschool.digitalprimaryschool.model;
 
-public enum SyncStatus {
-    PENDING_REMOTELY,
-    SYNCED
+public enum SectionClass {
+    ANGLOPHONE,
+    FRANCOPHONE
 }

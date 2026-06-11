@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
+<VBox spacing="25.0" styleClass="workspace-container" stylesheets="@style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="30.0" left="35.0" right="35.0" top="30.0" />
+    </padding>
+    <children>
 
-</AnchorPane>
+        <VBox spacing="5.0">
+            <children>
+                <Label styleClass="page-title" text="Enregistrer un élève" />
+                <Label styleClass="page-subtitle" text="Ajoutez un nouvel élève instantanément dans la base de données locale" />
+            </children>
+        </VBox>
+
+        <VBox maxWidth="500.0" spacing="20.0" styleClass="chart-card">
+            <padding>
+                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+            </padding>
+            <children>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label styleClass="kpi-title" text="Nom complet de l'élève" style="-fx-font-size: 13px;" />
+                        <TextField fx:id="nameField" prefHeight="40.0" promptText="Ex: Amina Benali" style="-fx-background-radius: 8px; -fx-border-color: #e2e8f0; -fx-border-radius: 8px; -fx-background-color: #ffffff;" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label styleClass="kpi-title" text="Assigner à une classe" style="-fx-font-size: 13px;" />
+                        <ComboBox fx:id="classComboBox" prefHeight="40.0" prefWidth="500.0" promptText="Choisir la classe" style="-fx-background-radius: 8px; -fx-background-color: #ffffff; -fx-border-color: #e2e8f0; -fx-border-radius: 8px;" />
+                    </children>
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <children>
+                        <Label styleClass="kpi-title" text="Date de naissance" style="-fx-font-size: 13px;" />
+                        <TextField fx:id="birthDateField" prefHeight="40.0" promptText="JJ/MM/AAAA" style="-fx-background-radius: 8px; -fx-border-color: #e2e8f0; -fx-border-radius: 8px; -fx-background-color: #ffffff;" />
+                    </children>
+                </VBox>
+
+                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                    <children>
+                        <Button mnemonicParsing="false"  style="-fx-background-color: transparent; -fx-text-fill: #64748b; -fx-cursor: hand; -fx-font-weight: bold;" text="Annuler" />
+                        <Button mnemonicParsing="false"  style="-fx-background-color: #1e293b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 8px; -fx-cursor: hand;" text="Enregistrer l'élève" />
+                    </children>
+                    <VBox.margin>
+                        <Insets top="10.0" />
+                    </VBox.margin>
+                </HBox>
+
+            </children>
+        </VBox>
+    </children>
+</VBox>

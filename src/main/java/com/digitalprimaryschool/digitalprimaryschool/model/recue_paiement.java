@@ -1,14 +1,20 @@
-/***********************************************************************
- * Module:  recue_paiement.java
- * Author:  DJALEU YURI
- * Purpose: Defines the Class recue_paiement
- ***********************************************************************/
+package com.digitalprimaryschool.digitalprimaryschool.model;
 
-import java.util.*;
+import java.util.UUID;
 
-/** @pdOid 948fd5c9-e9af-4fef-b2f3-f56e360ac37c */
 public class recue_paiement extends DocumentScolaire {
-   /** @pdOid 96c97323-7665-4b89-aed9-e32b446a0aa0 */
-   private int idRecu;
+   private String idRecu;
+   private String idPaiement;
 
+   public recue_paiement(){
+      super();
+      this.setType("recu");
+      this.idRecu = UUID.randomUUID().toString();
+   }
+
+   public String getIdRecu() { return idRecu; }
+   public void setIdRecu(String idRecu) { this.idRecu = idRecu; }
+
+   public String getIdPaiement() { return idPaiement; }
+   public void setIdPaiement(String idPaiement) { this.idPaiement = idPaiement; }
 }

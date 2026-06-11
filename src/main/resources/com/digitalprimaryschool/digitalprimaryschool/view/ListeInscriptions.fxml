@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+    ListeInscriptions.fxml – Vue tableau de tous les élèves inscrits
+    Contrôleur : ListeInscriptionsController.java
+    Point d'entrée du module Inscriptions avant FicheEleve.fxml
+-->
+<BorderPane
+    xmlns="http://javafx.com/javafx/17"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="cm.siantou.ecole.controller.ListeInscriptionsController"
+    styleClass="workspace"
+    style="-fx-padding: 0;">
+
+    <!-- ── En-tête de page ──────────────────────────────── -->
+    <top>
+        <VBox spacing="16" style="-fx-padding: 28 32 16 32; -fx-background-color: #F8FAFC;">
+
+            <HBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Inscriptions" styleClass="breadcrumb-label" />
+                <Label text="›" styleClass="breadcrumb-label" />
+                <Label text="Liste des élèves" styleClass="breadcrumb-current" />
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="16">
+                <VBox spacing="4">
+                    <Label text="Liste des élèves inscrits" styleClass="page-title" />
+                    <Label fx:id="lblNbElevesTotal"
+                           text="0 élève(s) enregistré(s)"
+                           styleClass="page-subtitle" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button
+                    fx:id="btnNouvelleInscription"
+                    text="➕  Nouvelle inscription"
+                    styleClass="btn-primary"
+                    onAction="#onNouvelleInscription" />
+                <Button
+                    fx:id="btnImporterCSV"
+                    text="📥  Importer CSV"
+                    styleClass="btn-secondary"
+                    onAction="#onImporterCSV" />
+            </HBox>
+
+        </VBox>
+    </top>
+
+    <!-- ── Contenu central ──────────────────────────────── -->
+    <center>
+        <VBox spacing="16" style="-fx-padding: 0 32 24 32;">
+
+            <!-- ── Barre de filtres ── -->
+            <HBox styleClass="toolbar-section" spacing="16" alignment="CENTER_LEFT">
+
+                <!-- Recherche texte -->
+                <TextField
+                    fx:id="txtRechercheInscription"
+                    promptText="🔍  Rechercher un élève (nom, matricule...)"
+                    styleClass="search-field"
+                    prefWidth="300"
+                    onKeyReleased="#onRecherche" />
+
+                <!-- Filtre classe -->
+                <ComboBox
+                    fx:id="cmbFiltreClasse"
+                    promptText="Toutes les classes"
+                    styleClass="filter-combo"
+                    prefWidth="170"
+                    onAction="#onFiltreChange" />
+
+                <!-- Filtre sexe -->
+                <ComboBox
+                    fx:id="cmbFiltreSexe"
+                    promptText="M / F / Tous"
+                    styleClass="filter-combo"
+                    prefWidth="130"
+                    onAction="#onFiltreChange" />
+
+                <!-- Filtre statut financier -->
+                <ComboBox
+                    fx:id="cmbFiltreStatutFinancier"
+                    promptText="Statut paiement"
+                    styleClass="filter-combo"
+                    prefWidth="160"
+                    onAction="#onFiltreChange" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- Compteur résultats -->
+                <Label fx:id="lblNbResultats"
+                       text="— résultat(s)"
+                       styleClass="label-info" />
+
+                <!-- Bouton export -->
+                <Button
+                    fx:id="btnExporterListe"
+                    text="📋  Exporter"
+                    styleClass="btn-secondary"
+                    style="-fx-font-size: 12px;"
+                    onAction="#onExporter" />
+
+            </HBox>
+
+            <!-- ── Tableau des élèves ── -->
+            <TableView
+                fx:id="tblEleves"
+                styleClass="table-view-base"
+                VBox.vgrow="ALWAYS"
+                columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
+                onMouseClicked="#onDoubleClickEleve">
+
+                <columns>
+
+                    <TableColumn fx:id="colElevePhoto"
+                                 text=""
+                                 prefWidth="50"
+                                 sortable="false" />
+
+                    <TableColumn fx:id="colEleveMatricule"
+                                 text="Matricule"
+                                 prefWidth="110" />
+
+                    <TableColumn fx:id="colEleveNom"
+                                 text="Nom"
+                                 prefWidth="140" />
+
+                    <TableColumn fx:id="colElevePrenom"
+                                 text="Prénom(s)"
+                                 prefWidth="160" />
+
+                    <TableColumn fx:id="colEleveSexe"
+                                 text="Sexe"
+                                 prefWidth="55"
+                                 style="-fx-alignment: CENTER;" />
+
+                    <TableColumn fx:id="colEleveDateNaissance"
+                                 text="Date naissance"
+                                 prefWidth="120" />
+
+                    <TableColumn fx:id="colEleveClasse"
+                                 text="Classe"
+                                 prefWidth="80"
+                                 style="-fx-alignment: CENTER;" />
+
+                    <TableColumn fx:id="colEleveParent"
+                                 text="Parent / Tuteur"
+                                 prefWidth="170" />
+
+                    <TableColumn fx:id="colEleveTelParent"
+                                 text="Téléphone"
+                                 prefWidth="110" />
+
+                    <TableColumn fx:id="colEleveStatutPaiement"
+                                 text="Paiement"
+                                 prefWidth="110"
+                                 style="-fx-alignment: CENTER;" />
+
+                    <TableColumn fx:id="colEleveActions"
+                                 text="Actions"
+                                 prefWidth="110"
+                                 sortable="false"
+                                 style="-fx-alignment: CENTER;" />
+
+                </columns>
+
+                <placeholder>
+                    <VBox alignment="CENTER" spacing="12">
+                        <Label text="🎓" style="-fx-font-size: 40px;" />
+                        <Label text="Aucun élève inscrit pour cette sélection."
+                               style="-fx-font-size: 14px; -fx-text-fill: #94A3B8;" />
+                        <Button
+                            text="➕  Enregistrer le premier élève"
+                            styleClass="btn-primary"
+                            onAction="#onNouvelleInscription" />
+                    </VBox>
+                </placeholder>
+
+            </TableView>
+
+        </VBox>
+    </center>
+
+    <!-- ── Barre de statut (BOTTOM) ─────────────────────── -->
+    <bottom>
+        <HBox
+            alignment="CENTER_LEFT"
+            spacing="24"
+            style="-fx-padding: 10 32; -fx-background-color: #FFFFFF;
+                   -fx-border-color: #E2E8F0 transparent transparent transparent;
+                   -fx-border-width: 1 0 0 0;">
+
+            <Label fx:id="lblStatutBarre" text="" styleClass="label-info" />
+
+            <HBox spacing="16">
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label styleClass="badge-paye" text="À jour" />
+                    <Label fx:id="lblNbPayes" text="0" styleClass="label-info" />
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label styleClass="badge-partiel" text="Partiel" />
+                    <Label fx:id="lblNbPartiel" text="0" styleClass="label-info" />
+                </HBox>
+                <HBox spacing="6" alignment="CENTER_LEFT">
+                    <Label styleClass="badge-impaye" text="Impayé" />
+                    <Label fx:id="lblNbImpayes" text="0" styleClass="label-info" />
+                </HBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS" />
+
+            <Label
+                fx:id="lblDerniereMAJ"
+                text="Dernière mise à jour : —"
+                styleClass="label-info" />
+
+        </HBox>
+    </bottom>
+
+</BorderPane>
