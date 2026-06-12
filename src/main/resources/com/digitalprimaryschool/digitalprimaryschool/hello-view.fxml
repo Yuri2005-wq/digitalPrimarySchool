@@ -1,102 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 
-<!--
-    LOGIN.fxml – Écran de connexion
-    Contrôleur : LoginController.java
-    Résolution minimum supportée : 1280×768
--->
-<StackPane
-        xmlns="http://javafx.com/javafx/17"
-        xmlns:fx="http://javafx.com/fxml/1"
-
-        styleClass="login-root"
-       >
-
-    <!-- Fond dégradé géré par CSS (.login-root) -->
-
-    <!-- Carte centrée -->
-    <VBox
-            styleClass="login-card"
-            alignment="CENTER"
-            spacing="0"
-            maxWidth="400"
-            maxHeight="520">
-
-        <!-- Logo + Titre -->
-        <VBox alignment="CENTER" spacing="8">
-            <!-- Remplacer ImageView src par le vrai logo -->
-            <Label text="🏫" style="-fx-font-size: 48px;" />
-            <Label
-                    fx:id="lblAppTitle"
-                    text="Gestion Scolaire"
-                    styleClass="login-title" />
-            <Label
-                    fx:id="lblSchoolName"
-                    text="École Primaire Privée"
-                    styleClass="login-subtitle" />
-        </VBox>
-
-        <!-- Séparateur -->
-        <Pane prefHeight="32" />
-
-        <!-- Formulaire -->
-        <VBox spacing="6">
-            <Label text="Identifiant" styleClass="login-label" />
-            <TextField
-                    fx:id="txtIdentifiant"
-                    promptText="Ex : economat@ecole.cm"
-                    styleClass="login-field"
-                    prefWidth="308" />
-        </VBox>
-
-        <Pane prefHeight="16" />
-
-        <VBox spacing="6">
-            <HBox alignment="CENTER_LEFT" spacing="4">
-                <Label text="Mot de passe" styleClass="login-label" />
-            </HBox>
-            <PasswordField
-                    fx:id="txtMotDePasse"
-                    promptText="••••••••"
-                    styleClass="login-field"
-                    prefWidth="308" />
-        </VBox>
-
-        <Pane prefHeight="8" />
-
-        <!-- Message d'erreur (caché par défaut) -->
-        <Label
-                fx:id="lblErreur"
-                text=""
-                styleClass="login-error"
-                visible="false"
-                wrapText="true"
-                maxWidth="308" />
-
-        <Pane prefHeight="24" />
-
-        <!-- Bouton connexion -->
-        <Button
-                fx:id="btnConnecter"
-                text="SE CONNECTER"
-                styleClass="btn-primary"
-                prefWidth="308"
-                prefHeight="44"
-                 />
-
-        <Pane prefHeight="20" />
-
-        <!-- Pied de page -->
-        <Label
-                text="© 2025 – Système de Gestion Scolaire MINEDUB"
-                styleClass="login-subtitle"
-                alignment="CENTER" />
-    </VBox>
-</StackPane>
+<AnchorPane prefHeight="600.0" prefWidth="850.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane layoutX="8.8" layoutY="-3.0" prefHeight="606.0" prefWidth="840.0" AnchorPane.bottomAnchor="-3.0" AnchorPane.leftAnchor="9.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-3.0">
+         <left>
+            <AnchorPane prefHeight="533.0" prefWidth="181.0" BorderPane.alignment="CENTER">
+               <children>
+                  <VBox layoutX="-9.0" layoutY="-30.0" prefHeight="634.0" prefWidth="226.0" style="-fx-background-color: #0A4969;" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="-9.0" AnchorPane.rightAnchor="-36.0" AnchorPane.topAnchor="-30.0">
+                     <children>
+                        <VBox prefHeight="25.0" prefWidth="206.0" spacing="8.0" styleClass="headNavbar" stylesheets="@style.css">
+                           <children>
+                              <Label prefHeight="31.0" prefWidth="216.0" text="Principal" textFill="#f3f3f3" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" right="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </left>
+      </BorderPane>
+   </children>
+</AnchorPane>

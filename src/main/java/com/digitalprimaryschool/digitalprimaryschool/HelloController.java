@@ -5,7 +5,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -43,6 +46,7 @@ public class HelloController {
     /**
      * Méthode générique de navigation corrigée pour ton arborescence
      */
+
     private void showPage(String fxmlFileName) {
         try {
             if (contentArea == null) {
@@ -70,7 +74,6 @@ public class HelloController {
             e.printStackTrace();
         }
     }
-
     /**
      * Gère l'état visuel de la barre latérale (.active)
      */

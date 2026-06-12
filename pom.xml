@@ -30,11 +30,11 @@
                 <version>2.2.224</version>
             </dependency>
 
-
-
-
-
-
+            <dependency>
+                <groupId>io.github.mkpaz</groupId>
+                <artifactId>atlantafx-base</artifactId>
+                <version>2.0.1</version>
+            </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>

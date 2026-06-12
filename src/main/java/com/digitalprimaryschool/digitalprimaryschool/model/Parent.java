@@ -17,6 +17,14 @@ public class Parent extends BaseModel {
       super(); // Appelle le constructeur d'Utilisateur
       this.idParent = UUID.randomUUID().toString(); // Génération sécurisée hors-ligne
    }
+   public Parent(String idParent, String prenom, int contactParent, String emailParent, String profession, String adresse){
+      this.idParent = idParent;
+      this.prenom = prenom;
+      this.contactParent = contactParent;
+      this.emailParent = emailParent;
+      this.profession = profession;
+      this.adresse = adresse;
+   }
 
    // Getters requis par le DAO et l'Élève
    public String getIdParent(){

@@ -39,10 +39,6 @@ public class Eleve {
    public String getParent(){
       return this.parent.getIdParent();
    }
-   public String getIdUtilisateur() {
-      // Si l'objet parent existe, on récupère son ID, sinon on renvoie une valeur par défaut ou null
-      return (this.parent != null) ? this.parent.getIdUtilisateur() : null;
-   }
 
    public String getIdParent() {
       // Si l'objet parent existe, on récupère son ID parent, sinon on renvoie une valeur par défaut ou null

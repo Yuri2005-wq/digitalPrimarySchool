@@ -15,7 +15,7 @@ public class ParentDAO {
      * Insère un Parent directement dans sa propre table.
      * Le statut de synchronisation est géré localement (is_synced = 0).
      */
-    public boolean insert(Parent parent) throws SQLException {
+    public void insert(Parent parent) throws SQLException {
         String sql = "INSERT INTO Parent (idParent, prenom, contactParent, emailParent, profession, adresse, is_synced) " +
                 "VALUES (?, ?, ?, ?, ?, ?, 0)";
 
@@ -30,7 +30,6 @@ public class ParentDAO {
             pstmt.setString(6, parent.getAdresse());
 
             int rows = pstmt.executeUpdate();
-            return rows > 0;
 
         } catch (SQLException e) {
             // Gestion de la violation de contrainte d'unicité SQLite (ex: idParent existant)
@@ -38,7 +37,6 @@ public class ParentDAO {
                     (((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY ||
                             ((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT)) {
                 System.err.println("Erreur : Le parent avec cet identifiant existe déjà.");
-                return false;
             } else {
                 throw e; // On propage l'erreur vers l'IHM JavaFX (ex: problème de base de données verrouillée)
             }
