@@ -6,6 +6,9 @@ module com.digitalprimaryschool.digitalprimaryschool {
     requires com.sun.jna;
     requires com.sun.jna.platform;
     requires org.xerial.sqlitejdbc;
+    requires org.kordamp.ikonli.core;
+    requires org.kordamp.ikonli.javafx;
+    requires atlantafx.base;
 
 
     opens com.digitalprimaryschool.digitalprimaryschool to javafx.fxml;

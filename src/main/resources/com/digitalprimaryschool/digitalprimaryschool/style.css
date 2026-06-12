@@ -1,344 +1,479 @@
+/* ============================================================
+   EduGestion — Thème custom sur base AtlantaFX (PrimerLight)
+   Palette : navy (sidebar/appbar) + orange (accent)
+   Police  : Inter (à charger via Font.loadFont() au démarrage,
+             fichiers .ttf à placer dans /resources/com/edugestion/fonts)
+   ============================================================ */
 
-*{
-    -fx-font-family: "Inter";
+/* --- Personnalisation de l'AppBar --- */
+
+
+
+/* Style des grosses tuiles de paramètres */
+.settings-tile {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 4);
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s;
 }
 
-
-.dashboard-card {
-    -fx-background-color: #ffffff;
-    -fx-pref-height: 50px;
-    -fx-background-radius: 12px; /* Coins arrondis comme la maquette */
-    -fx-padding: 40px;
-    /* Pour ajouter un léger ombrage moderne */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+.settings-tile:hover {
+    -fx-background-color: #F8FAFC;
+    -fx-border-color: #F5A524; /* Couleur orange accent */
+    -fx-translate-y: -5; /* Petit effet de levée */
 }
 
-
-
-.headNavbar{
-    -fx-background-color: #1e293b;
-    -fx-border-radius: 50px;
+.tile-icon {
+    -fx-icon-color: #16213A;
 }
 
-.buttonItem{
-    -fx-font-family: Arial;
-    -fx-background-color: #0000;
-    -fx-padding: 8px 10px;
+.settings-tile:hover .tile-icon {
+    -fx-icon-color: #F5A524;
+}
+
+.tile-label {
     -fx-font-size: 16px;
-    -fx-transition: all 0.7s;
+    -fx-font-weight: 700;
+    -fx-text-fill: #16213A;
 }
-.buttonItem:hover{
-    -fx-background-color: red;
+
+/* Style spécifique pour les ComboBox dans la modale sombre */
+.combo-box .list-cell {
+    -fx-text-fill: white;
+}
+.top-bar {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.02), 8, 0, 0, 1);
+}
+
+/* --- Boutons de la Navbar Latérale (Sidebar) --- */
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8; /* Couleur désactivée de ta maquette */
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.nav-item .ikonli-font-icon {
+    -fx-icon-color: #64748B;
+}
+
+/* 🌟 ÉTAT LUMINEUX EN ACCENT AVEC ATLANTAFX (Fidèle à ta maquette) */
+.nav-item.active {
+    /* Utilisation de la couleur "accent" d'AtlantaFX en fond transparent */
+    -fx-background-color: rgba(245, 165, 36, 0.15);
+    -fx-text-fill: #F5A524; /* Orange lumineux */
+    -fx-font-weight: bold;
+}
+
+.nav-item.active .ikonli-font-icon {
+    -fx-icon-color: #F5A524;
+}
+
+/* Effet de survol (Hover) propre */
+.nav-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-text-fill: #FFFFFF;
+}
+.nav-item:hover .ikonli-font-icon {
+    -fx-icon-color: #FFFFFF;
 }
 
 
+
+
+.root-pane {
+    -color-bg-default: #F4F6FA;
+    -fx-font-family: "Inter", "Segoe UI", sans-serif;
+    -fx-background-color: #F4F6FA;
+}
+
+/* ===================== APP BAR ===================== */
 
 .app-bar {
-    -fx-background-color: #ffffff;
-    -fx-border-color: transparent transparent #e2e8f0 transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-min-height: 42px;
-    -fx-max-height: 42px;
-    -fx-pref-height: 42px;
-    -fx-padding: 0 0 0 12px;
-    -fx-spacing: 0;
+    -fx-background-color: #16213A; /* même couleur que la sidebar */
+    -fx-border-color: transparent;
 }
 
-/* Icône hamburger gauche */
-.appbar-icon-btn {
+.app-bar-btn {
     -fx-background-color: transparent;
-    -fx-background-radius: 6px;
-    -fx-border-width: 0;
-    -fx-cursor: hand;
-    -fx-min-width: 36px;
-    -fx-min-height: 36px;
+    -fx-background-radius: 8;
+    -fx-text-fill: #C8D2E4;
+    -fx-padding: 6 8 6 8;
 }
-.appbar-icon-btn:hover {
-    -fx-background-color: #f1f5f9;
+.app-bar-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.08);
 }
-.appbar-icon {
-    -fx-text-fill: #64748b;
-    -fx-font-size: 14px;
+.app-bar-btn .ikonli-font-icon {
+    -fx-icon-color: #C8D2E4;
 }
 
-/* Boutons fenêtre */
-.win-btn {
+.avatar-badge {
+    -fx-background-color: #2A3B61;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-background-radius: 100;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+    -fx-max-width: 30;
+    -fx-max-height: 30;
+    -fx-alignment: center;
+}
+
+/* --- Boutons de fenêtre (minimize / maximize / close) --- */
+
+.window-controls {
+    -fx-padding: 0;
+}
+
+.window-btn {
     -fx-background-color: transparent;
-    -fx-border-width: 0;
-    -fx-background-radius: 0;
+    -fx-background-radius: 6;
+    -fx-min-width: 34;
+    -fx-min-height: 30;
+    -fx-max-width: 34;
+    -fx-max-height: 30;
     -fx-cursor: hand;
-    -fx-min-width: 46px;
-    -fx-min-height: 42px;
-    -fx-max-height: 42px;
+    -fx-padding: 0;
 }
-.win-btn-icon {
-    -fx-font-family: "Segoe MDL2 Assets", "Segoe UI Symbol";
-    -fx-font-size: 10px;
-    -fx-text-fill: #64748b;
+.window-btn .ikonli-font-icon {
+    -fx-icon-color: #C8D2E4;
 }
-.win-btn:hover {
-    -fx-background-color: #f1f5f9;
+.window-btn:hover {
+    -fx-background-color: rgba(255,255,255,0.10);
 }
-.win-btn:hover .win-btn-icon {
-    -fx-text-fill: #0f172a;
-}
-.btn-close:hover {
-    -fx-background-color: #ef4444;
-}
-.btn-close:hover .win-btn-icon {
-    -fx-text-fill: #ffffff;
+.window-btn:hover .ikonli-font-icon {
+    -fx-icon-color: #FFFFFF;
 }
 
-.root {
-    -fx-font-family: "Inter";
-    -fx-base: #f8fafc; /* Donne une teinte claire par défaut aux contrôles natifs */
-    -fx-control-inner-background: #ffffff; /* Fond des zones de saisie et listes */
+.close-btn:hover {
+    -fx-background-color: #E5484D; /* rouge au survol, comme Windows 11 */
+}
+.close-btn:hover .ikonli-font-icon {
+    -fx-icon-color: #FFFFFF;
 }
 
-.main-root {
-    -fx-font-family: "Inter";
-    -fx-background-color: #f8fafc;
-}
+/* ===================== SIDEBAR ===================== */
 
-/* ==========================================================================
-   2. SIDEBAR BLEU NUIT COMPLÈTE
-   ========================================================================== */
 .sidebar {
-    -fx-background-color: #1e293b;
+    -fx-background-color: #16213A;
+}
+
+.sidebar-header {
+    -fx-border-color: transparent transparent rgba(255,255,255,0.06) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.logo-badge {
+    -fx-background-color: #F5A524;
+    -fx-background-radius: 10;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+}
+.logo-badge .ikonli-font-icon {
+    -fx-icon-color: #16213A;
 }
 
 .brand-title {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
 }
-
 .brand-subtitle {
-    -fx-text-fill: #94a3b8;
+    -fx-text-fill: #7E8CAE;
     -fx-font-size: 11px;
 }
 
-.brand-logo {
-    -fill: #f59e0b;
+.nav-section-label {
+    -fx-text-fill: #5C6A8C;
+    -fx-font-size: 10px;
+    -fx-font-weight: 700;
+    -fx-padding: 14 10 6 10;
+    -fx-letter-spacing: 0.06em;
 }
 
-.menu-section-title {
-    -fx-text-fill: #64748b;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 10 0 5 10;
-}
-
-/* BOUTONS DE LA SIDEBAR */
-.sidebar-btn {
+/* Items de navigation (ToggleButton) */
+.nav-item {
     -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-background-radius: 8px;
-    -fx-border-width: 0;
-    -fx-padding: 0;
-    -fx-pref-width: 220px;
+    -fx-background-radius: 10;
+    -fx-text-fill: #B7C2DC;
+    -fx-font-size: 13px;
+    -fx-font-weight: 500;
+    -fx-alignment: CENTER_LEFT;
+    -fx-graphic-text-gap: 12;
+    -fx-padding: 10 12 10 12;
     -fx-cursor: hand;
 }
-
-/* Conteneur interne du bouton pour assurer un alignement parfait */
-.sidebar-btn .graphic-container, .sidebar-btn HBox {
-    -fx-padding: 12 15 12 15;
-    -fx-background-radius: 8px;
-    -fx-pref-width: 220px;
+.nav-item .ikonli-font-icon {
+    -fx-icon-color: #8593B8;
+}
+.nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #FFFFFF;
+}
+.nav-item:hover .ikonli-font-icon {
+    -fx-icon-color: #FFFFFF;
 }
 
-/* TEXTES ET POLICES DANS LES BOUTONS */
-.sidebar-btn .btn-text {
-    -fx-text-fill: #94a3b8;
-    -fx-font-size: 16px;
+/* Item actif : fond orange, texte sombre — comme la maquette */
+.nav-item:selected {
+    -fx-background-color: #F5A524;
+    -fx-text-fill: #16213A;
+    -fx-font-weight: 700;
+}
+.nav-item:selected .ikonli-font-icon {
+    -fx-icon-color: #16213A;
+}
+.nav-item:selected:hover {
+    -fx-background-color: #F5A524;
 }
 
-.icon-font {
-    -fx-font-family: "Segoe MDL2 Assets", "Segoe UI Symbol";
-    -fx-font-size: 14px;
-    -fx-text-fill: #94a3b8;
+.logout-item {
+    -fx-text-fill: #B7C2DC;
+}
+.logout-item .ikonli-font-icon {
+    -fx-icon-color: #8593B8;
+}
+.logout-item:hover {
+    -fx-background-color: rgba(229,72,77,0.15);
+    -fx-text-fill: #FF8C8F;
+}
+.logout-item:hover .ikonli-font-icon {
+    -fx-icon-color: #FF8C8F;
 }
 
-/* EFFET DE SURVOL (HOVER) */
-.sidebar-btn:hover HBox {
-    -fx-background-color: #334155;
-}
-.sidebar-btn:hover .btn-text, .sidebar-btn:hover .icon-font {
-    -fx-text-fill: #ffffff;
+/* ===================== CONTENU ===================== */
+
+.content-area {
+    -fx-background-color: #F4F6FA;
 }
 
-/* BOUTON ACTIF (SÉLECTIONNÉ) */
-.sidebar-btn.active HBox {
-    -fx-background-color: #2563eb; /* Bleu royal de ta maquette */
-}
-.sidebar-btn.active .btn-text, .sidebar-btn.active .icon-font {
-    -fx-text-fill: #ffffff;
-    -fx-font-weight: bold;
-}
-
-.logout-btn .btn-text, .logout-btn .icon-font {
-    -fx-text-fill: #cbd5e1;
-}
-
-/* ==========================================================================
-   3. ESPACE DE TRAVAIL CENTRAL
-   ========================================================================== */
-.workspace-scroll {
+.page-scroll {
     -fx-background-color: transparent;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+    -fx-background: transparent;
 }
-
-.workspace-scroll .viewport {
+.page-scroll > .viewport {
     -fx-background-color: transparent;
-}
-
-.workspace-container {
-    -fx-background-color: #f8fafc;
 }
 
 .page-title {
-    -fx-text-fill: #0f172a;
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-}
-
-.page-subtitle {
-    -fx-text-fill: #64748b;
-    -fx-font-size: 13px;
-}
-
-.user-profile-badge {
-    -fx-background-color: #1e293b;
-    -fx-background-radius: 20px;
-    -fx-pref-width: 38px;
-    -fx-pref-height: 38px;
-}
-
-.user-avatar-text {
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 12px;
-    -fx-font-weight: bold;
-}
-
-/* ==========================================================================
-   4. STYLISATION DES CARTES BLANCHES (KPI CARDS)
-   ========================================================================== */
-.kpi-card {
-    -fx-background-color: #ffffff;
-    -fx-padding: 20px;
-    -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 10, 0, 0, 4);
-}
-
-.kpi-title {
-    -fx-text-fill: #64748b;
-    -fx-font-size: 13px;
-}
-
-.kpi-value {
-    -fx-text-fill: #0f172a;
+    -fx-text-fill: #0F172A;
     -fx-font-size: 26px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 800;
 }
-
-.kpi-trend-positive {
-    -fx-text-fill: #10b981;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 0 0 0;
-}
-
-.kpi-trend-neutral {
-    -fx-text-fill: #64748b;
-    -fx-font-size: 11px;
-    -fx-padding: 5 0 0 0;
-}
-
-/* ENVELOPPES ET ARRIÈRE-PLAN DES ICONES DES CARTES */
-.kpi-icon-wrapper {
-    -fx-min-width: 42px;
-    -fx-min-height: 42px;
-    -fx-background-radius: 8px;
-}
-
-.kpi-icon-style {
-    -fx-font-family: "Segoe MDL2 Assets", "Segoe UI Symbol";
-    -fx-font-size: 16px;
-}
-
-.bg-blue   { -fx-background-color: #eff6ff; } .bg-blue .kpi-icon-style   { -fx-text-fill: #2563eb; }
-.bg-orange { -fx-background-color: #fff7ed; } .bg-orange .kpi-icon-style { -fx-text-fill: #ea580c; }
-.bg-purple { -fx-background-color: #f5f3ff; } .bg-purple .kpi-icon-style { -fx-text-fill: #7c3aed; }
-.bg-green  { -fx-background-color: #ecfdf5; } .bg-green .kpi-icon-style  { -fx-text-fill: #16a34a; }
-
-/* ==========================================================================
-   5. CARTES GRAPHIQUES ET LISTES D'ACTIVITÉS
-   ========================================================================== */
-.chart-card, .info-list-card {
-    -fx-background-color: #ffffff;
-    -fx-padding: 20px;
-    -fx-background-radius: 12px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 12, 0, 0, 5);
-}
-
-.chart-card-title {
-    -fx-text-fill: #0f172a;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-padding: 0 0 10 0;
-}
-
-.activity-item, .event-item {
-    -fx-padding: 12px;
-    -fx-background-color: #f8fafc;
-    -fx-background-radius: 8px;
-}
-
-.activity-icon {
-    -fx-font-family: "Segoe MDL2 Assets";
-    -fx-font-size: 16px;
-    -fx-text-fill: #10b981;
-}
-
-.activity-text, .event-title {
-    -fx-text-fill: #334155;
+.page-subtitle {
+    -fx-text-fill: #94A3B8;
     -fx-font-size: 13px;
 }
 
-.activity-time {
-    -fx-text-fill: #94a3b8;
-    -fx-font-size: 11px;
+/* Cartes génériques */
+.card {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 16;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(16,24,40,0.06), 14, 0, 0, 4);
 }
 
-.event-date-badge {
-    -fx-background-color: #e2e8f0;
-    -fx-padding: 5 10 5 10;
-    -fx-background-radius: 6px;
-    -fx-text-fill: #475569;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
+.card-title {
+    -fx-text-fill: #1E293B;
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+}
+.card-title-icon .ikonli-font-icon {
+    -fx-icon-color: #F5A524;
 }
 
-.event-tag {
-    -fx-background-color: #eff6ff;
-    -fx-text-fill: #2563eb;
-    -fx-padding: 4 8 4 8;
-    -fx-background-radius: 12px;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
+/* Cartes statistiques */
+.stat-label {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+.stat-value {
+    -fx-text-fill: #0F172A;
+    -fx-font-size: 30px;
+    -fx-font-weight: 800;
+}
+.stat-trend {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+.trend-up {
+    -fx-text-fill: #16A34A;
+}
+.trend-neutral {
+    -fx-text-fill: #94A3B8;
 }
 
-/* ==========================================================================
-   6. CORRECTIONS SUR LES CHARTS NATIFS DE JAVAFX
-   ========================================================================== */
-.chart-plot-background {
+.stat-icon {
+    -fx-background-radius: 10;
+    -fx-min-width: 38;
+    -fx-min-height: 38;
+    -fx-max-width: 38;
+    -fx-max-height: 38;
+}
+.stat-icon.icon-sm {
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+    -fx-max-width: 32;
+    -fx-max-height: 32;
+}
+
+.icon-gray {
+    -fx-background-color: #F1F5F9;
+}
+.icon-gray .ikonli-font-icon {
+    -fx-icon-color: #64748B;
+}
+
+.icon-orange {
+    -fx-background-color: #FEF3E2;
+}
+.icon-orange .ikonli-font-icon {
+    -fx-icon-color: #F5A524;
+}
+
+.icon-blue {
+    -fx-background-color: #EAF2FF;
+}
+.icon-blue .ikonli-font-icon {
+    -fx-icon-color: #3B82F6;
+}
+
+.icon-green {
+    -fx-background-color: #DCFCE7;
+}
+.icon-green .ikonli-font-icon {
+    -fx-icon-color: #16A34A;
+}
+
+/* Graphiques */
+.chart-card {
+    -fx-padding: 20 16 12 8;
+}
+.dashboard-chart {
     -fx-background-color: transparent;
 }
-.chart-vertical-grid-lines, .chart-horizontal-grid-lines {
-    -fx-stroke: #f1f5f9;
+.dashboard-chart .chart-plot-background {
+    -fx-background-color: transparent;
 }
-.axis {
-    -fx-tick-label-fill: #94a3b8;
+.dashboard-chart .axis {
+    -fx-tick-label-fill: #94A3B8;
+    -fx-font-size: 10px;
+}
+.dashboard-chart .axis-tick-mark,
+.dashboard-chart .axis-minor-tick-mark {
+    -fx-stroke: transparent;
+}
+.dashboard-chart .chart-vertical-grid-lines,
+.dashboard-chart .chart-horizontal-grid-lines {
+    -fx-stroke: #EEF1F6;
+}
+
+/* Barres : navy + orange (comme la maquette) */
+.dashboard-chart .default-color0.chart-bar {
+    -fx-bar-fill: #16213A;
+}
+.dashboard-chart .default-color1.chart-bar {
+    -fx-bar-fill: #F5A524;
+}
+
+/* Ligne : orange */
+.dashboard-chart .default-color0.chart-series-line {
+    -fx-stroke: #F5A524;
+    -fx-stroke-width: 3px;
+}
+.dashboard-chart .default-color0.chart-line-symbol {
+    -fx-background-color: #F5A524, white;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 6px;
+    -fx-padding: 5px;
+}
+
+/* Listes (activité récente / événements) */
+.activity-title {
+    -fx-text-fill: #1E293B;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+.activity-time {
+    -fx-text-fill: #94A3B8;
     -fx-font-size: 11px;
-} 
+}
+
+.event-row {
+    -fx-padding: 4 0 4 0;
+}
+.event-date {
+    -fx-text-fill: #64748B;
+    -fx-font-size: 12px;
+    -fx-font-weight: 700;
+    -fx-min-width: 50;
+}
+.event-title {
+    -fx-text-fill: #1E293B;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+.event-tag {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 4 10 4 10;
+    -fx-background-radius: 999;
+}
+.tag-blue {
+    -fx-background-color: #EAF2FF;
+    -fx-text-fill: #3B82F6;
+}
+.tag-orange {
+    -fx-background-color: #FEF3E2;
+    -fx-text-fill: #F5A524;
+}
+.tag-green {
+    -fx-background-color: #DCFCE7;
+    -fx-text-fill: #16A34A;
+}
+/* État normal de tous les boutons de la navbar */
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94A3B8; /* Gris clair/foncé de la maquette */
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 16 10 16;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+/* La couleur des icônes par défaut */
+.nav-item .ikonli-font-icon {
+    -fx-icon-color: #64748B;
+}
+
+/* 🌟 L'ÉTAT ACTIF (LUMINEUX) EN COULEUR ORANGE COMME LA MAQUETTE */
+.nav-item.active {
+    -fx-background-color: rgba(245, 165, 36, 0.15); /* Fond orange très transparent */
+    -fx-text-fill: #F5A524; /* Texte orange lumineux */
+    -fx-font-weight: bold;
+}
+
+/* L'icône de l'onglet actif devient elle aussi lumineuse */
+.nav-item.active .ikonli-font-icon {
+    -fx-icon-color: #F5A524;
+}
+
+/* Effet de survol (Hover) pour rendre l'interface dynamique */
+.nav-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+    -fx-text-fill: #FFFFFF;
+}
+.nav-item:hover .ikonli-font-icon {
+    -fx-icon-color: #FFFFFF;
+}

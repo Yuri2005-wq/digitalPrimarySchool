@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <content>
+        <VBox spacing="25.0">
+            <padding>
+                <Insets bottom="30.0" left="35.0" right="35.0" top="30.0" />
+            </padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="16.0">
+                <Button style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-padding: 8; -fx-cursor: hand;">
+                    <graphic><FontIcon iconLiteral="fth-arrow-left" iconSize="16" style="-fx-icon-color: #64748B;"/></graphic>
+                </Button>
+                <VBox spacing="4.0">
+                    <Label style="-fx-font-size: 24px; -fx-font-weight: 800; -fx-text-fill: #0F172A;" text="Nouvelle inscription" />
+                    <Label style="-fx-font-size: 13px; -fx-text-fill: #94A3B8;" text="Inscrire un nouvel élève dans l'établissement" />
+                </VBox>
+            </HBox>
+
+            <VBox spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(16,24,40,0.04), 10, 0, 0, 2);">
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <FontIcon iconLiteral="fth-upload" iconSize="16" style="-fx-icon-color: #F5A524;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #1E293B;" text="Photo de l'élève" />
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <VBox alignment="CENTER" spacing="8.0" style="-fx-border-color: #CBD5E1; -fx-border-style: dashed; -fx-border-radius: 8; -fx-background-radius: 8; -fx-min-width: 90; -fx-min-height: 90; -fx-max-width: 90; -fx-max-height: 90; -fx-background-color: #F8FAFC;">
+                        <FontIcon iconLiteral="fth-upload-cloud" iconSize="20" style="-fx-icon-color: #64748B;" />
+                        <Label style="-fx-font-size: 11px; -fx-text-fill: #64748B;" text="Ajouter" />
+                    </VBox>
+
+                    <VBox alignment="CENTER_LEFT" spacing="6.0">
+                        <Button style="-fx-background-color: #16213A; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6; -fx-padding: 8 14; -fx-cursor: hand; -fx-font-size: 12px;" text="Choisir une photo" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #94A3B8;" text="JPG ou PNG, max 2 Mo" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-padding: 24; -fx-effect: dropshadow(gaussian, rgba(16,24,40,0.04), 10, 0, 0, 2);">
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <FontIcon iconLiteral="fth-user" iconSize="16" style="-fx-icon-color: #F5A524;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #1E293B;" text="Informations personnelles" />
+                </HBox>
+
+                <GridPane hgap="20.0" vgap="18.0">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50.0" />
+                        <ColumnConstraints percentWidth="50.0" />
+                    </columnConstraints>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <HBox><Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Nom" /><Label style="-fx-text-fill: #D92D20;" text=" *" /></HBox>
+                        <TextField maxWidth="1.7976931348623157E308" promptText="Nom de famille" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <HBox><Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Prénom" /><Label style="-fx-text-fill: #D92D20;" text=" *" /></HBox>
+                        <TextField maxWidth="1.7976931348623157E308" promptText="Prénom" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <HBox><Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Date de naissance" /><Label style="-fx-text-fill: #D92D20;" text=" *" /></HBox>
+                        <DatePicker maxWidth="1.7976931348623157E308" promptText="mm/dd/yyyy" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 4;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <HBox><Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Lieu de naissance" /><Label style="-fx-text-fill: #D92D20;" text=" *" /></HBox>
+                        <TextField maxWidth="1.7976931348623157E308" promptText="Ville de naissance" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <HBox><Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Sexe" /><Label style="-fx-text-fill: #D92D20;" text=" *" /></HBox>
+                        <ComboBox maxWidth="1.7976931348623157E308" promptText="Sélectionner" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 6;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Nationalité" />
+                        <TextField maxWidth="1.7976931348623157E308" promptText="Nationalité" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;" />
+                    </VBox>
+
+                    <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="3">
+                        <Label style="-fx-font-weight: 600; -fx-text-fill: #344054; -fx-font-size: 13px;" text="Adresse" />
+                        <TextField maxWidth="1.7976931348623157E308" promptText="Adresse complète" style="-fx-background-color: #F8FAFC; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10;" />
+                    </VBox>
+                </GridPane>
+            </VBox>
+        </VBox>
+    </content>
+</ScrollPane>

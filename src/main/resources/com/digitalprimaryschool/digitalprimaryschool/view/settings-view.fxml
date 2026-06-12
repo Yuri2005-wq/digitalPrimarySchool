@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane fx:id="settingsRoot" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.SettingsController">
+
+    <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;">
+        <content>
+            <VBox spacing="30.0">
+                <padding><Insets bottom="40.0" left="40.0" right="40.0" top="40.0" /></padding>
+
+                <VBox spacing="5.0">
+                    <Label style="-fx-font-size: 26px; -fx-font-weight: 800; -fx-text-fill: -color-fg-default;" text="Configurations Système" />
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: -color-fg-muted;" text="Configurez les bases de votre établissement avant de commencer l'année." />
+                </VBox>
+
+                <GridPane hgap="25.0" vgap="25.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+
+                    <Button onAction="#showYearModal" prefHeight="180.0" prefWidth="400.0" styleClass="settings-tile" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <graphic>
+                            <VBox alignment="CENTER" spacing="15.0">
+                                <FontIcon iconLiteral="fth-calendar" iconSize="40" styleClass="tile-icon" />
+                                <Label styleClass="tile-label" text="Année Scolaire" />
+                            </VBox>
+                        </graphic>
+                    </Button>
+
+                    <Button prefHeight="180.0" prefWidth="400.0" styleClass="settings-tile" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <graphic>
+                            <VBox alignment="CENTER" spacing="15.0">
+                                <FontIcon iconLiteral="fth-credit-card" iconSize="40" styleClass="tile-icon" />
+                                <Label styleClass="tile-label" text="Tarifs &amp; Scolarité" />
+                            </VBox>
+                        </graphic>
+                    </Button>
+
+                    <Button prefHeight="180.0" prefWidth="400.0" styleClass="settings-tile" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <graphic>
+                            <VBox alignment="CENTER" spacing="15.0">
+                                <FontIcon iconLiteral="fth-book-open" iconSize="40" styleClass="tile-icon" />
+                                <Label styleClass="tile-label" text="Matières &amp; Cours" />
+                            </VBox>
+                        </graphic>
+                    </Button>
+                </GridPane>
+            </VBox>
+        </content>
+    </ScrollPane>
+
+    <VBox fx:id="modalOverlay" alignment="CENTER" style="-fx-background-color: rgba(0,0,0,0.5);" visible="false">
+        <VBox maxWidth="500.0" spacing="0.0" style="-fx-background-color: #16213A; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 10);">
+
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 20;">
+                <Label fx:id="modalTitle" style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;" text="Configuration Année Scolaire" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button onAction="#closeModal" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                    <graphic><FontIcon iconLiteral="fth-x" iconSize="20" style="-fx-icon-color: white;" /></graphic>
+                </Button>
+            </HBox>
+
+            <VBox spacing="20.0" style="-fx-padding: 0 30 30 30;">
+                <VBox spacing="8.0">
+                    <Label style="-fx-text-fill: #B7C2DC;" text="Libellé de l'année (ex: 2023-2024)" />
+                    <TextField promptText="Entrez l'année..." style="-fx-background-color: #2A3B61; -fx-text-fill: white; -fx-border-color: #3f5485; -fx-border-radius: 5;" />
+                </VBox>
+
+                <VBox spacing="8.0">
+                    <Label style="-fx-text-fill: #B7C2DC;" text="Statut de l'année" />
+                    <ComboBox maxWidth="1.7976931348623157E308" promptText="Sélectionner le statut" style="-fx-background-color: #2A3B61; -fx-border-color: #3f5485;" />
+                </VBox>
+
+                <Button maxWidth="1.7976931348623157E308" style="-fx-background-color: #F5A524; -fx-text-fill: #16213A; -fx-font-weight: bold; -fx-padding: 12; -fx-background-radius: 8;" text="Enregistrer les modifications" />
+            </VBox>
+        </VBox>
+    </VBox>
+</StackPane>

@@ -1,5 +1,6 @@
 package com.digitalprimaryschool.digitalprimaryschool;
 
+import atlantafx.base.theme.PrimerLight;
 import com.digitalprimaryschool.digitalprimaryschool.dao.ParentDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.Parent;
 import javafx.application.Application;
@@ -17,9 +18,10 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException, SQLException {
         Database.initializeDatabase();
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
         String css = getClass().getResource("/com/digitalprimaryschool/digitalprimaryschool/style.css").toExternalForm();
         stage.getIcons().add(new javafx.scene.image.Image(HelloApplication.class.getResourceAsStream("oh.png")));
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Dashboard.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1080, 740);
         scene.getStylesheets().add(css);
         stage.setMinHeight(740);

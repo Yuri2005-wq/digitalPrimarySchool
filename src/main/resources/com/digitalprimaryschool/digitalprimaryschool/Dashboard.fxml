@@ -1,150 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<?import javafx.scene.layout.Pane?>
-<BorderPane prefHeight="768.0" prefWidth="1280.0" styleClass="main-root" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.HelloController">
+<ScrollPane fitToWidth="true" styleClass="page-scroll"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.digitalprimaryschool.digitalprimaryschool.HelloController">
 
-    <stylesheets>
-        <URL value="@style.css" />
-    </stylesheets>
+    <VBox spacing="22" styleClass="page-content">
+        <padding>
+            <Insets top="26" right="32" bottom="32" left="32"/>
+        </padding>
 
-    <!-- ══════════════════════════════════════
-         SIDEBAR (inchangée)
-    ══════════════════════════════════════ -->
-    <left>
-        <VBox prefWidth="260.0" spacing="25.0" styleClass="sidebar">
-            <padding>
-                <Insets bottom="30.0" left="20.0" right="20.0" top="30.0" />
-            </padding>
+        <!-- En-tête -->
+        <VBox spacing="4">
+            <Label text="Tableau de bord" styleClass="page-title"/>
+            <Label text="Bienvenue, voici un aperçu de votre établissement" styleClass="page-subtitle"/>
+        </VBox>
 
-            <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-                <Label styleClass="menu-section-title" text="PRINCIPAL" />
-                <Button fx:id="btnDashboard" onAction="#handleDashboardHome" styleClass="sidebar-btn, active">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Tableau de bord" />
-                    </HBox></graphic>
-                </Button>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Élèves" />
-                    </HBox></graphic>
-                </Button>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Enseignants" />
-                    </HBox></graphic>
-                </Button>
-                <Button fx:id="btnClasses" onAction="#handleClassesMenu" styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Classes" />
-                    </HBox></graphic>
-                </Button>
-                <Button fx:id="btnRegisterStudent" onAction="#handleAddStudentMenu" styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Enregistrer un élève" />
-                    </HBox></graphic>
-                </Button>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Emploi du temps" />
-                    </HBox></graphic>
-                </Button>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Notes &amp; Bulletins" />
-                    </HBox></graphic>
-                </Button>
-                <Label styleClass="menu-section-title" text="SYSTÈME">
-                    <VBox.margin><Insets top="20.0" /></VBox.margin>
-                </Label>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Notifications" />
-                    </HBox></graphic>
-                </Button>
-                <Button styleClass="sidebar-btn">
-                    <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                        <Label styleClass="icon-font" text="" />
-                        <Label styleClass="btn-text" text="Paramètres" />
-                    </HBox></graphic>
-                </Button>
+        <!-- Cartes statistiques -->
+        <HBox spacing="18">
+            <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="Total élèves" styleClass="stat-label" HBox.hgrow="ALWAYS"/>
+                    <StackPane styleClass="stat-icon,icon-gray">
+                        <FontIcon iconLiteral="fth-users" iconSize="18"/>
+                    </StackPane>
+                </HBox>
+                <Label text="1,245" styleClass="stat-value"/>
+                <Label text="↑ 12 cette semaine" styleClass="stat-trend,trend-up"/>
             </VBox>
 
-            <Button styleClass="sidebar-btn, logout-btn">
-                <graphic><HBox alignment="CENTER_LEFT" spacing="15.0">
-                    <Label styleClass="icon-font" text="" />
-                    <Label styleClass="btn-text" text="Déconnexion" />
-                </HBox></graphic>
-            </Button>
-        </VBox>
-    </left>
+            <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="Enseignants" styleClass="stat-label" HBox.hgrow="ALWAYS"/>
+                    <StackPane styleClass="stat-icon,icon-orange">
+                        <FontIcon iconLiteral="fth-award" iconSize="18"/>
+                    </StackPane>
+                </HBox>
+                <Label text="68" styleClass="stat-value"/>
+                <Label text="+2 ce mois" styleClass="stat-trend,trend-neutral"/>
+            </VBox>
 
-    <!-- ══════════════════════════════════════
-         ZONE CENTRALE : AppBar + Contenu
-    ══════════════════════════════════════ -->
-    <center>
-        <VBox>
+            <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="Classes actives" styleClass="stat-label" HBox.hgrow="ALWAYS"/>
+                    <StackPane styleClass="stat-icon,icon-blue">
+                        <FontIcon iconLiteral="fth-book-open" iconSize="18"/>
+                    </StackPane>
+                </HBox>
+                <Label text="42" styleClass="stat-value"/>
+                <Label text="Stable" styleClass="stat-trend,trend-neutral"/>
+            </VBox>
 
-            <!-- ── APPBAR CUSTOM ── -->
-                <!-- Bouton toggle sidebar (optionnel) -->
-                <Button styleClass="appbar-icon-btn">
-                    <graphic><Label styleClass="icon-font appbar-icon" text="" /></graphic>
-                </Button>
+            <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="Taux de présence" styleClass="stat-label" HBox.hgrow="ALWAYS"/>
+                    <StackPane styleClass="stat-icon,icon-green">
+                        <FontIcon iconLiteral="fth-trending-up" iconSize="18"/>
+                    </StackPane>
+                </HBox>
+                <Label text="93.2%" styleClass="stat-value"/>
+                <Label text="↑ 1.5% vs sem. dernière" styleClass="stat-trend,trend-up"/>
+            </VBox>
+        </HBox>
 
-                <!-- Spacer -->
-                <Region HBox.hgrow="ALWAYS" />
-                <VBox fx:id="contentArea" fillWidth="true" styleClass="workspace-container" VBox.vgrow="ALWAYS">
+        <!-- Graphiques -->
+        <HBox spacing="18">
+            <VBox styleClass="card,chart-card" HBox.hgrow="ALWAYS" spacing="14">
+                <Label text="Présence hebdomadaire" styleClass="card-title"/>
+                <BarChart fx:id="presenceChart" styleClass="dashboard-chart"
+                          legendVisible="false" animated="false"
+                          VBox.vgrow="ALWAYS" minHeight="240">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </BarChart>
+            </VBox>
 
+            <VBox styleClass="card,chart-card" HBox.hgrow="ALWAYS" spacing="14">
+                <Label text="Moyenne générale" styleClass="card-title"/>
+                <LineChart fx:id="averageChart" styleClass="dashboard-chart"
+                           legendVisible="false" animated="false"
+                           VBox.vgrow="ALWAYS" minHeight="240">
+                    <xAxis>
+                        <CategoryAxis side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis side="LEFT"/>
+                    </yAxis>
+                </LineChart>
+            </VBox>
+        </HBox>
 
-                    <children>
-                        <BorderPane prefHeight="140.0" prefWidth="1020.0">
-                            <left>
-                                <Pane prefHeight="138.0" prefWidth="200.0" styleClass="dashboard-card" stylesheets="@style.css" BorderPane.alignment="CENTER">
-                                    <BorderPane.margin>
-                                        <Insets left="20.0" top="10.0" />
-                                    </BorderPane.margin>
-                                </Pane>
-                            </left>
-                            <center>
-                                <BorderPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                                    <center>
-                                        <Pane prefHeight="140.0" prefWidth="58.0" BorderPane.alignment="CENTER">
-                                            <children>
-                                                <Pane layoutX="37.0" layoutY="11.0" prefHeight="129.0" prefWidth="200.0" styleClass="dashboard-card" />
-                                                <Pane layoutX="274.0" layoutY="13.0" prefHeight="125.0" prefWidth="200.0" styleClass="dashboard-card" />
-                                            </children>
-                                        </Pane>
-                                    </center>
-                                </BorderPane>
-                            </center>
-                        </BorderPane>
-                    </children>
-                    <VBox.margin>
-                        <Insets top="10.0" />
-                    </VBox.margin></VBox>
+        <!-- Listes -->
+        <HBox spacing="18">
+            <VBox styleClass="card,list-card" HBox.hgrow="ALWAYS" spacing="16">
+                <Label text="Activité récente" styleClass="card-title"/>
 
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane styleClass="stat-icon,icon-blue,icon-sm">
+                        <FontIcon iconLiteral="fth-user-plus" iconSize="15"/>
+                    </StackPane>
+                    <VBox spacing="2">
+                        <Label text="Nouvel élève inscrit : Amina Benali" styleClass="activity-title"/>
+                        <Label text="Il y a 5 min" styleClass="activity-time"/>
+                    </VBox>
+                </HBox>
 
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane styleClass="stat-icon,icon-green,icon-sm">
+                        <FontIcon iconLiteral="fth-check-circle" iconSize="15"/>
+                    </StackPane>
+                    <VBox spacing="2">
+                        <Label text="Bulletin du 2e trimestre validé - 5ème B" styleClass="activity-title"/>
+                        <Label text="Il y a 1 h" styleClass="activity-time"/>
+                    </VBox>
+                </HBox>
 
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <StackPane styleClass="stat-icon,icon-orange,icon-sm">
+                        <FontIcon iconLiteral="fth-dollar-sign" iconSize="15"/>
+                    </StackPane>
+                    <VBox spacing="2">
+                        <Label text="Paiement reçu - Tranche 2, Élève #1187" styleClass="activity-title"/>
+                        <Label text="Il y a 3 h" styleClass="activity-time"/>
+                    </VBox>
+                </HBox>
+            </VBox>
 
+            <VBox styleClass="card,list-card" HBox.hgrow="ALWAYS" spacing="16">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <FontIcon iconLiteral="fth-calendar" iconSize="16" styleClass="card-title-icon"/>
+                    <Label text="Événements à venir" styleClass="card-title"/>
+                </HBox>
 
+                <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
+                    <Label text="28 Mar" styleClass="event-date"/>
+                    <Label text="Conseil de classe - 3ème" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Réunion" styleClass="event-tag,tag-blue"/>
+                </HBox>
 
-        </VBox>
-    </center>
+                <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
+                    <Label text="02 Avr" styleClass="event-date"/>
+                    <Label text="Date limite - paiement tranche 3" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Paiement" styleClass="event-tag,tag-orange"/>
+                </HBox>
 
-</BorderPane>
+                <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
+                    <Label text="10 Avr" styleClass="event-date"/>
+                    <Label text="Distribution des bulletins" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Académique" styleClass="event-tag,tag-green"/>
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>
