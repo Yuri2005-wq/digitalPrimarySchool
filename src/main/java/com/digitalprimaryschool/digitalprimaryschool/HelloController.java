@@ -21,7 +21,7 @@ public class HelloController {
     @FXML
     public void initialize() {
         // Au démarrage de l'application, on charge la vue Inscription par défaut
-        loadPage("view/settings-view.fxml", btnStudents);
+        loadPage("Dashboard.fxml", btnStudents);
     }
 
     @FXML

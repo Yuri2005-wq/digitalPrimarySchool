@@ -4,17 +4,25 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.HelloController">
+<BorderPane prefHeight="800.0" prefWidth="1280.0" styleClass="root-pane" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.HelloController">
    <stylesheets>
       <URL value="@style.css" />
    </stylesheets>
+
+   <!-- ===== Barre de fenêtre personnalisée (drag + min/max/fermer) ===== -->
+   <top>
+      <fx:include source="view/app-bar.fxml" />
+   </top>
 
    <left>
       <VBox prefWidth="260.0" spacing="25.0" styleClass="sidebar">
@@ -22,67 +30,68 @@
             <Insets bottom="30.0" left="20.0" right="20.0" top="30.0" />
          </padding>
 
-         <HBox alignment="CENTER_LEFT" spacing="12.0" styleClass="sidebar-header">
-            <padding><Insets bottom="15.0"/></padding>
-            <VBox styleClass="logo-badge" alignment="CENTER" style="-fx-background-color: #F5A524; -fx-background-radius: 10; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;">
-               <FontIcon iconLiteral="fth-layers" iconSize="18" style="-fx-icon-color: #16213A;"/>
-            </VBox>
-            <VBox spacing="2.0">
-               <Label styleClass="brand-title" text="EduGestion" style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" />
-               <Label styleClass="brand-subtitle" text="Gestion scolaire" style="-fx-text-fill: #7E8CAE; -fx-font-size: 11px;" />
+         <HBox alignment="CENTER" spacing="12.0" styleClass="sidebar-header">
+            <padding><Insets bottom="15.0" /></padding>
+            <VBox alignment="CENTER" style="-fx-background-color: transparent; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;">
+               <ImageView fitHeight="85.0" fitWidth="85.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@oh.png" />
+                  </image>
+               </ImageView>
             </VBox>
          </HBox>
 
          <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-            <Label styleClass="nav-section-label" text="PRINCIPAL" style="-fx-text-fill: #5C6A8C; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 14 10 6 10;" />
+            <Label style="-fx-text-fill: #5C6A8C; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 14 10 6 10;" styleClass="nav-section-label" text="PRINCIPAL" />
 
-            <Button fx:id="btnDashboard" onAction="#handleDashboardHome" styleClass="nav-item" prefWidth="220.0" text="Tableau de bord">
-               <graphic><FontIcon iconLiteral="fth-grid" iconSize="16"/></graphic>
+            <Button fx:id="btnDashboard" onAction="#handleDashboardHome" prefWidth="220.0" styleClass="nav-item" text="Tableau de bord">
+               <graphic><FontIcon iconLiteral="fth-grid" iconSize="16" /></graphic>
             </Button>
 
-            <Button fx:id="btnStudents" onAction="#handleInscriptionMenu" styleClass="nav-item, active" prefWidth="220.0" text="Élèves">
-               <graphic><FontIcon iconLiteral="fth-users" iconSize="16"/></graphic>
+            <Button fx:id="btnStudents" onAction="#handleInscriptionMenu" prefWidth="220.0" styleClass="nav-item, active" text="Élèves">
+               <graphic><FontIcon iconLiteral="fth-users" iconSize="16" /></graphic>
             </Button>
 
-            <Button styleClass="nav-item" prefWidth="220.0" text="Enseignants">
-               <graphic><FontIcon iconLiteral="fth-user" iconSize="16"/></graphic>
+            <Button prefWidth="220.0" styleClass="nav-item" text="Enseignants">
+               <graphic><FontIcon iconLiteral="fth-user" iconSize="16" /></graphic>
             </Button>
 
-            <Button fx:id="btnClasses" onAction="#handleClassesMenu" styleClass="nav-item" prefWidth="220.0" text="Classes">
-               <graphic><FontIcon iconLiteral="fth-book" iconSize="16"/></graphic>
+            <Button fx:id="btnClasses" onAction="#handleClassesMenu" prefWidth="220.0" styleClass="nav-item" text="Classes">
+               <graphic><FontIcon iconLiteral="fth-book" iconSize="16" /></graphic>
             </Button>
 
-            <Button styleClass="nav-item" prefWidth="220.0" text="Emploi du temps">
-               <graphic><FontIcon iconLiteral="fth-calendar" iconSize="16"/></graphic>
+            <Button prefWidth="220.0" styleClass="nav-item" text="Emploi du temps">
+               <graphic><FontIcon iconLiteral="fth-calendar" iconSize="16" /></graphic>
             </Button>
 
-            <Button styleClass="nav-item" prefWidth="220.0" text="Notes &amp; Bulletins">
-               <graphic><FontIcon iconLiteral="fth-file-text" iconSize="16"/></graphic>
+            <Button prefWidth="220.0" styleClass="nav-item" text="Notes &amp; Bulletins">
+               <graphic><FontIcon iconLiteral="fth-file-text" iconSize="16" /></graphic>
             </Button>
 
-            <Label styleClass="nav-section-label" text="SYSTÈME" style="-fx-text-fill: #5C6A8C; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 20 10 6 10;" />
-            <Button styleClass="nav-item" prefWidth="220.0" text="Notifications"><graphic><FontIcon iconLiteral="fth-bell" iconSize="16"/></graphic></Button>
-            <Button styleClass="nav-item" prefWidth="220.0" text="Paramètres"><graphic><FontIcon iconLiteral="fth-settings" iconSize="16"/></graphic></Button>
+            <Label style="-fx-text-fill: #5C6A8C; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 20 10 6 10;" styleClass="nav-section-label" text="SYSTÈME" />
+            <Button prefWidth="220.0" styleClass="nav-item" text="Notifications"><graphic><FontIcon iconLiteral="fth-bell" iconSize="16" /></graphic></Button>
+            <Button prefWidth="220.0" styleClass="nav-item" text="Paramètres"><graphic><FontIcon iconLiteral="fth-settings" iconSize="16" /></graphic></Button>
          </VBox>
 
-         <Button styleClass="nav-item, logout-item" prefWidth="220.0" text="Déconnexion">
-            <graphic><FontIcon iconLiteral="fth-log-out" iconSize="16"/></graphic>
+         <Button prefWidth="220.0" styleClass="nav-item, logout-item" text="Déconnexion">
+            <graphic><FontIcon iconLiteral="fth-log-out" iconSize="16" /></graphic>
          </Button>
       </VBox>
    </left>
 
    <center>
       <VBox style="-fx-background-color: -color-bg-subtle;">
-         <HBox alignment="CENTER_LEFT" minHeight="65.0" prefHeight="65.0" styleClass="top-bar" style="-fx-background-color: -color-bg-default; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;">
+         <HBox alignment="CENTER_LEFT" minHeight="65.0" prefHeight="65.0" style="-fx-background-color: -color-bg-default; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;" styleClass="top-bar">
             <padding><Insets left="24.0" right="24.0" /></padding>
 
-            <Button styleClass="button, button-icon, flat" style="-fx-cursor: hand;">
-               <graphic><FontIcon iconLiteral="fth-sidebar" iconSize="18" style="-fx-icon-color: -color-fg-default;"/></graphic>
-            </Button>
-
             <Region HBox.hgrow="ALWAYS" />
+            <Pane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label layoutX="21.0" layoutY="24.0" prefHeight="17.0" prefWidth="135.0" styleClass="tile-label" text="Le 17/05/2026" />
+               </children>
+            </Pane>
 
-            <Label text="AD" styleClass="avatar-badge" style="-fx-background-color: -color-fg-default; -fx-text-fill: -color-bg-default; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 100; -fx-min-width: 34; -fx-min-height: 34; -fx-alignment: center;" />
+            <Label style="-fx-background-color: -color-fg-default; -fx-text-fill: -color-bg-default; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 100; -fx-min-width: 34; -fx-min-height: 34; -fx-alignment: center;" styleClass="avatar-badge" text="AD" />
          </HBox>
 
          <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" />

@@ -15,4 +15,8 @@ module com.digitalprimaryschool.digitalprimaryschool {
     exports com.digitalprimaryschool.digitalprimaryschool;
     exports com.digitalprimaryschool.digitalprimaryschool.dao;
     opens com.digitalprimaryschool.digitalprimaryschool.dao to javafx.fxml;
+
+    opens com.digitalprimaryschool.digitalprimaryschool.controller to javafx.fxml;
+    exports com.digitalprimaryschool.digitalprimaryschool.controller;
+
 }
