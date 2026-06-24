@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.web.WebView?>
-
-<!--
-    DocumentsParametres.fxml – Module Documents (impression) + Administration
-    Contrôleur : DocumentsParametresController.java
-    Deux sous-onglets : Aperçu documents | Paramètres système
--->
 <BorderPane
     xmlns="http://javafx.com/javafx/17"
     xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="cm.siantou.ecole.controller.DocumentsParametresController"
     styleClass="workspace"
     style="-fx-padding: 0;">
 
@@ -41,7 +31,7 @@
                     style="-fx-background-color: #1E3A8A; -fx-text-fill: #FFFFFF;
                            -fx-font-weight: bold; -fx-background-radius: 8 0 0 8;
                            -fx-padding: 10 24; -fx-font-size: 13px; -fx-cursor: hand;"
-                    onAction="#onSwitchOnglet" />
+                    />
                 <ToggleButton
                     fx:id="btnOngletParametres"
                     text="⚙️  Paramètres"
@@ -49,7 +39,7 @@
                            -fx-font-weight: bold; -fx-background-radius: 0 8 8 0;
                            -fx-border-color: #CBD5E1; -fx-border-width: 1;
                            -fx-padding: 10 24; -fx-font-size: 13px; -fx-cursor: hand;"
-                    onAction="#onSwitchOnglet" />
+                    />
             </HBox>
 
         </VBox>
@@ -81,37 +71,37 @@
                             text="📄  Bulletin trimestriel PDF"
                             styleClass="doc-type-btn, active"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                             />
                         <Button
                             fx:id="btnDocCertificat"
                             text="🎓  Certificat de scolarité"
                             styleClass="doc-type-btn"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                             />
                         <Button
                             fx:id="btnDocRecu"
                             text="🧾  Reçu de paiement"
                             styleClass="doc-type-btn"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                            />
                         <Button
                             fx:id="btnDocLettre"
                             text="✉️  Lettre de rappel impayé"
                             styleClass="doc-type-btn"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                             />
                         <Button
                             fx:id="btnDocListeClasse"
                             text="📋  Liste de classe"
                             styleClass="doc-type-btn"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                             />
                         <Button
                             fx:id="btnDocPalmares"
                             text="🏆  Palmarès / Classement"
                             styleClass="doc-type-btn"
                             prefWidth="9999"
-                            onAction="#onSelectDocType" />
+                            />
                     </VBox>
 
                     <Pane styleClass="form-separator" />
@@ -128,7 +118,7 @@
                                 promptText="Toutes les classes"
                                 styleClass="combo-base"
                                 prefWidth="9999"
-                                onAction="#onParamDocChange" />
+                                />
                         </VBox>
 
                         <VBox spacing="4">
@@ -138,7 +128,7 @@
                                 promptText="Tous les élèves"
                                 styleClass="combo-base"
                                 prefWidth="9999"
-                                onAction="#onParamDocChange" />
+                                 />
                         </VBox>
 
                         <VBox spacing="4">
@@ -147,7 +137,7 @@
                                 fx:id="cmbDocSequence"
                                 styleClass="combo-base"
                                 prefWidth="9999"
-                                onAction="#onParamDocChange" />
+                                 />
                         </VBox>
 
                         <VBox spacing="4">
@@ -169,19 +159,19 @@
                             text="👁  Générer l'aperçu"
                             styleClass="btn-primary"
                             prefWidth="9999"
-                            onAction="#onGenererApercu" />
+                            />
                         <Button
                             fx:id="btnImprimerDoc"
                             text="🖨️  Imprimer"
                             styleClass="btn-success"
                             prefWidth="9999"
-                            onAction="#onImprimer" />
+                           />
                         <Button
                             fx:id="btnExporterPDF"
                             text="📥  Exporter en PDF"
                             styleClass="btn-secondary"
                             prefWidth="9999"
-                            onAction="#onExporterPDF" />
+                             />
                     </VBox>
 
                 </VBox>
@@ -199,14 +189,14 @@
                             text="◀"
                             styleClass="btn-secondary"
                             style="-fx-padding: 6 12;"
-                            onAction="#onPagePrecedente" />
+                             />
                         <Label fx:id="lblPagination" text="Page 1 / 1" styleClass="label-info" />
                         <Button
                             fx:id="btnPageSuiv"
                             text="▶"
                             styleClass="btn-secondary"
                             style="-fx-padding: 6 12;"
-                            onAction="#onPageSuivante" />
+                             />
                     </HBox>
 
                     <!-- Zone d'aperçu WebView (rendu HTML/CSS du bulletin) -->
@@ -230,10 +220,11 @@
                         </VBox>
 
                         <!-- WebView pour le rendu HTML du document -->
-                        <WebView
-                            fx:id="webViewApercu"
-                            visible="false"
-                            managed="false" />
+<!--                        <WebView-->
+<!--                            fx:id="webViewApercu"-->
+<!--                            visible="false"-->
+<!--                            managed="false"-->
+<!--                        />-->
 
                     </StackPane>
 
@@ -309,7 +300,7 @@
                                 fx:id="btnSauvegarderAnnee"
                                 text="✔  Enregistrer"
                                 styleClass="btn-primary"
-                                onAction="#onSauvegarderAnnee" />
+                            />
                         </HBox>
 
                     </VBox>
@@ -364,7 +355,7 @@
                                 fx:id="btnSauvegarderEtablissement"
                                 text="✔  Enregistrer"
                                 styleClass="btn-primary"
-                                onAction="#onSauvegarderEtablissement" />
+                            />
                         </HBox>
 
                     </VBox>
@@ -380,7 +371,7 @@
                                 text="+ Nouvel utilisateur"
                                 styleClass="btn-primary"
                                 style="-fx-font-size: 12px; -fx-padding: 8 16;"
-                                onAction="#onNouvelUtilisateur" />
+                                />
                         </HBox>
                         <Pane styleClass="form-separator" />
 
@@ -419,7 +410,7 @@
                                     text="+ Ajouter"
                                     styleClass="btn-secondary"
                                     style="-fx-font-size: 12px; -fx-padding: 6 14;"
-                                    onAction="#onNouvelleClasse" />
+                                />
                             </HBox>
                             <Pane styleClass="form-separator" />
                             <TableView
@@ -447,7 +438,7 @@
                                     text="+ Ajouter"
                                     styleClass="btn-secondary"
                                     style="-fx-font-size: 12px; -fx-padding: 6 14;"
-                                    onAction="#onNouvelleMatiere" />
+                                    />
                             </HBox>
                             <Pane styleClass="form-separator" />
                             <TableView
@@ -500,7 +491,7 @@
                                         fx:id="btnChoisirDossier"
                                         text="📂"
                                         styleClass="btn-secondary"
-                                        onAction="#onChoisirDossierSauvegarde" />
+                                         />
                                 </HBox>
                             </VBox>
 
@@ -511,7 +502,7 @@
                                     styleClass="btn-primary"
                                     prefWidth="220"
                                     prefHeight="44"
-                                    onAction="#onSauvegarderMaintenant" />
+                                    />
 
                                 <Button
                                     fx:id="btnRestaurerSauvegarde"
@@ -519,14 +510,14 @@
                                     styleClass="btn-danger"
                                     prefWidth="220"
                                     prefHeight="44"
-                                    onAction="#onRestaurerSauvegarde" />
+                                    />
 
                                 <Button
                                     fx:id="btnPlanifierSauvegarde"
                                     text="🕐  Planifier la sauvegarde"
                                     styleClass="btn-secondary"
                                     prefWidth="220"
-                                    onAction="#onPlanifierSauvegarde" />
+                                    />
                             </VBox>
 
                         </HBox>

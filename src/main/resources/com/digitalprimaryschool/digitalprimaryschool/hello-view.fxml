@@ -8,8 +8,6 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -48,32 +46,40 @@
                <graphic><FontIcon iconLiteral="fth-grid" iconSize="16" /></graphic>
             </Button>
 
-            <Button fx:id="btnStudents" onAction="#handleInscriptionMenu" prefWidth="220.0" styleClass="nav-item, active" text="Élèves">
+            <Button fx:id="btnStudents" onAction="#handleListEleve" prefWidth="220.0" styleClass="nav-item, active" text="Élèves">
                <graphic><FontIcon iconLiteral="fth-users" iconSize="16" /></graphic>
+            </Button>
+            <Button fx:id="btnInscription" onAction="#handleInscriptionMenu" prefWidth="220.0" styleClass="nav-item, active" text="Inscription|Réinscription">
+               <graphic><FontIcon iconLiteral="fth-user-plus" iconSize="16" /></graphic>
             </Button>
 
             <Button prefWidth="220.0" styleClass="nav-item" text="Enseignants">
-               <graphic><FontIcon iconLiteral="fth-user" iconSize="16" /></graphic>
+               <graphic><FontIcon iconLiteral="fth-award" iconSize="16" /></graphic>
             </Button>
 
             <Button fx:id="btnClasses" onAction="#handleClassesMenu" prefWidth="220.0" styleClass="nav-item" text="Classes">
-               <graphic><FontIcon iconLiteral="fth-book" iconSize="16" /></graphic>
+               <graphic>
+                  <FontIcon iconLiteral="fth-layers" iconSize="16" />
+               </graphic>
             </Button>
 
-            <Button prefWidth="220.0" styleClass="nav-item" text="Emploi du temps">
-               <graphic><FontIcon iconLiteral="fth-calendar" iconSize="16" /></graphic>
+            <Button fx:id="btnEnregistrement" onAction="#handleEnregistrement" prefWidth="220.0" styleClass="nav-item" text="Enregistrement">
+               <graphic><FontIcon iconLiteral="fth-edit-3" iconSize="16" /></graphic>
             </Button>
 
-            <Button prefWidth="220.0" styleClass="nav-item" text="Notes &amp; Bulletins">
+            <Button fx:id="btnNotes" onAction="#handleNotes" prefWidth="220.0" styleClass="nav-item" text="Notes &amp; Bulletins">
                <graphic><FontIcon iconLiteral="fth-file-text" iconSize="16" /></graphic>
+            </Button>
+            <Button fx:id="btnPaiement" onAction="#handleEnregistrement" prefWidth="220.0" styleClass="nav-item" text="Paiement">
+               <graphic><FontIcon iconLiteral="fth-dollar-sign" iconSize="16" /></graphic>
             </Button>
 
             <Label style="-fx-text-fill: #5C6A8C; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 20 10 6 10;" styleClass="nav-section-label" text="SYSTÈME" />
             <Button prefWidth="220.0" styleClass="nav-item" text="Notifications"><graphic><FontIcon iconLiteral="fth-bell" iconSize="16" /></graphic></Button>
-            <Button prefWidth="220.0" styleClass="nav-item" text="Paramètres"><graphic><FontIcon iconLiteral="fth-settings" iconSize="16" /></graphic></Button>
+            <Button fx:id="btnSettings" onAction="#handleSettings" prefWidth="220.0" styleClass="nav-item" text="Paramètres"><graphic><FontIcon iconLiteral="fth-settings" iconSize="16" /></graphic></Button>
          </VBox>
 
-         <Button prefWidth="220.0" styleClass="nav-item, logout-item" text="Déconnexion">
+         <Button fx:id="btnLogout" onAction="#handleLogout" prefWidth="220.0" styleClass="nav-item, logout-item" text="Déconnexion">
             <graphic><FontIcon iconLiteral="fth-log-out" iconSize="16" /></graphic>
          </Button>
       </VBox>
@@ -81,20 +87,8 @@
 
    <center>
       <VBox style="-fx-background-color: -color-bg-subtle;">
-         <HBox alignment="CENTER_LEFT" minHeight="65.0" prefHeight="65.0" style="-fx-background-color: -color-bg-default; -fx-border-color: -color-border-default; -fx-border-width: 0 0 1 0;" styleClass="top-bar">
-            <padding><Insets left="24.0" right="24.0" /></padding>
 
-            <Region HBox.hgrow="ALWAYS" />
-            <Pane prefHeight="200.0" prefWidth="200.0">
-               <children>
-                  <Label layoutX="21.0" layoutY="24.0" prefHeight="17.0" prefWidth="135.0" styleClass="tile-label" text="Le 17/05/2026" />
-               </children>
-            </Pane>
-
-            <Label style="-fx-background-color: -color-fg-default; -fx-text-fill: -color-bg-default; -fx-font-size: 12px; -fx-font-weight: bold; -fx-background-radius: 100; -fx-min-width: 34; -fx-min-height: 34; -fx-alignment: center;" styleClass="avatar-badge" text="AD" />
-         </HBox>
-
-         <StackPane fx:id="contentArea" VBox.vgrow="ALWAYS" />
+         <StackPane fx:id="contentArea" prefHeight="713.0" prefWidth="1020.0" VBox.vgrow="ALWAYS" />
       </VBox>
    </center>
 </BorderPane>

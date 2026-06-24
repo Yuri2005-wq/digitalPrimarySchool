@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<StackPane fx:id="rootStackPane" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.GestionElevesController">
+    <children>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+            </padding>
+            <children>
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Élèves - Tous" textFill="#0f172a">
+                            <font>
+                                <Font name="Segoe UI Bold" size="24.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblCompteur" text="0 élève(s) trouvé(s)" textFill="#64748b">
+                            <font>
+                                <Font name="Segoe UI" size="13.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </VBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <TextField fx:id="txtRecherche" prefHeight="40.0" prefWidth="350.0" promptText="🔍 Rechercher un élève (Nom, matricule...)" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-background-color: #ffffff; -fx-padding: 0 10;" />
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <ComboBox fx:id="comboClasse" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" />
+                        <ComboBox fx:id="comboStatut" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" />
+                    </children>
+                </HBox>
+
+                <TableView fx:id="tableEleves" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0;" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colPhoto" maxWidth="100.0" minWidth="65.0" prefWidth="80.0" style="-fx-alignment: CENTER;" text="PHOTO" />
+                        <TableColumn fx:id="colNom" prefWidth="200.0" text="MATRICULE" />
+                        <TableColumn fx:id="colPrenom" prefWidth="200.0" text="NOMS ET PRENOM" />
+                        <TableColumn fx:id="colDateNaissance" prefWidth="150.0" style="-fx-alignment: CENTER;" text="DATE DE NAISSANCE" />
+                        <TableColumn fx:id="colClasse" prefWidth="150.0" style="-fx-alignment: CENTER;" text="CLASSE" />
+                        <TableColumn fx:id="colStatut" prefWidth="150.0" style="-fx-alignment: CENTER;" text="STATUT" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</StackPane>

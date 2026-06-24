@@ -1,257 +1,331 @@
 package com.digitalprimaryschool.digitalprimaryschool.dao;
 
 import com.digitalprimaryschool.digitalprimaryschool.Database;
-import com.digitalprimaryschool.digitalprimaryschool.model.Eleve;
-import com.digitalprimaryschool.digitalprimaryschool.model.Parent;
-import org.sqlite.SQLiteErrorCode;
-import org.sqlite.SQLiteException;
+import com.digitalprimaryschool.digitalprimaryschool.model.*;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EleveDAO {
 
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 
-    /**
-     * Insère un élève. Si le matricule existe déjà (rare en UUID mais possible si personnalisé),
-     * il est régénéré automatiquement.
-     * * @param eleve L'objet élève à insérer
-     * @throws SQLException Si une autre erreur SQL stricte survient (ex: contrainte de clé étrangère parent)
-     */
-    public void insert(Eleve eleve) throws SQLException {
-        String sql = "INSERT INTO Eleve (matriculeEleve, idParent, nom, prenom, dateNaissance, lieuNaissance, sexe, nationnalite, photo, aTerminerPension, is_synced) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
-
-        boolean insertReussie = false;
-        int tentatives = 0;
-
-        while (!insertReussie) {
-            // Utilisation de la connexion centralisée de ton application
-            try (Connection conn = Database.getConnexion();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-                pstmt.setString(1, eleve.getMatricule());
-                pstmt.setString(2, eleve.getIdParent());
-                pstmt.setString(3, eleve.getNom());
-                pstmt.setString(4, eleve.getPrenom());
-                // Correction du bug de Date : conversion sécurisée de java.util.Date à java.sql.Date
-                if (eleve.getDateNaissance() != null) {
-                    pstmt.setDate(5, new java.sql.Date(eleve.getDateNaissance().getTime()));
-                } else {
-                    pstmt.setNull(5, java.sql.Types.DATE);
-                }
-
-                pstmt.setString(6, eleve.getLieuNaissance());
-                pstmt.setString(7, eleve.getSexe());
-                pstmt.setString(8, eleve.getNationnalite());
-                pstmt.setString(9, eleve.getPhoto());
-
-                // Gestion du boolean pour SQLite (0 ou 1)
-                pstmt.setInt(10, eleve.getATerminerPension() ? 1 : 0);
-
-                pstmt.executeUpdate();
-                insertReussie = true; // Si on arrive ici sans exception, l'insertion a réussi !
-
-            } catch (SQLException e) {
-                // On vérifie si l'erreur est spécifiquement un doublon sur SQLite (Code erreur 19)
-                if (e instanceof SQLiteException &&
-                        (((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY ||
-                                ((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT)) {
-
-                    System.out.println("Doublon de matricule local détecté ! Régénération...");
-
-                    // Sécurité anti-boucle infinie (Ex: si la méthode de régénération échoue)
-                    if (tentatives > 5) {
-                        throw new SQLException("Impossible de générer un matricule unique après 5 tentatives.", e);
-                    }
-
-                    eleve.regenererMatricule(); // Ta méthode pour modifier le matricule de l'objet
-                    tentatives++;
-                } else {
-                    throw e;
-                }
-            }
-        }
-    }
-    public boolean update(Eleve eleve) {
-        String sql = "UPDATE Eleve SET idParent = ?, nom = ?, prenom = ?, dateNaissance = ?, lieuNaissance = ?, " +
-                "sexe = ?, nationnalite = ?, photo = ?, aTerminerPension = ?, is_synced = 0, derniere_modification = CURRENT_TIMESTAMP " +
-                "WHERE matriculeEleve = ?";
+    public void ajouter(Eleve eleve, String idParent) throws SQLException {
+        String sql = """
+                INSERT INTO Eleve (
+                    matriculeEleve, idParent, nom, prenom,
+                    dateNaissance, lieuNaissance, sexe,
+                    nationnalite, photo, aTerminerPension,
+                    regionOrigine, antecedentsMedicaux
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """;
 
         try (Connection conn = Database.getConnexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, eleve.getIdParent());
-            pstmt.setString(2, eleve.getNom());
-            pstmt.setString(3, eleve.getPrenom());
+            stmt.setString(1, eleve.getMatricule());
+            stmt.setString(2, idParent);
+            stmt.setString(3, eleve.getNom());
+            stmt.setString(4, eleve.getPrenom());
+            stmt.setString(5, eleve.getDateNaissance() != null
+                    ? SDF.format(eleve.getDateNaissance()) : null);
+            stmt.setString(6, eleve.getLieuNaissance() != null
+                    ? eleve.getLieuNaissance().name() : null);
+            stmt.setString(7, eleve.getSexe() != null
+                    ? eleve.getSexe().name() : null);
+            stmt.setString(8, eleve.getNationalite() != null
+                    ? eleve.getNationalite().name() : null);
+            stmt.setString(9, eleve.getPhoto());
+            stmt.setInt(10, eleve.getATerminerPension() ? 1 : 0);
+            stmt.setString(11, eleve.getRegionOrigine() != null
+                    ? eleve.getRegionOrigine().name() : null);
+            stmt.setString(12, eleve.getAntecedentsMedicaux());
 
-            if (eleve.getDateNaissance() != null) {
-                pstmt.setString(4, dateFormat.format(eleve.getDateNaissance()));
-            } else {
-                pstmt.setNull(4, Types.VARCHAR);
-            }
-
-            pstmt.setString(5, eleve.getLieuNaissance());
-            pstmt.setString(6, eleve.getSexe());
-            pstmt.setString(7, eleve.getNationnalite());
-            pstmt.setString(8, eleve.getPhoto());
-            pstmt.setInt(9, eleve.getATerminerPension() ? 1 : 0);
-            pstmt.setString(10, eleve.getMatricule());
-
-            return pstmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la mise à jour de l'élève: " + e.getMessage());
-            return false;
+            stmt.executeUpdate();
+            System.out.println("Élève ajouté : " + eleve.getMatricule());
         }
     }
 
-    public boolean delete(String matricule) {
+    public void modifier(Eleve eleve) throws SQLException {
+        String sql = """
+                UPDATE Eleve SET
+                    nom = ?,
+                    prenom = ?,
+                    dateNaissance = ?,
+                    lieuNaissance = ?,
+                    sexe = ?,
+                    nationnalite = ?,
+                    photo = ?,
+                    aTerminerPension = ?,
+                    regionOrigine = ?,
+                    antecedentsMedicaux = ?,
+                    derniere_modification = CURRENT_TIMESTAMP
+                WHERE matriculeEleve = ?
+                """;
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, eleve.getNom());
+            stmt.setString(2, eleve.getPrenom());
+            stmt.setString(3, eleve.getDateNaissance() != null
+                    ? SDF.format(eleve.getDateNaissance()) : null);
+            stmt.setString(4, eleve.getLieuNaissance() != null
+                    ? eleve.getLieuNaissance().name() : null);
+            stmt.setString(5, eleve.getSexe() != null
+                    ? eleve.getSexe().name() : null);
+            stmt.setString(6, eleve.getNationalite() != null
+                    ? eleve.getNationalite().name() : null);
+            stmt.setString(7, eleve.getPhoto());
+            stmt.setInt(8, eleve.getATerminerPension() ? 1 : 0);
+            stmt.setString(9, eleve.getRegionOrigine() != null
+                    ? eleve.getRegionOrigine().name() : null);
+            stmt.setString(10, eleve.getAntecedentsMedicaux());
+            stmt.setString(11, eleve.getMatricule());
+
+            int lignes = stmt.executeUpdate();
+            if (lignes == 0) {
+                throw new SQLException("Aucun élève trouvé avec le matricule : " + eleve.getMatricule());
+            }
+        }
+    }
+
+    public void supprimer(String matricule) throws SQLException {
         String sql = "DELETE FROM Eleve WHERE matriculeEleve = ?";
 
         try (Connection conn = Database.getConnexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, matricule);
-            return pstmt.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-            System.err.println("Erreur lors de la suppression de l'élève: " + e.getMessage());
-            return false;
+            stmt.setString(1, matricule);
+            int lignes = stmt.executeUpdate();
+            if (lignes == 0) {
+                throw new SQLException("Aucun élève trouvé avec le matricule : " + matricule);
+            }
+            System.out.println("Élève supprimé : " + matricule);
         }
     }
 
-    public Eleve findByMatricule(String matricule) {
-        String sql = "SELECT * FROM Eleve WHERE matriculeEleve = ?";
+    // --- REQUÊTE DE BASE CENTRALISÉE AVEC LES JOINTURES ---
+    private String getBaseSelectQuery() {
+        return """
+                SELECT e.*, 
+                       p.prenom AS p_prenom, p.contactParent AS p_contact, p.emailParent AS p_email, p.profession AS p_profession,
+                       i.idClasse AS i_idClasse, i.idAnnescolaire AS i_anneeScolaire
+                FROM Eleve e
+                LEFT JOIN Parent p ON e.idParent = p.idParent
+                LEFT JOIN Inscription i ON e.matriculeEleve = i.matriculeEleve AND i.idAnnescolaire = '2025-2026'
+                """;
+    }
+
+    public Eleve trouverParMatricule(String matricule) throws SQLException {
+        String sql = getBaseSelectQuery() + " WHERE e.matriculeEleve = ?";
 
         try (Connection conn = Database.getConnexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, matricule);
-            try (ResultSet rs = pstmt.executeQuery()) {
+            stmt.setString(1, matricule);
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToEleve(rs);
+                    return construireEleve(rs);
                 }
             }
-        } catch (Exception e) {
-            System.err.println("Erreur findByMatricule: " + e.getMessage());
         }
         return null;
     }
 
-
-
-    public void markAsSynced(String matricule) {
-        String sql = "UPDATE Eleve SET is_synced = 1 WHERE matriculeEleve = ?";
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, matricule);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Erreur markAsSynced: " + e.getMessage());
-        }
-    }
-
-    public List<Eleve> findPendingSynchronization() {
-        List<Eleve> pending = new ArrayList<>();
-        String sql = "SELECT * FROM Eleve WHERE is_synced = 0";
-
-        try (Connection conn = Database.getConnexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                pending.add(mapResultSetToEleve(rs));
-            }
-        } catch (Exception e) {
-            System.err.println("Erreur findPendingSynchronization: " + e.getMessage());
-        }
-        return pending;
-    }
-
-    public List<Eleve> findAll() {
+    public List<Eleve> listerTous() throws SQLException {
+        String sql = getBaseSelectQuery() + " ORDER BY e.nom, e.prenom";
         List<Eleve> eleves = new ArrayList<>();
-        String sql = "SELECT * FROM Eleve ORDER BY nom ASC";
 
         try (Connection conn = Database.getConnexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                eleves.add(mapResultSetToEleve(rs));
+                eleves.add(construireEleve(rs));
             }
-        } catch (Exception e) {
-            System.err.println("Erreur findAll: " + e.getMessage());
         }
         return eleves;
     }
 
+    public List<Eleve> listerParClasse(String idClasse) throws SQLException {
+        String sql = getBaseSelectQuery() + " WHERE i.idClasse = ? ORDER BY e.nom, e.prenom";
+        List<Eleve> eleves = new ArrayList<>();
 
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setString(1, idClasse);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    eleves.add(construireEleve(rs));
+                }
+            }
+        }
+        return eleves;
+    }
 
+    public List<Eleve> rechercher(String motCle) throws SQLException {
+        String sql = getBaseSelectQuery() + """
+                 WHERE LOWER(e.nom) LIKE LOWER(?)
+                    OR LOWER(e.prenom) LIKE LOWER(?)
+                    OR e.matriculeEleve LIKE ?
+                 ORDER BY e.nom, e.prenom
+                """;
+        List<Eleve> eleves = new ArrayList<>();
+        String parametre = "%" + motCle + "%";
 
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setString(1, parametre);
+            stmt.setString(2, parametre);
+            stmt.setString(3, parametre);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    eleves.add(construireEleve(rs));
+                }
+            }
+        }
+        return eleves;
+    }
 
-    private Eleve mapResultSetToEleve(ResultSet rs) throws Exception {
+    public int compterTous() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Eleve";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public boolean matriculeExiste(String matricule) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Eleve WHERE matriculeEleve = ?";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, matricule);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    private Eleve construireEleve(ResultSet rs) throws SQLException {
         Eleve eleve = new Eleve();
 
-        // Utilisation de la réflexion ou des setters directs de votre classe Eleve
-        // Note: Comme vos attributs de classe sont pour l'instant package-private ou privatise-les et génère les setters.
-        // Exemple si vous avez ajouté les setters correspondants dans Eleve.java :
+        eleve.setMatricule(rs.getString("matriculeEleve"));
+        eleve.setNom(rs.getString("nom"));
+        eleve.setPrenom(rs.getString("prenom"));
 
-        // Injection du matricule (Variable 'Matricule' avec majuscule dans votre modèle)
-        java.lang.reflect.Field fieldMatricule = Eleve.class.getDeclaredField("Matricule");
-        fieldMatricule.setAccessible(true);
-        fieldMatricule.set(eleve, rs.getString("matriculeEleve"));
-
-        java.lang.reflect.Field fieldNom = Eleve.class.getDeclaredField("nom");
-        fieldNom.setAccessible(true);
-        fieldNom.set(eleve, rs.getString("nom"));
-
-        java.lang.reflect.Field fieldPrenom = Eleve.class.getDeclaredField("prenom");
-        fieldPrenom.setAccessible(true);
-        fieldPrenom.set(eleve, rs.getString("prenom"));
-
-        String dateStr = rs.getString("dateNaissance");
-        if (dateStr != null) {
-            java.lang.reflect.Field fieldDate = Eleve.class.getDeclaredField("dateNaissance");
-            fieldDate.setAccessible(true);
-            fieldDate.set(eleve, dateFormat.parse(dateStr));
+        // Conversion LieuNaissance
+        String lieuStr = rs.getString("lieuNaissance");
+        if (lieuStr != null && !lieuStr.isEmpty()) {
+            try {
+                eleve.setLieuNaissance(LieuNaissance.valueOf(lieuStr));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Lieu de naissance inconnu : " + lieuStr);
+                eleve.setLieuNaissance(LieuNaissance.AUTRE);
+            }
+        } else {
+            eleve.setLieuNaissance(LieuNaissance.AUTRE);
         }
 
-        java.lang.reflect.Field fieldLieu = Eleve.class.getDeclaredField("lieuNaissance");
-        fieldLieu.setAccessible(true);
-        fieldLieu.set(eleve, rs.getString("lieuNaissance"));
+        // Conversion Nationalité
+        String nationaliteStr = rs.getString("nationnalite");
+        if (nationaliteStr != null && !nationaliteStr.isEmpty()) {
+            try {
+                eleve.setNationalite(Nationnalite.valueOf(nationaliteStr));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Valeur de nationalité inconnue : " + nationaliteStr);
+                eleve.setNationalite(Nationnalite.AUTRE);
+            }
+        } else {
+            eleve.setNationalite(Nationnalite.AUTRE);
+        }
 
-        java.lang.reflect.Field fieldSexe = Eleve.class.getDeclaredField("sexe");
-        fieldSexe.setAccessible(true);
-        fieldSexe.set(eleve, rs.getString("sexe"));
+        eleve.setPhoto(rs.getString("photo"));
+        eleve.setaTerminerPension(rs.getInt("aTerminerPension") == 1);
 
-        java.lang.reflect.Field fieldNat = Eleve.class.getDeclaredField("nationnalite");
-        fieldNat.setAccessible(true);
-        fieldNat.set(eleve, rs.getString("nationnalite"));
+        // Conversion date
+        String dateStr = rs.getString("dateNaissance");
+        if (dateStr != null && !dateStr.isEmpty()) {
+            try {
+                eleve.setDateNaissance(SDF.parse(dateStr));
+            } catch (ParseException e) {
+                System.err.println("Format de date invalide pour : " + dateStr);
+            }
+        }
 
-        java.lang.reflect.Field fieldPhoto = Eleve.class.getDeclaredField("photo");
-        fieldPhoto.setAccessible(true);
-        fieldPhoto.set(eleve, rs.getString("photo"));
+        // Conversion Sexe
+        String sexeStr = rs.getString("sexe");
+        if (sexeStr != null && !sexeStr.isEmpty()) {
+            try {
+                eleve.setSexe(Sexe.valueOf(sexeStr));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Valeur de sexe inconnue : " + sexeStr);
+                eleve.setSexe(Sexe.MASCULIN);
+            }
+        } else {
+            eleve.setSexe(Sexe.MASCULIN);
+        }
 
-        java.lang.reflect.Field fieldPension = Eleve.class.getDeclaredField("aTerminerPension");
-        fieldPension.setAccessible(true);
-        fieldPension.set(eleve, rs.getInt("aTerminerPension") == 1);
+        // Conversion Region
+        String regionStr = rs.getString("regionOrigine");
+        if (regionStr != null && !regionStr.isEmpty()) {
+            try {
+                eleve.setRegionOrigine(Region.valueOf(regionStr));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Région inconnue : " + regionStr);
+                eleve.setRegionOrigine(Region.AUTRE);
+            }
+        } else {
+            eleve.setRegionOrigine(Region.AUTRE);
+        }
 
-        // Liaison avec l'objet Parent (Instanciation minimale pour récupérer l'ID)
-        Parent parentMock = new Parent();
-        parentMock.setPrenom(""); // Remplir si besoin, ou laisser le service charger le vrai ParentDAO
-        java.lang.reflect.Field fieldIdParent = Parent.class.getDeclaredField("idParent");
-        fieldIdParent.setAccessible(true);
-        fieldIdParent.set(parentMock, rs.getString("idParent"));
+        eleve.setAntecedentsMedicaux(rs.getString("antecedentsMedicaux"));
 
-        eleve.parent = parentMock;
+        // --- ENCAPSULATION DU PARENT (LIEN DIRECT VERS L'ATTRIBUT PUBLIC) ---
+        String pPrenom = rs.getString("p_prenom");
+        if (pPrenom != null) {
+            Parent parent = new Parent();
+            parent.setPrenom(pPrenom);
+            parent.setContactParent(rs.getInt("p_contact"));
+            parent.setEmailParent(rs.getString("p_email"));
+
+            String profStr = rs.getString("p_profession");
+            if (profStr != null) {
+                parent.setProfession(profStr);
+            }
+
+            // Assignation directe à la variable publique de l'objet Eleve
+            eleve.parent = parent;
+        }
+
+        // --- ENCAPSULATION DE L'INSCRIPTION (LIEN DIRECT VERS L'ATTRIBUT PUBLIC) ---
+        String idClasse = rs.getString("i_idClasse");
+        if (idClasse != null) {
+            Inscription inscription = new Inscription();
+            inscription.setMatriculeEleve(eleve.getMatricule());
+            inscription.setIdClasse(idClasse);
+            inscription.setIdAnnescolaire(rs.getString("i_anneeScolaire"));
+
+            // Assignation directe à la variable publique de l'objet Eleve
+            eleve.inscription = inscription;
+        }
 
         return eleve;
     }
-
 }

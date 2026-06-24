@@ -22,7 +22,7 @@ public class AnneeScolaire extends BaseModel {
    public String getLibelle() { return libelle; }
    public void setLibelle(String libelle) { this.libelle = libelle; }
 
-   public String getDateDebut() { return dateDebut; }
+   public  String getDateDebut() { return dateDebut; }
    public void setDateDebut(String dateDebut) { this.dateDebut = dateDebut; }
 
    public String getDateFin() { return dateFin; }

@@ -15,6 +15,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.shape.SVGPath?>
 
+<?import javafx.scene.Group?>
 <VBox xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.LoginController">
     <children>
 
@@ -115,8 +116,11 @@
                                 <Label style="-fx-font-weight: 600; -fx-text-fill: #16213A; -fx-font-size: 13px;" text="Username" />
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14;">
                                     <children>
-                                        <SVGPath content="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6" fill="transparent" stroke="#94A3B8" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeWidth="2" />
-                                        <TextField fx:id="champEmail" promptText="Votre login" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #16213A;" HBox.hgrow="ALWAYS" />
+                                        <Group>
+                                            <SVGPath content="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#94A3B8" strokeWidth="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" fill="TRANSPARENT" />
+                                            <SVGPath content="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="#94A3B8" strokeWidth="2.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" fill="TRANSPARENT" />
+                                        </Group>
+                                        <TextField fx:id="champEmail" promptText="username" style="-fx-background-color: transparent; -fx-padding: 0; -fx-text-fill: #16213A;" HBox.hgrow="ALWAYS" />
                                     </children>
                                 </HBox>
                             </children>
@@ -129,7 +133,6 @@
                                     <children>
                                         <Label style="-fx-font-weight: 600; -fx-text-fill: #16213A; -fx-font-size: 13px;" text="Mot de passe" />
                                         <Region HBox.hgrow="ALWAYS" />
-                                        <Button style="-fx-background-color: transparent; -fx-text-fill: #F5A524; -fx-font-size: 12px; -fx-font-weight: 600; -fx-padding: 0; -fx-cursor: hand;" text="Mot de passe oublié ?" />
                                     </children>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10 14;">

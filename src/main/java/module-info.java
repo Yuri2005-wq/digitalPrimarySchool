@@ -9,7 +9,10 @@ module com.digitalprimaryschool.digitalprimaryschool {
     requires org.kordamp.ikonli.core;
     requires org.kordamp.ikonli.javafx;
     requires atlantafx.base;
-
+    requires kernel;
+    requires layout;
+    requires java.desktop;
+    requires org.kordamp.ikonli.fontawesome5;
 
     opens com.digitalprimaryschool.digitalprimaryschool to javafx.fxml;
     exports com.digitalprimaryschool.digitalprimaryschool;
@@ -18,5 +21,9 @@ module com.digitalprimaryschool.digitalprimaryschool {
 
     opens com.digitalprimaryschool.digitalprimaryschool.controller to javafx.fxml;
     exports com.digitalprimaryschool.digitalprimaryschool.controller;
+
+    opens com.digitalprimaryschool.digitalprimaryschool.service to javafx.fxml;
+    exports com.digitalprimaryschool.digitalprimaryschool.service;
+    opens com.digitalprimaryschool.digitalprimaryschool.model to javafx.base, javafx.fxml;
 
 }

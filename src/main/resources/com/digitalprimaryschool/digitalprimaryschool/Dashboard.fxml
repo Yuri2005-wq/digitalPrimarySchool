@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
@@ -14,13 +15,11 @@
             <Insets top="26" right="32" bottom="32" left="32"/>
         </padding>
 
-        <!-- En-tête -->
         <VBox spacing="4">
             <Label text="Tableau de bord" styleClass="page-title"/>
             <Label text="Bienvenue, voici un aperçu de votre établissement" styleClass="page-subtitle"/>
         </VBox>
 
-        <!-- Cartes statistiques -->
         <HBox spacing="18">
             <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
                 <HBox alignment="CENTER" spacing="10">
@@ -29,8 +28,8 @@
                         <FontIcon iconLiteral="fth-users" iconSize="18"/>
                     </StackPane>
                 </HBox>
-                <Label text="1,245" styleClass="stat-value"/>
-                <Label text="↑ 12 cette semaine" styleClass="stat-trend,trend-up"/>
+                <Label fx:id="lblTotalEleves" text="0" styleClass="stat-value"/>
+                <Label text="Élèves enregistrés" styleClass="stat-trend,trend-up"/>
             </VBox>
 
             <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
@@ -40,8 +39,8 @@
                         <FontIcon iconLiteral="fth-award" iconSize="18"/>
                     </StackPane>
                 </HBox>
-                <Label text="68" styleClass="stat-value"/>
-                <Label text="+2 ce mois" styleClass="stat-trend,trend-neutral"/>
+                <Label fx:id="lblTotalEnseignants" text="0" styleClass="stat-value"/>
+                <Label text="Corps enseignant" styleClass="stat-trend,trend-neutral"/>
             </VBox>
 
             <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
@@ -51,8 +50,8 @@
                         <FontIcon iconLiteral="fth-book-open" iconSize="18"/>
                     </StackPane>
                 </HBox>
-                <Label text="42" styleClass="stat-value"/>
-                <Label text="Stable" styleClass="stat-trend,trend-neutral"/>
+                <Label fx:id="lblTotalClasses" text="0" styleClass="stat-value"/>
+                <Label text="Salles de classe" styleClass="stat-trend,trend-neutral"/>
             </VBox>
 
             <VBox styleClass="card,stat-card" HBox.hgrow="ALWAYS" spacing="10">
@@ -63,11 +62,10 @@
                     </StackPane>
                 </HBox>
                 <Label text="93.2%" styleClass="stat-value"/>
-                <Label text="↑ 1.5% vs sem. dernière" styleClass="stat-trend,trend-up"/>
+                <Label text="Moyenne globale" styleClass="stat-trend,trend-up"/>
             </VBox>
         </HBox>
 
-        <!-- Graphiques -->
         <HBox spacing="18">
             <VBox styleClass="card,chart-card" HBox.hgrow="ALWAYS" spacing="14">
                 <Label text="Présence hebdomadaire" styleClass="card-title"/>
@@ -98,7 +96,6 @@
             </VBox>
         </HBox>
 
-        <!-- Listes -->
         <HBox spacing="18">
             <VBox styleClass="card,list-card" HBox.hgrow="ALWAYS" spacing="16">
                 <Label text="Activité récente" styleClass="card-title"/>
@@ -108,8 +105,8 @@
                         <FontIcon iconLiteral="fth-user-plus" iconSize="15"/>
                     </StackPane>
                     <VBox spacing="2">
-                        <Label text="Nouvel élève inscrit : Amina Benali" styleClass="activity-title"/>
-                        <Label text="Il y a 5 min" styleClass="activity-time"/>
+                        <Label text="Mise à jour de fiches profils effectuée" styleClass="activity-title"/>
+                        <Label text="Récemment" styleClass="activity-time"/>
                     </VBox>
                 </HBox>
 
@@ -118,8 +115,8 @@
                         <FontIcon iconLiteral="fth-check-circle" iconSize="15"/>
                     </StackPane>
                     <VBox spacing="2">
-                        <Label text="Bulletin du 2e trimestre validé - 5ème B" styleClass="activity-title"/>
-                        <Label text="Il y a 1 h" styleClass="activity-time"/>
+                        <Label text="Base de données locale synchronisée" styleClass="activity-title"/>
+                        <Label text="Aujourd'hui" styleClass="activity-time"/>
                     </VBox>
                 </HBox>
 
@@ -128,8 +125,8 @@
                         <FontIcon iconLiteral="fth-dollar-sign" iconSize="15"/>
                     </StackPane>
                     <VBox spacing="2">
-                        <Label text="Paiement reçu - Tranche 2, Élève #1187" styleClass="activity-title"/>
-                        <Label text="Il y a 3 h" styleClass="activity-time"/>
+                        <Label text="Paiement de pension enregistré" styleClass="activity-title"/>
+                        <Label text="Il n'y a pas longtemps" styleClass="activity-time"/>
                     </VBox>
                 </HBox>
             </VBox>
@@ -137,25 +134,25 @@
             <VBox styleClass="card,list-card" HBox.hgrow="ALWAYS" spacing="16">
                 <HBox alignment="CENTER_LEFT" spacing="8">
                     <FontIcon iconLiteral="fth-calendar" iconSize="16" styleClass="card-title-icon"/>
-                    <Label text="Événements à venir" styleClass="card-title"/>
+                    <Label text="Suivi Académique" styleClass="card-title"/>
                 </HBox>
 
                 <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
-                    <Label text="28 Mar" styleClass="event-date"/>
-                    <Label text="Conseil de classe - 3ème" styleClass="event-title" HBox.hgrow="ALWAYS"/>
-                    <Label text="Réunion" styleClass="event-tag,tag-blue"/>
+                    <Label text="Étape 1" styleClass="event-date"/>
+                    <Label text="Calcul des statistiques de fin de trimestre" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Automatique" styleClass="event-tag,tag-blue"/>
                 </HBox>
 
                 <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
-                    <Label text="02 Avr" styleClass="event-date"/>
-                    <Label text="Date limite - paiement tranche 3" styleClass="event-title" HBox.hgrow="ALWAYS"/>
-                    <Label text="Paiement" styleClass="event-tag,tag-orange"/>
+                    <Label text="Étape 2" styleClass="event-date"/>
+                    <Label text="Génération des fiches de renseignement" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Fiches" styleClass="event-tag,tag-orange"/>
                 </HBox>
 
                 <HBox spacing="14" alignment="CENTER_LEFT" styleClass="event-row">
-                    <Label text="10 Avr" styleClass="event-date"/>
-                    <Label text="Distribution des bulletins" styleClass="event-title" HBox.hgrow="ALWAYS"/>
-                    <Label text="Académique" styleClass="event-tag,tag-green"/>
+                    <Label text="Étape 3" styleClass="event-date"/>
+                    <Label text="Clôture et traitement des moyennes globales" styleClass="event-title" HBox.hgrow="ALWAYS"/>
+                    <Label text="Finitions" styleClass="event-tag,tag-green"/>
                 </HBox>
             </VBox>
         </HBox>

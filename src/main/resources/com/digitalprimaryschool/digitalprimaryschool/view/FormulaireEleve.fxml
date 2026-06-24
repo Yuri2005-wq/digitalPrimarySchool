@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" prefHeight="850.0" prefWidth="1200.0" styleClass="root-pane" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.FormulaireEleveController">
+    <VBox spacing="20" styleClass="content-area">
+        <padding>
+            <Insets bottom="25" left="30" right="30" top="25" />
+        </padding>
+
+        <VBox spacing="4">
+            <Label styleClass="page-title" text="Modification de la Fiche Éducative" />
+            <Label styleClass="page-subtitle" text="Modifiez les informations du parent et de l'élève connecté" />
+        </VBox>
+
+        <HBox alignment="TOP_CENTER" spacing="25">
+
+            <VBox maxWidth="450" prefHeight="720.0" prefWidth="450.0" spacing="12" styleClass="card" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <StackPane style="-fx-padding: 8; -fx-background-radius: 8;" styleClass="icon-orange">
+                        <FontIcon iconColor="#F5A524" iconLiteral="fth-user" iconSize="18" />
+                    </StackPane>
+                    <Label styleClass="card-title" text="Informations du Parent" />
+                </HBox>
+                <Separator />
+
+                <Label fx:id="labelErreurParent" style="-fx-text-fill: #E5484D; -fx-font-size: 12px;" wrapText="true" />
+
+                <Label text="Nom complet du Parent *" />
+                <TextField fx:id="txtPrenomParent" promptText="Ex: Jean Paul Ndi" styleClass="input" />
+
+                <Label text="Contact Téléphonique *" />
+                <TextField fx:id="txtContactParent" promptText="Ex: 699999999" styleClass="input" />
+
+                <Label text="Adresse Email" />
+                <TextField fx:id="txtEmailParent" promptText="Ex: parent@gmail.com" styleClass="input" />
+
+                <VBox spacing="4">
+                    <Label text="Profession *" />
+                    <TextField fx:id="txtProfessionParent" promptText="🔍 Filtrer la profession..." styleClass="input" style="-fx-font-size: 12px; -fx-pref-height: 30px;"/>
+                    <ComboBox fx:id="comboProfessionParent" prefHeight="43.0" prefWidth="410.0" promptText="Sélectionner la profession" styleClass="input combo-box-custom" />
+                </VBox>
+
+                <VBox spacing="4">
+                    <Label text="Adresse / Quartier *" />
+                    <TextField fx:id="txtChercherAdresse" promptText="🔍 Filtrer le quartier..." styleClass="input" style="-fx-font-size: 12px; -fx-pref-height: 30px;"/>
+                    <ComboBox fx:id="comboAdresseParent" prefHeight="43.0" prefWidth="410.0" promptText="Sélectionner le quartier" styleClass="input combo-box-custom" />
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <HBox alignment="CENTER_RIGHT" prefHeight="41.0" prefWidth="410.0">
+                    <children>
+                        <Button onAction="#handleEnregistrerParent" style="-fx-background-color: #F5A524; -fx-text-fill: #16213A; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Mettre à jour le Parent">
+                            <padding>
+                                <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+                            </padding>
+                        </Button>
+                    </children>
+                </HBox>
+            </VBox>
+
+            <VBox maxWidth="638.0" prefHeight="720.0" prefWidth="638.0" spacing="12" styleClass="card" HBox.hgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <StackPane style="-fx-padding: 8; -fx-background-radius: 8;" styleClass="icon-gray">
+                        <FontIcon iconColor="#16213A" iconLiteral="fth-users" iconSize="18" />
+                    </StackPane>
+                    <Label styleClass="card-title" text="Information de l'élève" />
+                </HBox>
+                <Separator />
+
+                <Label fx:id="labelErreurEleve" style="-fx-text-fill: #E5484D; -fx-font-size: 12px;" wrapText="true" />
+
+                <HBox alignment="CENTER_LEFT" spacing="20">
+                    <VBox alignment="CENTER" spacing="8" style="-fx-border-color: #E2E8F0; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 5; -fx-background-color: #F8FAFC;">
+                        <ImageView fx:id="imgApercu" fitHeight="110" fitWidth="110" preserveRatio="true" />
+                    </VBox>
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <Label style="-fx-font-weight: bold;" text="Photo d'identité de l'élève" />
+                        <Label styleClass="page-subtitle" text="Formats acceptés: PNG, JPG" />
+                        <Button onAction="#handleChoisirPhoto" style="-fx-background-color: white; -fx-border-color: #E2E8F0; -fx-border-radius: 8; -fx-cursor: hand;" text="Remplacer la photo">
+                            <graphic><FontIcon iconLiteral="fth-image" /></graphic>
+                        </Button>
+                    </VBox>
+                </HBox>
+
+                <GridPane hgap="15" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="50" />
+                        <ColumnConstraints percentWidth="50" />
+                    </columnConstraints>
+
+                    <children>
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Label text="Noms *" />
+                            <TextField fx:id="txtNomEleve" promptText="Ex: Ndi" styleClass="input" />
+                        </VBox>
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                            <Label text="Prénom *" />
+                            <TextField fx:id="txtPrenomEleve" promptText="Ex: Marc" styleClass="input" />
+                        </VBox>
+
+                        <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                            <Label text="Date de Naissance *" />
+                            <DatePicker fx:id="dpDateNaissance" prefHeight="37.0" prefWidth="294.0" styleClass="date-picker-custom" />
+                        </VBox>
+                        <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                            <Label text="Lieu de Naissance *" />
+                            <ComboBox fx:id="comboLieuNaissance" prefHeight="43.0" prefWidth="290.0" promptText="Sélectionner le lieu" styleClass="input combo-box-custom" />
+                        </VBox>
+
+                        <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                            <Label text="Sexe *" />
+                            <ComboBox fx:id="comboSexe" prefHeight="43.0" prefWidth="290.0" promptText="Sélectionner le sexe" styleClass="input combo-box-custom" />
+                        </VBox>
+                        <VBox spacing="4" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                            <Label text="Nationalité *" />
+                            <ComboBox fx:id="comboNationalite" prefHeight="43.0" prefWidth="290.0" promptText="Sélectionner la nationalité" styleClass="input combo-box-custom" />
+                        </VBox>
+
+                        <VBox spacing="4" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                            <Label text="Région d'origine *" />
+                            <ComboBox fx:id="comboRegionOrigine" prefHeight="43.0" prefWidth="290.0" promptText="Sélectionner la région" styleClass="input combo-box-custom" />
+                        </VBox>
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                            <Label text="Antécédents Médicaux" />
+                            <TextArea fx:id="txtAntecedentsMedicaux" prefHeight="70.0" prefWidth="290.0" promptText="Ex: Asthme, Allergie..." styleClass="input" wrapText="true" />
+                        </VBox>
+                    </children>
+
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+
+                <Region VBox.vgrow="ALWAYS" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="15">
+                    <Button onAction="#handleAnnuler" style="-fx-background-color: #f1f5f9; -fx-text-fill: #334155; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand;" text="Annuler">
+                        <padding>
+                            <Insets bottom="8.0" left="20.0" right="20.0" top="8.0" />
+                        </padding>
+                    </Button>
+                    <Button onAction="#handleEnregistrerEleve" style="-fx-background-color: #3B82F6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Enregistrer l'élève">
+                        <padding>
+                            <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                        </padding>
+                    </Button>
+                    <Button onAction="#handleEnregistrerParentEtEleve" style="-fx-background-color: #F5A524; -fx-text-fill: #16213A; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Enregistrer Tout">
+                        <padding>
+                            <Insets bottom="8.0" left="15.0" right="15.0" top="8.0" />
+                        </padding>
+                    </Button>
+                </HBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</ScrollPane>

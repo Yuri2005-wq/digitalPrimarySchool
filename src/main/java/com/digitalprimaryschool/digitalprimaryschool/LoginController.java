@@ -104,11 +104,10 @@ public class LoginController {
             Utilisateur utilisateur = utilisateurDAO.verifierIdentifiants(login, motDePasse);
 
             if (utilisateur != null) {
-                // Identifiants corrects -> chargement du tableau de bord
+                Stage currentStage = (Stage) btnConnecter.getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
                 Scene mainScene = new Scene(loader.load(), 1080, 740);
 
-                Stage currentStage = (Stage) btnConnecter.getScene().getWindow();
 
                 Stage appStage = new Stage();
                 appStage.getIcons().add(new javafx.scene.image.Image(HelloApplication.class.getResourceAsStream("oh.png")));
@@ -121,6 +120,7 @@ public class LoginController {
 
                 currentStage.close();
                 appStage.show();
+
             } else {
                 afficherErreur("Login ou mot de passe incorrect.");
             }
@@ -138,4 +138,5 @@ public class LoginController {
         labelErreur.setVisible(true);
         labelErreur.setManaged(true);
     }
+
 }

@@ -1,9 +1,0 @@
-/* Le point (.) devant signifie que c'est une classe réutilisable */
-.dashboard-card {
-    -fx-pref-height: 50px;
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 12px; /* Coins arrondis comme la maquette */
-    -fx-padding: 20px;
-    /* Pour ajouter un léger ombrage moderne */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
-}

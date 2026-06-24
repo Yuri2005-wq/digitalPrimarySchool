@@ -54,6 +54,10 @@ public class Enseignant {
    public void setClasse(Classe newClasse) {
       this.classe = newClasse;
    }
+   public String getFullName(){
+      return this.nom + " " + this.prenom;
+   }
+
 
 
 }

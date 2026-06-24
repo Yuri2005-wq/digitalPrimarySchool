@@ -1,0 +1,141 @@
+package com.digitalprimaryschool.digitalprimaryschool.dao;
+
+import com.digitalprimaryschool.digitalprimaryschool.Database;
+import com.digitalprimaryschool.digitalprimaryschool.model.Inscription;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class InscriptionDAO {
+
+    // ================================================================
+    // AJOUTER une inscription
+    // ================================================================
+    public void ajouter(Inscription inscription) throws SQLException {
+        String sql = """
+                INSERT INTO Inscription (
+                    idInscription, idAnnescolaire, idClasse, 
+                    matriculeEleve, montantPayer, estReinscript
+                ) VALUES (?, ?, ?, ?, ?, ?)
+                """;
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, inscription.getIdInscription());
+            stmt.setString(2, inscription.getIdAnnescolaire());
+            stmt.setString(3, inscription.getIdClasse());
+            stmt.setString(4, inscription.getMatriculeEleve());
+            stmt.setDouble(5, inscription.getMontantPayer());
+            stmt.setInt(6, inscription.getEstReinscript());
+
+            stmt.executeUpdate();
+        }
+    }
+
+    // ================================================================
+    // VÉRIFIER si une inscription existe
+    // ================================================================
+    public boolean inscriptionExiste(String matricule, String idClasse, String idAnnee) throws SQLException {
+        String sql = """
+                SELECT COUNT(*) FROM Inscription 
+                WHERE matriculeEleve = ? AND idClasse = ? AND idAnnescolaire = ?
+                """;
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, matricule);
+            stmt.setString(2, idClasse);
+            stmt.setString(3, idAnnee);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    // ================================================================
+    // LISTER les inscriptions d'un élève
+    // ================================================================
+    public List<Inscription> listerParEleve(String matricule) throws SQLException {
+        String sql = "SELECT * FROM Inscription WHERE matriculeEleve = ?";
+        List<Inscription> inscriptions = new ArrayList<>();
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, matricule);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Inscription ins = new Inscription();
+                    ins.setIdInscription(rs.getString("idInscription"));
+                    ins.setIdAnnescolaire(rs.getString("idAnnescolaire"));
+                    ins.setIdClasse(rs.getString("idClasse"));
+                    ins.setMatriculeEleve(rs.getString("matriculeEleve"));
+                    ins.setMontantPayer(rs.getDouble("montantPayer"));
+                    ins.setEstReinscript(rs.getInt("estReinscript"));
+
+                    // Récupération de la date d'inscription depuis le schéma SQLite
+                    ins.setDateInscription(rs.getString("dateInscription"));
+
+                    inscriptions.add(ins);
+                }
+            }
+        }
+        return inscriptions;
+    }
+
+    // ================================================================
+    // SUPPRIMER une inscription
+    // ================================================================
+    public void supprimer(String idInscription) throws SQLException {
+        String sql = "DELETE FROM Inscription WHERE idInscription = ?";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idInscription);
+            stmt.executeUpdate();
+        }
+    }
+
+    // ================================================================
+    // LISTER toutes les inscriptions d'une classe pour une année
+    // ================================================================
+    public List<Inscription> listerParClasseEtAnnee(String idClasse, String idAnnee) throws SQLException {
+        String sql = """
+                SELECT * FROM Inscription 
+                WHERE idClasse = ? AND idAnnescolaire = ?
+                """;
+        List<Inscription> inscriptions = new ArrayList<>();
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idClasse);
+            stmt.setString(2, idAnnee);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Inscription ins = new Inscription();
+                    ins.setIdInscription(rs.getString("idInscription"));
+                    ins.setIdAnnescolaire(rs.getString("idAnnescolaire"));
+                    ins.setIdClasse(rs.getString("idClasse"));
+                    ins.setMatriculeEleve(rs.getString("matriculeEleve"));
+                    ins.setMontantPayer(rs.getDouble("montantPayer"));
+                    ins.setEstReinscript(rs.getInt("estReinscript"));
+
+                    // Récupération de la date d'inscription depuis le schéma SQLite
+                    ins.setDateInscription(rs.getString("dateInscription"));
+
+                    inscriptions.add(ins);
+                }
+            }
+        }
+        return inscriptions;
+    }
+}

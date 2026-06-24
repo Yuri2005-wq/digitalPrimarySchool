@@ -13,8 +13,14 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalField;
+
 
 public class HelloApplication extends Application {
+
     @Override
     public void start(Stage stage) throws IOException, SQLException {
         Database.initializeDatabase();
@@ -32,7 +38,7 @@ public class HelloApplication extends Application {
 
         UtilisateurDAO utilisateurDAO = new UtilisateurDAO();
         utilisateurDAO.insertUser(user);
-        System.out.println("save user successfully !");
+
         // --- Fenêtre de Login : taille fixe + sans bordure native ---
         stage.initStyle(StageStyle.UNDECORATED);
         stage.setResizable(false);

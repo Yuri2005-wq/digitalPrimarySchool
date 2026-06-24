@@ -12,4 +12,7 @@ public class Bulletin extends DocumentScolaire {
 
    public String getIdBulletin() { return idBulletin; }
    public void setIdBulletin(String idBulletin) { this.idBulletin = idBulletin; }
+   public double getMoyenneGenerale(){
+      return 0.0;
+   }
 }

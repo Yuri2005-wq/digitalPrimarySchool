@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<ScrollPane fitToWidth="true" prefHeight="650.0" prefWidth="1200.0" style="-fx-background-color: #f6f6f6;" stylesheets="@../style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.ClasseController">
+
+    <HBox prefHeight="688.0" prefWidth="1200.0" spacing="30.0" styleClass="content-area" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+        <children>
+
+            <VBox prefWidth="380.0" spacing="0.0" styleClass="card">
+                <children>
+                    <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 25 20 25; -fx-border-color: #2A3B61; -fx-border-width: 0 0 1 0;">
+                        <children>
+                            <Label style="-fx-text-fill: #000; -fx-font-size: 16px; -fx-font-weight: bold;" text="Configuration de la Classe" />
+                        </children>
+                    </HBox>
+
+                    <VBox spacing="18.0" style="-fx-padding: 25;">
+                        <children>
+                            <VBox spacing="8.0">
+                                <children>
+                                    <Label style="-fx-text-fill: #000; -fx-font-size: 13px;" text="Nom de la classe (ex: SIL A)" />
+                                    <TextField fx:id="txtNom" promptText="Saisir le nom..." styleClass="input" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="8.0">
+                                <children>
+                                    <Label style="-fx-text-fill: #000; -fx-font-size: 13px;" text="Niveau d'étude" />
+                                    <ComboBox fx:id="comboNiveau" maxWidth="1.7976931348623157E308" promptText="Sélectionner le niveau" styleClass="combo-box" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="8.0">
+                                <children>
+                                    <Label style="-fx-text-fill: #000; -fx-font-size: 13px;" text="Section" />
+                                    <ComboBox fx:id="comboSection" maxWidth="1.7976931348623157E308" promptText="Sélectionner la section" styleClass="combo-box" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="8.0">
+                                <children>
+                                    <Label style="-fx-text-fill: #000; -fx-font-size: 13px;" text="Capacité maximale d'élèves" />
+                                    <TextField fx:id="txtCapacite" promptText="Ex: 50" style="-fx-padding: 10;" styleClass="input" />
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="10.0" style="-fx-padding: 15 0 0 0;">
+                                <children>
+                                    <Button fx:id="btnEnregistrer" maxWidth="1.7976931348623157E308" onAction="#handleEnregistrer" styleClass="button-validate" text="Créer la Classe">
+                                        <cursor><Cursor fx:constant="HAND" /></cursor>
+                                    </Button>
+                                    <Button fx:id="btnSupprimer" disable="true" maxWidth="1.7976931348623157E308" onAction="#handleSupprimer" style="-fx-background-color: #D32F2F; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10; -fx-background-radius: 8; -fx-cursor: hand;" text="Supprimer la Classe" />
+                                    <Button maxWidth="1.7976931348623157E308" onAction="#handleAnnuler" style="-fx-background-color: transparent; -fx-text-fill: #000; -fx-padding: 5; -fx-cursor: hand;" text="Réinitialiser" />
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </children>
+            </VBox>
+
+            <VBox spacing="15.0" styleClass="card" HBox.hgrow="ALWAYS">
+                <children>
+                    <HBox alignment="CENTER_LEFT" prefHeight="45.0" style="-fx-padding: 0 15 0 15; -fx-border-width: 1; -fx-border-radius: 8; -fx-border-color: #B7C2DC;" styleClass="input">
+                        <children>
+                            <FontIcon iconColor="#B7C2DC" iconLiteral="fth-search" iconSize="16" wrappingWidth="23.16796875">
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin></FontIcon>
+                            <TextField fx:id="txtRecherche" promptText="Filtrer par nom ou niveau..." style="-fx-text-fill: #000; -fx-background-color: transparent; -fx-prompt-text-fill: #5A73A3;" HBox.hgrow="ALWAYS">
+                                <padding><Insets left="10.0" /></padding>
+                            </TextField>
+                        </children>
+                    </HBox>
+
+                    <TableView fx:id="tableClasses" styleClass="modern-table" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colNom" prefWidth="120.0" text="Nom Classe" />
+                            <TableColumn fx:id="colNiveau" prefWidth="130.0" text="Niveau" />
+                            <TableColumn fx:id="colSection" prefWidth="110.0" text="Section" />
+                            <TableColumn fx:id="colCategorie" prefWidth="120.0" text="Catégorie" />
+                            <TableColumn fx:id="colCapacite" prefWidth="100.0" text="Capacité Max" />
+                        </columns>
+                        <columnResizePolicy>
+                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                    </TableView>
+                </children>
+            </VBox>
+        </children>
+        <padding>
+            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        </padding>
+    </HBox>
+    <styleClass>
+        <String fx:value="root-pane" />
+        <String fx:value="content-area" />
+    </styleClass>
+</ScrollPane>

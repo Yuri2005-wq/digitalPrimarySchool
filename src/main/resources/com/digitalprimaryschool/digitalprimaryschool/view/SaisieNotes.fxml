@@ -13,7 +13,7 @@
 <BorderPane
     xmlns="http://javafx.com/javafx/17"
     xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="cm.siantou.ecole.controller.SaisieNotesController"
+    fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.NotesController"
     styleClass="workspace"
     style="-fx-padding: 0;">
 
@@ -57,7 +57,7 @@
                         promptText="Sélectionner une classe"
                         styleClass="filter-combo"
                         prefWidth="180"
-                        onAction="#onFiltreChange" />
+                         />
                 </VBox>
 
                 <VBox spacing="4">
@@ -67,7 +67,7 @@
                         promptText="Sélectionner..."
                         styleClass="filter-combo"
                         prefWidth="200"
-                        onAction="#onFiltreChange" />
+                         />
                 </VBox>
 
                 <VBox spacing="4">
@@ -77,7 +77,7 @@
                         promptText="Séquence..."
                         styleClass="filter-combo"
                         prefWidth="160"
-                        onAction="#onFiltreChange" />
+                         />
                 </VBox>
 
                 <VBox spacing="4">
@@ -98,7 +98,7 @@
                         promptText="🔍  Nom ou matricule..."
                         styleClass="search-field"
                         prefWidth="220"
-                        onKeyReleased="#onRechercheEleve" />
+                         />
                 </VBox>
 
             </HBox>
@@ -150,13 +150,13 @@
                         text="Marquer tous absents"
                         styleClass="btn-secondary"
                         style="-fx-font-size: 11px; -fx-padding: 6 12;"
-                        onAction="#onMarquerTousAbsents" />
+                         />
                     <Button
                         fx:id="btnEffacerNotes"
                         text="🗑  Effacer tout"
                         styleClass="btn-danger"
                         style="-fx-font-size: 11px; -fx-padding: 6 12;"
-                        onAction="#onEffacerTout" />
+                         />
                 </HBox>
 
                 <TableView
@@ -290,19 +290,19 @@
                 fx:id="btnAnnulerNotes"
                 text="Annuler"
                 styleClass="btn-secondary"
-                onAction="#onAnnulerSaisie" />
+                 />
 
             <Button
                 fx:id="btnSauvegarderBrouillon"
                 text="💾  Enregistrer le brouillon"
                 styleClass="btn-secondary"
-                onAction="#onSauvegarderBrouillon" />
+                 />
 
             <Button
                 fx:id="btnValiderNotes"
                 text="✔  Valider les notes"
                 styleClass="btn-primary"
-                onAction="#onValiderNotes" />
+                 />
 
         </HBox>
     </bottom>

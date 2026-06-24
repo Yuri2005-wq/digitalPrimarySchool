@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.DetailClasseController" style="-fx-background-color: #F8FAFC;">
+
+    <top>
+        <VBox spacing="16" style="-fx-padding: 24 32 16 32; -fx-background-color: #F8FAFC;">
+            <HBox alignment="CENTER_LEFT" spacing="6">
+                <Label text="Classes" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #64748B;" />
+                <Label text="&gt;" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #94A3B8;" />
+                <Label text="Détails de la classe" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px; -fx-text-fill: #0F172A; -fx-font-weight: bold;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnExporterPDF" text="📥 Exporter PDF" style="-fx-background-color: #FFFFFF; -fx-text-fill: #475569; -fx-border-color: #CBD5E1; -fx-border-radius: 6; -fx-padding: 8 16; -fx-font-family: 'Segoe UI'; -fx-font-weight: bold; -fx-cursor: hand;" />
+            </HBox>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background: #F8FAFC; -fx-background-color: transparent; -fx-border-color: transparent;">
+            <content>
+                <VBox spacing="24" style="-fx-padding: 0 32 32 32;">
+
+                    <HBox alignment="CENTER_LEFT" spacing="24" style="-fx-background-color: #334155; -fx-background-radius: 12; -fx-padding: 28 32;">
+                        <children>
+                            <StackPane style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-min-width: 80; -fx-min-height: 80; -fx-pref-width: 80; -fx-pref-height: 80;">
+                                <children>
+                                    <Label text="🏫" style="-fx-font-size: 36px;" />
+                                </children>
+                            </StackPane>
+
+                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="12">
+                                        <children>
+                                            <Label fx:id="lblNomClasse" text="6ème A" textFill="WHITE" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold;" />
+                                            <Label fx:id="badgeEffectif" text="32 élèves" style="-fx-background-color: #10B981; -fx-text-fill: white; -fx-padding: 4 10; -fx-background-radius: 20; -fx-font-family: 'Segoe UI'; -fx-font-size: 12px; -fx-font-weight: bold;" />
+                                        </children>
+                                    </HBox>
+                                    <HBox spacing="16">
+                                        <children>
+                                            <Label fx:id="lblProfPrincipal" text="Prof. principal : M. Dupont" textFill="#94A3B8" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 14px;" />
+                                            <Label text="•" textFill="#64748B" />
+                                            <Label fx:id="lblSalle" text="Salle : A101" textFill="#94A3B8" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 14px;" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </VBox>
+
+                            <HBox spacing="32" alignment="CENTER_RIGHT">
+                                <children>
+                                    <VBox alignment="CENTER">
+                                        <children>
+                                            <Label text="13.5 / 20" textFill="#10B981" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 22px; -fx-font-weight: bold;" />
+                                            <Label text="Moyenne" textFill="#94A3B8" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 12px;" />
+                                        </children>
+                                    </VBox>
+                                    <VBox alignment="CENTER">
+                                        <children>
+                                            <Label text="0" textFill="#EF4444" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 22px; -fx-font-weight: bold;" />
+                                            <Label text="Absences" textFill="#94A3B8" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 12px;" />
+                                        </children>
+                                    </VBox>
+                                </children>
+                            </HBox>
+                        </children>
+                    </HBox>
+
+                    <GridPane hgap="24" vgap="24">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50.0" />
+                            <ColumnConstraints percentWidth="50.0" />
+                        </columnConstraints>
+
+                        <children>
+                            <VBox spacing="16" GridPane.columnIndex="0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12; -fx-padding: 24;">
+                                <children>
+                                    <Label text="👤 Informations de la classe" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0F172A;" />
+                                    <Pane style="-fx-background-color: #E2E8F0; -fx-min-height: 1;" />
+
+                                    <GridPane vgap="14" hgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints prefWidth="150" />
+                                            <ColumnConstraints hgrow="ALWAYS" />
+                                        </columnConstraints>
+                                        <children>
+                                            <Label text="Niveau :" textFill="#64748B" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="6ème" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Année Scolaire :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="2025-2026" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Régime de cours :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="Francophone" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Pension Scolaire :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="3" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label fx:id="lblMontantPension" text="0 CFA" textFill="#0369A1" GridPane.columnIndex="1" GridPane.rowIndex="3" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Frais d'inscription :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="4" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label fx:id="lblFraisInscription" text="0 CFA" textFill="#0369A1" GridPane.columnIndex="1" GridPane.rowIndex="4" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+                                        </children>
+                                    </GridPane>
+                                </children>
+                            </VBox>
+
+                            <VBox spacing="16" GridPane.columnIndex="1" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12; -fx-padding: 24;">
+                                <children>
+                                    <Label text="📞 Enseignants &amp; Suivi" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0F172A;" />
+                                    <Pane style="-fx-background-color: #E2E8F0; -fx-min-height: 1;" />
+
+                                    <GridPane vgap="14" hgap="10">
+                                        <columnConstraints>
+                                            <ColumnConstraints prefWidth="150" />
+                                            <ColumnConstraints hgrow="ALWAYS" />
+                                        </columnConstraints>
+                                        <children>
+                                            <Label text="Professeur Principal :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="0" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="M. Dupont" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="0" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Téléphone :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="1" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="+237 6xx xx xx xx" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="1" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+
+                                            <Label text="Délégué de classe :" textFill="#64748b" GridPane.columnIndex="0" GridPane.rowIndex="2" style="-fx-font-family: 'Segoe UI';" />
+                                            <Label text="CHIEMENI TAGNI ELIAM" textFill="#0F172A" GridPane.columnIndex="1" GridPane.rowIndex="2" style="-fx-font-family: 'Segoe UI'; -fx-font-weight: bold;" />
+                                        </children>
+                                    </GridPane>
+                                </children>
+                            </VBox>
+                        </children>
+                    </GridPane>
+
+                    <VBox spacing="16" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #E2E8F0; -fx-border-radius: 12; -fx-padding: 24;">
+                        <children>
+                            <Label text="📋 Liste nominale des élèves inscrits" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #0F172A;" />
+                            <Pane style="-fx-background-color: #E2E8F0; -fx-min-height: 1;" />
+
+                            <TableView fx:id="tableEleves" prefHeight="320" style="-fx-background-color: transparent; -fx-border-color: #E2E8F0; -fx-border-radius: 8;">
+                                <columns>
+                                    <TableColumn fx:id="colMatricule" prefWidth="140.0" text="Matricule" />
+                                    <TableColumn fx:id="colNom" prefWidth="220.0" text="Nom(s)" />
+                                    <TableColumn fx:id="colPrenom" prefWidth="200.0" text="Prénom(s)" />
+                                    <TableColumn fx:id="colDateNaissance" prefWidth="150.0" text="Date de naissance" />
+                                    <TableColumn fx:id="colSexe" prefWidth="100.0" text="Sexe" />
+                                    <TableColumn fx:id="colStatut" prefWidth="130.0" text="Statut" />
+                                </columns>
+                            </TableView>
+                        </children>
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

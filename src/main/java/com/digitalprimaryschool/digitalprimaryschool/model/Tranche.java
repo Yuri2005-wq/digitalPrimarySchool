@@ -27,6 +27,7 @@ import java.util.UUID;
 
 public class Tranche extends BaseModel {
    private String idTranche;
+   private String idTarifScolaire;
    private String libelleTranche;
    private Double montantTranche;
    private String dateEcheance;
@@ -37,7 +38,8 @@ public class Tranche extends BaseModel {
       super();
       this.idTranche = UUID.randomUUID().toString();
    }
-
+   public String getIdTarifScolaire() { return idTarifScolaire; }
+   public void setIdTarifScolaire(String idTarifScolaire) { this.idTarifScolaire = idTarifScolaire; }
    public String getIdTranche() { return idTranche; }
    public void setIdTranche(String idTranche) { this.idTranche = idTranche; }
 

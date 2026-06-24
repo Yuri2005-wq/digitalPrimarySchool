@@ -1,558 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<!--
-    FicheEleve.fxml – Formulaire complet d'inscription d'un élève
-    Contrôleur : FicheEleveController.java
-    Chargé dans MainWindow.stackPaneWorkspace
--->
-<BorderPane
-    xmlns="http://javafx.com/javafx/17"
-    xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="cm.siantou.ecole.controller.FicheEleveController"
-    styleClass="workspace"
-    style="-fx-padding: 0;">
-
-    <!-- ── En-tête de page ──────────────────────────────── -->
-    <top>
-        <VBox spacing="16" style="-fx-padding: 28 32 16 32; -fx-background-color: #F8FAFC;">
-
-            <!-- Fil d'Ariane -->
-            <HBox spacing="6" alignment="CENTER_LEFT">
-                <Label text="Inscriptions" styleClass="breadcrumb-label" />
-                <Label text="›" styleClass="breadcrumb-label" />
-                <Label fx:id="lblBreadcrumbMode" text="Nouvelle inscription" styleClass="breadcrumb-current" />
-            </HBox>
-
-            <HBox alignment="CENTER_LEFT" spacing="16">
-                <VBox spacing="4">
-                    <Label fx:id="lblTitreFormulaire" text="Fiche d'inscription élève"
-                           styleClass="page-title" />
-                    <Label text="Remplissez toutes les sections obligatoires (*)"
-                           styleClass="page-subtitle" />
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<VBox prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.FicheEleveController">
+    <children>
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0" style="-fx-background-color: #ffffff; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+            <padding>
+                <Insets left="20.0" right="20.0" />
+            </padding>
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleRetour" style="-fx-background-color: transparent; -fx-cursor: hand;">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-arrow-left" iconSize="20" iconColor="#64748b" />
+                    </graphic>
+                </Button>
+                <VBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Fiche Élève" textFill="#0f172a">
+                            <font>
+                                <Font name="Segoe UI Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblMatriculeHeader" text="Matricule : EDU-2024-0142" textFill="#64748b">
+                            <font>
+                                <Font name="Segoe UI" size="12.0" />
+                            </font>
+                        </Label>
+                    </children>
                 </VBox>
-                <Region HBox.hgrow="ALWAYS" />
-
-                <!-- Matricule généré automatiquement -->
-                <VBox alignment="CENTER_RIGHT" spacing="4">
-                    <Label text="MATRICULE" styleClass="card-title" />
-                    <Label fx:id="lblMatricule" text="(généré à l'enregistrement)"
-                           styleClass="matricule-badge" />
-                </VBox>
-            </HBox>
-        </VBox>
-    </top>
-
-    <!-- ── Contenu principal : TabPane ──────────────────── -->
-    <center>
-        <ScrollPane
-            styleClass="scroll-pane-clean"
-            fitToWidth="true"
-            hbarPolicy="NEVER"
-            style="-fx-padding: 0 32;">
-
-            <TabPane
-                fx:id="tabPaneFiche"
-                styleClass="tab-pane-form"
-                tabClosingPolicy="UNAVAILABLE">
-
-                <!-- ════════════════════════════════════════
-                     ONGLET 1 – Informations de l'élève
-                     ════════════════════════════════════════ -->
-                <Tab text="👤  Élève" fx:id="tabEleve">
-                    <HBox spacing="32">
-
-                        <!-- Colonne gauche : Formulaire -->
-                        <VBox spacing="20" HBox.hgrow="ALWAYS">
-
-                            <!-- Section : État civil -->
-                            <VBox spacing="12">
-                                <Label text="État civil" styleClass="form-section-title" />
-                                <Pane styleClass="form-separator" />
-
-                                <GridPane hgap="16" vgap="12">
-
-                                    <!-- Nom -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                        <HBox spacing="4">
-                                            <Label text="Nom" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <TextField
-                                            fx:id="txtNom"
-                                            promptText="NOM (majuscules)"
-                                            styleClass="text-field-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Prénom -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                        <HBox spacing="4">
-                                            <Label text="Prénom(s)" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <TextField
-                                            fx:id="txtPrenom"
-                                            promptText="Prénom(s)"
-                                            styleClass="text-field-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Sexe -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                        <HBox spacing="4">
-                                            <Label text="Sexe" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <ComboBox
-                                            fx:id="cmbSexe"
-                                            promptText="Sélectionner..."
-                                            styleClass="combo-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Date de naissance -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                        <HBox spacing="4">
-                                            <Label text="Date de naissance" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <DatePicker
-                                            fx:id="dpDateNaissance"
-                                            promptText="JJ/MM/AAAA"
-                                            styleClass="date-picker-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Lieu de naissance -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                                        <HBox spacing="4">
-                                            <Label text="Lieu de naissance" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <TextField
-                                            fx:id="txtLieuNaissance"
-                                            promptText="Ville, Région"
-                                            styleClass="text-field-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Nationalité -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                        <Label text="Nationalité" styleClass="field-label" />
-                                        <ComboBox
-                                            fx:id="cmbNationalite"
-                                            promptText="Camerounais(e)"
-                                            styleClass="combo-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Religion -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                                        <Label text="Religion" styleClass="field-label" />
-                                        <ComboBox
-                                            fx:id="cmbReligion"
-                                            styleClass="combo-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Handicap / besoins spéciaux -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                        <Label text="Besoins particuliers" styleClass="field-label" />
-                                        <TextField
-                                            fx:id="txtBesoins"
-                                            promptText="Optionnel"
-                                            styleClass="text-field-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                </GridPane>
-                            </VBox>
-
-                            <!-- Section : Scolarité -->
-                            <VBox spacing="12">
-                                <Label text="Scolarité" styleClass="form-section-title" />
-                                <Pane styleClass="form-separator" />
-
-                                <GridPane hgap="16" vgap="12">
-
-                                    <!-- Classe -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                        <HBox spacing="4">
-                                            <Label text="Classe" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <ComboBox
-                                            fx:id="cmbClasse"
-                                            promptText="Sélectionner une classe"
-                                            styleClass="combo-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Date d'inscription -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                        <HBox spacing="4">
-                                            <Label text="Date d'inscription" styleClass="field-label" />
-                                            <Label text="*" styleClass="field-required" />
-                                        </HBox>
-                                        <DatePicker
-                                            fx:id="dpDateInscription"
-                                            styleClass="date-picker-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Ancien élève -->
-                                    <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                        <Label text="Statut" styleClass="field-label" />
-                                        <ComboBox
-                                            fx:id="cmbStatutEleve"
-                                            styleClass="combo-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                    <!-- Ancien établissement -->
-                                    <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                        <Label text="Établissement précédent" styleClass="field-label" />
-                                        <TextField
-                                            fx:id="txtEtabPrecedent"
-                                            promptText="Si transfert"
-                                            styleClass="text-field-base"
-                                            prefWidth="240" />
-                                    </VBox>
-
-                                </GridPane>
-                            </VBox>
-
-                        </VBox>
-
-                        <!-- Colonne droite : Photo + actions rapides -->
-                        <VBox spacing="16" alignment="TOP_CENTER" prefWidth="140">
-                            <Label text="PHOTO D'IDENTITÉ" styleClass="card-title" />
-
-                            <!-- Zone photo -->
-                            <StackPane
-                                fx:id="panePhoto"
-                                styleClass="photo-placeholder"
-                                prefWidth="120"
-                                prefHeight="140"
-                                onMouseClicked="#onChoisirPhoto">
-                                <VBox alignment="CENTER" spacing="6">
-                                    <Label text="📷" style="-fx-font-size: 28px;" />
-                                    <Label text="Cliquer pour importer"
-                                           styleClass="label-info"
-                                           wrapText="true"
-                                           style="-fx-text-alignment: center;" />
-                                </VBox>
-                            </StackPane>
-
-                            <Button
-                                fx:id="btnImporterPhoto"
-                                text="📂 Importer"
-                                styleClass="btn-secondary"
-                                prefWidth="120"
-                                onAction="#onChoisirPhoto" />
-
-                            <Button
-                                fx:id="btnSupprimerPhoto"
-                                text="🗑 Supprimer"
-                                styleClass="btn-danger"
-                                prefWidth="120"
-                                style="-fx-font-size: 12px; -fx-padding: 7 12;"
-                                onAction="#onSupprimerPhoto"
-                                visible="false" />
-                        </VBox>
-
-                    </HBox>
-                </Tab>
-
-                <!-- ════════════════════════════════════════
-                     ONGLET 2 – Parent / Tuteur
-                     ════════════════════════════════════════ -->
-                <Tab text="👪  Parent / Tuteur" fx:id="tabParent">
-                    <VBox spacing="20">
-
-                        <!-- Sous-titre -->
-                        <Label text="Coordonnées du responsable légal"
-                               styleClass="form-section-title" />
-                        <Pane styleClass="form-separator" />
-
-                        <GridPane hgap="16" vgap="12">
-
-                            <!-- Lien de parenté -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                <HBox spacing="4">
-                                    <Label text="Lien de parenté" styleClass="field-label" />
-                                    <Label text="*" styleClass="field-required" />
-                                </HBox>
-                                <ComboBox
-                                    fx:id="cmbLienParente"
-                                    styleClass="combo-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Nom du parent -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <HBox spacing="4">
-                                    <Label text="Nom &amp; Prénom(s)" styleClass="field-label" />
-                                    <Label text="*" styleClass="field-required" />
-                                </HBox>
-                                <TextField
-                                    fx:id="txtNomParent"
-                                    promptText="Nom complet du parent/tuteur"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Téléphone principal -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                <HBox spacing="4">
-                                    <Label text="Téléphone principal" styleClass="field-label" />
-                                    <Label text="*" styleClass="field-required" />
-                                </HBox>
-                                <TextField
-                                    fx:id="txtTelParent"
-                                    promptText="Ex : 6XX XXX XXX"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Téléphone secondaire -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                <Label text="Téléphone secondaire" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtTel2Parent"
-                                    promptText="Optionnel"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Email -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                                <Label text="Adresse email" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtEmailParent"
-                                    promptText="exemple@mail.com"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Profession -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                <Label text="Profession" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtProfessionParent"
-                                    promptText="Ex : Commerçant(e), Fonctionnaire"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Quartier / Adresse -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                                <Label text="Quartier / Lieu de résidence" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtAdresseParent"
-                                    promptText="Ex : Bastos, Mvan, Ngousso..."
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                            <!-- Ville -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                <Label text="Ville" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtVilleParent"
-                                    promptText="Ex : Yaoundé"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-
-                        </GridPane>
-
-                        <!-- Personne à contacter en cas d'urgence -->
-                        <Label text="Contact d'urgence (si différent du parent)"
-                               styleClass="form-section-title"
-                               style="-fx-padding: 12 0 0 0;" />
-                        <Pane styleClass="form-separator" />
-
-                        <GridPane hgap="16" vgap="12">
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                <Label text="Nom du contact urgence" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtNomUrgence"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <Label text="Téléphone urgence" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtTelUrgence"
-                                    styleClass="text-field-base"
-                                    prefWidth="240" />
-                            </VBox>
-                        </GridPane>
-
-                    </VBox>
-                </Tab>
-
-                <!-- ════════════════════════════════════════
-                     ONGLET 3 – Frais de scolarité
-                     ════════════════════════════════════════ -->
-                <Tab text="💳  Frais scolaires" fx:id="tabFrais">
-                    <VBox spacing="20">
-
-                        <Label text="Configuration des frais" styleClass="form-section-title" />
-                        <Pane styleClass="form-separator" />
-
-                        <GridPane hgap="16" vgap="12">
-
-                            <!-- Montant total annuel -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                                <Label text="Frais annuels (FCFA)" styleClass="field-label" />
-                                <TextField
-                                    fx:id="txtFraisAnnuels"
-                                    promptText="Ex : 180 000"
-                                    styleClass="text-field-base"
-                                    prefWidth="200" />
-                            </VBox>
-
-                            <!-- Mode de paiement préféré -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="0">
-                                <Label text="Mode de paiement" styleClass="field-label" />
-                                <ComboBox
-                                    fx:id="cmbModePaiement"
-                                    styleClass="combo-base"
-                                    prefWidth="200" />
-                            </VBox>
-
-                            <!-- Nombre de tranches -->
-                            <VBox spacing="6" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                                <Label text="Nombre de tranches" styleClass="field-label" />
-                                <ComboBox
-                                    fx:id="cmbNbTranches"
-                                    styleClass="combo-base"
-                                    prefWidth="200" />
-                            </VBox>
-
-                            <!-- Remise éventuelle -->
-                            <VBox spacing="6" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                <Label text="Remise / Exonération (%)" styleClass="field-label" />
-                                <Spinner
-                                    fx:id="spnRemise"
-                                    min="0" max="100" initialValue="0"
-                                    styleClass="spinner-base"
-                                    prefWidth="200" />
-                            </VBox>
-
-                        </GridPane>
-
-                        <!-- Tableau des tranches générées -->
-                        <Label text="Échéancier des tranches" styleClass="form-section-title"
-                               style="-fx-padding: 12 0 0 0;" />
-                        <Pane styleClass="form-separator" />
-
-                        <TableView
-                            fx:id="tblTranches"
-                            styleClass="table-view-base"
-                            prefHeight="160"
-                            columnResizePolicy="CONSTRAINED_RESIZE_POLICY">
-                            <columns>
-                                <TableColumn fx:id="colTrancheNum"     text="Tranche" prefWidth="80" />
-                                <TableColumn fx:id="colTrancheMontant" text="Montant (FCFA)" prefWidth="140" />
-                                <TableColumn fx:id="colTrancheDate"    text="Date limite" prefWidth="140" />
-                                <TableColumn fx:id="colTrancheStatut"  text="Statut" prefWidth="120" />
-                            </columns>
-                            <placeholder>
-                                <Label text="Configurez les frais pour générer l'échéancier." styleClass="label-info" />
-                            </placeholder>
-                        </TableView>
-
-                    </VBox>
-                </Tab>
-
-                <!-- ════════════════════════════════════════
-                     ONGLET 4 – Documents fournis
-                     ════════════════════════════════════════ -->
-                <Tab text="📄  Documents" fx:id="tabDocuments">
-                    <VBox spacing="16">
-                        <Label text="Pièces fournies à l'inscription"
-                               styleClass="form-section-title" />
-                        <Pane styleClass="form-separator" />
-
-                        <VBox spacing="10">
-                            <CheckBox fx:id="chkActeNaissance"
-                                      text="Acte de naissance ou extrait (copie certifiée)"
-                                      style="-fx-font-size: 13px;" />
-                            <CheckBox fx:id="chkCertificatVaccin"
-                                      text="Carnet de vaccination à jour"
-                                      style="-fx-font-size: 13px;" />
-                            <CheckBox fx:id="chkCertificatScolarite"
-                                      text="Certificat de scolarité de l'année précédente"
-                                      style="-fx-font-size: 13px;" />
-                            <CheckBox fx:id="chkBulletinPrecedent"
-                                      text="Bulletin de notes de l'année précédente"
-                                      style="-fx-font-size: 13px;" />
-                            <CheckBox fx:id="chkPhotoIdentite"
-                                      text="Photo d'identité (4×4)"
-                                      style="-fx-font-size: 13px;" />
-                        </VBox>
-
-                        <Label text="Observations / Notes supplémentaires"
-                               styleClass="field-label"
-                               style="-fx-padding: 12 0 0 0;" />
-                        <TextArea
-                            fx:id="txtObservations"
-                            promptText="Remarques particulières sur cet élève..."
-                            styleClass="text-area-base"
-                            prefHeight="100"
-                            wrapText="true" />
-                    </VBox>
-                </Tab>
-
-            </TabPane>
-        </ScrollPane>
-    </center>
-
-    <!-- ── Barre d'actions (BOTTOM) ─────────────────────── -->
-    <bottom>
-        <HBox
-            alignment="CENTER_RIGHT"
-            spacing="12"
-            style="-fx-padding: 16 32; -fx-background-color: #FFFFFF;
-                   -fx-border-color: #E2E8F0 transparent transparent transparent;
-                   -fx-border-width: 1 0 0 0;">
-
-            <!-- Message de validation -->
-            <Label
-                fx:id="lblValidation"
-                text=""
-                styleClass="login-error"
-                visible="false"
-                wrapText="true"
-                maxWidth="400" />
-            <Region HBox.hgrow="ALWAYS" />
-
-            <Button
-                fx:id="btnAnnuler"
-                text="Annuler"
-                styleClass="btn-secondary"
-                onAction="#onAnnuler" />
-
-            <Button
-                fx:id="btnReinitialiser"
-                text="🗑  Réinitialiser"
-                styleClass="btn-secondary"
-                onAction="#onReinitialiser" />
-
-            <Button
-                fx:id="btnEnregistrer"
-                text="✔  Enregistrer l'inscription"
-                styleClass="btn-primary"
-                onAction="#onEnregistrer" />
-
+                <Pane HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#handleExporterPDF" style="-fx-background-color: #f1f5f9; -fx-text-fill: #334155; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;" text="Exporter PDF">
+                    <graphic>
+                        <FontIcon iconLiteral="fth-printer" iconSize="16" />
+                    </graphic>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#handleModifier" style="-fx-background-color: #1e293b; -fx-text-fill: #ffffff; -fx-background-radius: 8; -fx-padding: 8 16; -fx-cursor: hand;" text="📝 Modifier"  />
+            </children>
         </HBox>
-    </bottom>
 
-</BorderPane>
+        <AnchorPane VBox.vgrow="ALWAYS">
+            <children>
+                <AnchorPane layoutX="20.0" layoutY="20.0" prefHeight="160.0" prefWidth="1060.0" style="-fx-background-color: #334155; -fx-background-radius: 12;" AnchorPane.leftAnchor = "20.0" AnchorPane.rightAnchor="20.0">
+                    <children>
+                        <VBox layoutX="180.0" layoutY="35.0" spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                    <children>
+                                        <Label fx:id="lblNomComplet" text="Amina Benali" textFill="WHITE">
+                                            <font>
+                                                <Font name="Segoe UI Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="lblBadgeStatut" style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 2 8;" text="Actif" />
+                                    </children>
+                                </HBox>
+                                <Label fx:id="lblClasseGenre" text="6ème A · Féminin" textFill="#94a3b8">
+                                    <font>
+                                        <Font name="Segoe UI" size="14.0" />
+                                    </font>
+                                </Label>
+                                <Label fx:id="lblMetasNaissance" text="Né(e) le 12/03/2013 à Casablanca · Marocaine" textFill="#94a3b8">
+                                    <font>
+                                        <Font name="Segoe UI" size="13.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+                        <HBox layoutX="780.0" layoutY="45.0" spacing="30.0" AnchorPane.rightAnchor="40.0">
+                            <children>
+                                <VBox alignment="CENTER">
+                                    <children>
+                                        <Label fx:id="lblMoyenneHeader" text="15.5" textFill="#10b981">
+                                            <font>
+                                                <Font name="Segoe UI Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                        <Label text="Moyenne" textFill="#94a3b8" />
+                                    </children>
+                                </VBox>
+                                <VBox alignment="CENTER">
+                                    <children>
+                                        <Label fx:id="lblAbsencesHeader" text="2" textFill="#ef4444">
+                                            <font>
+                                                <Font name="Segoe UI Bold" size="24.0" />
+                                            </font>
+                                        </Label>
+                                        <Label text="Absences" textFill="#94a3b8" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </AnchorPane>
+
+                <AnchorPane layoutX="45.0" layoutY="110.0" prefHeight="120.0" prefWidth="120.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4); -fx-padding: 4;">
+                    <children>
+                        <ImageView fx:id="imgPhotoEleve" fitHeight="112.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="false" style="-fx-background-radius: 8;" />
+                    </children>
+                </AnchorPane>
+
+                <HBox layoutX="20.0" layoutY="260.0" prefHeight="350.0" prefWidth="1060.0" spacing="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="260.0">
+                    <children>
+                        <VBox prefWidth="520.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="👤 Informations personnelles" textFill="#1e293b">
+                                    <font>
+                                        <Font name="Segoe UI Bold" size="16.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets bottom="15.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <GridPane vgap="12.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="Adresse" textFill="#64748b" />
+                                        <Label fx:id="lblAdresse" text="25, Rue des Oliviers, Casablanca" textFill="#334155" GridPane.columnIndex="1" />
+                                        <Label text="Nationalité" textFill="#64748b" GridPane.rowIndex="1" />
+                                        <Label fx:id="lblNationalite" text="Marocaine" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                        <Label text="Date inscription" textFill="#64748b" GridPane.rowIndex="2" />
+                                        <Label fx:id="lblDateInscription" text="05/09/2023" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                        <Label text="Matricule" textFill="#64748b" GridPane.rowIndex="3" />
+                                        <Label fx:id="lblMatriculeCorps" text="EDU-2024-0142" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                        <Label text="Antécédents Médicaux" textFill="#64748b" GridPane.rowIndex="4" />
+                                        <Label fx:id="lblAntecedentsMedicaux" text="Aucun" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+
+                        <VBox prefWidth="520.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-padding: 20;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="📞 Contacts parents" textFill="#1e293b">
+                                    <font>
+                                        <Font name="Segoe UI Bold" size="16.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets bottom="15.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <GridPane vgap="12.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+                                    </columnConstraints>
+                                    <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    </rowConstraints>
+                                    <children>
+                                        <Label text="Nom complet" textFill="#64748b" />
+                                        <Label fx:id="lblNomParent" text="Benali Karim" textFill="#334155" GridPane.columnIndex="1" />
+                                        <Label text="Profession" textFill="#64748b" GridPane.rowIndex="1" />
+                                        <Label fx:id="lblProfessionParent" text="Père - Ingénieur" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                        <Label text="Téléphone" textFill="#64748b" GridPane.rowIndex="2" />
+                                        <Label fx:id="lblTelephoneParent" text="06 12 34 56 78" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                        <Label text="Email" textFill="#64748b" GridPane.rowIndex="3" />
+                                        <Label fx:id="lblEmailParent" text="karim.benali@email.com" textFill="#334155" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    </children>
+                                </GridPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
