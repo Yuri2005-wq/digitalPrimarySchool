@@ -10,25 +10,47 @@ import java.sql.Statement;
 import java.util.stream.Collectors;
 
 public class Database {
-        private static final String URL = "jdbc:sqlite:ecole.db";
-        //metode qui retourn une connection sqlite
-        public static Connection getConnexion() throws SQLException {
-            return DriverManager.getConnection(URL);
-        }
-        public static void initializeDatabase(){
-            try(Connection conn = getConnexion(); Statement stmt = conn.createStatement()){
-                InputStream is = Database.class.getResourceAsStream("DB.sql");
+    // Remplacer 'localhost' par l'IP fixe du serveur à l'école en production
+    private static final String HOST = "localhost";
+    private static final String PORT = "3306";
+    private static final String DB_NAME = "digital_primary_school_db"; // Créez d'abord cette base vide sous MySQL Workbench
+    private static final String USER = "root";
+    private static final String PASSWORD = "yuriDjaleu";
 
-                if (is == null){
-                    System.err.println("Fichier DB.sql introuvables dans les ressources");
-                    return;
-                }
-                String sqlScript = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining("\n"));
-                stmt.executeUpdate(sqlScript);
-                System.out.println("base de donnée initialisée avec succées");
+    private static final String URL = "jdbc:mysql://" + HOST + ":" + PORT + "/" + DB_NAME
+            + "?useSSL=false&serverTimezone=UTC&allowMultiQueries=true";
 
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+    public static Connection getConnexion() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
+    }
+
+    public static void initializeDatabase() {
+        try (Connection conn = getConnexion(); Statement stmt = conn.createStatement()) {
+            InputStream is = Database.class.getResourceAsStream("DB.sql");
+
+            if (is == null) {
+                System.err.println("Le fichier DB.sql est introuvable dans les ressources.");
+                return;
             }
+
+            String sqlScript = new BufferedReader(new InputStreamReader(is))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+
+            // Découpage des requêtes par point-virgule pour MySQL
+            String[] commands = sqlScript.split(";");
+
+            for (String command : commands) {
+                String trimmedCommand = command.trim();
+                if (!trimmedCommand.isEmpty()) {
+                    stmt.execute(trimmedCommand);
+                }
+            }
+
+            System.out.println("Base de données initialisée avec succès avec l'entité Ecole !");
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Erreur d'initialisation MySQL : " + e.getMessage(), e);
         }
+    }
 }

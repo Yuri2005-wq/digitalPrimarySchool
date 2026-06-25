@@ -4,8 +4,6 @@ import com.digitalprimaryschool.digitalprimaryschool.Database;
 import com.digitalprimaryschool.digitalprimaryschool.model.Parent;
 import com.digitalprimaryschool.digitalprimaryschool.model.Profession;
 import com.digitalprimaryschool.digitalprimaryschool.model.Quartier;
-import org.sqlite.SQLiteErrorCode;
-import org.sqlite.SQLiteException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -24,19 +22,15 @@ public class ParentDAO {
             pstmt.setString(2, parent.getPrenom());
             pstmt.setInt(3, parent.getContactParent());
             pstmt.setString(4, parent.getEmailParent());
-            // MODIFICATION: Utiliser getProfession().name()
-            pstmt.setString(5, parent.getProfession() != null
-                    ? parent.getProfession().name() : null);
-            pstmt.setString(6, parent.getAdresse() != null
-                    ? parent.getAdresse().name() : null);
+            pstmt.setString(5, parent.getProfession() != null ? parent.getProfession().name() : null);
+            pstmt.setString(6, parent.getAdresse() != null ? parent.getAdresse().name() : null);
             pstmt.setString(7, parent.getDateCreation());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            if (e instanceof SQLiteException &&
-                    (((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT_PRIMARYKEY ||
-                            ((SQLiteException) e).getResultCode() == SQLiteErrorCode.SQLITE_CONSTRAINT)) {
+            // "23000" correspond au code d'état SQL standard (SQLState) pour les violations d'intégrité (Duplicate Key)
+            if ("23000".equals(e.getSQLState())) {
                 System.err.println("Erreur : Le parent avec cet identifiant existe déjà.");
             } else {
                 throw e;
@@ -54,10 +48,8 @@ public class ParentDAO {
             pstmt.setString(1, parent.getPrenom());
             pstmt.setInt(2, parent.getContactParent());
             pstmt.setString(3, parent.getEmailParent());
-            pstmt.setString(4, parent.getProfession() != null
-                    ? parent.getProfession().name() : null);
-            pstmt.setString(5, parent.getAdresse() != null
-                    ? parent.getAdresse().name() : null);
+            pstmt.setString(4, parent.getProfession() != null ? parent.getProfession().name() : null);
+            pstmt.setString(5, parent.getAdresse() != null ? parent.getAdresse().name() : null);
             pstmt.setString(6, parent.getIdParent());
 
             return pstmt.executeUpdate() > 0;
@@ -157,6 +149,7 @@ public class ParentDAO {
     private Parent mapResultSetToParent(ResultSet rs) throws SQLException {
         Parent parent = new Parent();
 
+        // Récupération sécurisée du champ idParent via la réflexion Java
         try {
             java.lang.reflect.Field fieldIdParent = Parent.class.getDeclaredField("idParent");
             fieldIdParent.setAccessible(true);
@@ -169,27 +162,27 @@ public class ParentDAO {
         parent.setContactParent(rs.getInt("contactParent"));
         parent.setEmailParent(rs.getString("emailParent"));
         parent.setDateCreation(rs.getString("date_creation"));
+        parent.setIsSynced(rs.getInt("is_synced"));
+        parent.setLabDerniereModification(rs.getString("derniere_modification"));
 
-        // Conversion Profession
+        // Extraction robuste de l'Enum Profession
         String professionStr = rs.getString("profession");
         if (professionStr != null && !professionStr.isEmpty()) {
             try {
                 parent.setProfession(Profession.valueOf(professionStr));
             } catch (IllegalArgumentException e) {
-                System.err.println("Profession inconnue : " + professionStr);
                 parent.setProfession(Profession.AUTRE);
             }
         } else {
             parent.setProfession(Profession.AUTRE);
         }
 
-        // Conversion Quartier
+        // Extraction robuste de l'Enum Quartier
         String adresseStr = rs.getString("adresse");
         if (adresseStr != null && !adresseStr.isEmpty()) {
             try {
                 parent.setAdresse(Quartier.valueOf(adresseStr));
             } catch (IllegalArgumentException e) {
-                System.err.println("Quartier inconnu : " + adresseStr);
                 parent.setAdresse((Quartier) null);
             }
         } else {

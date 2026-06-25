@@ -1,10 +1,7 @@
 package com.digitalprimaryschool.digitalprimaryschool.dao;
 
 import com.digitalprimaryschool.digitalprimaryschool.Database;
-import com.digitalprimaryschool.digitalprimaryschool.model.Classe;
-import com.digitalprimaryschool.digitalprimaryschool.model.NiveauClasse;
-import com.digitalprimaryschool.digitalprimaryschool.model.SectionClass;
-import com.digitalprimaryschool.digitalprimaryschool.model.CategoryClasse;
+import com.digitalprimaryschool.digitalprimaryschool.model.*;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,28 +14,21 @@ public class ClasseDAO {
     // ================================================================
     public void ajouter(Classe classe) throws SQLException {
         String sql = """
-                INSERT INTO Classe (idClasse, nom, niveau, capaciteMax, section)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO Classe (idClasse, idEcole, nom, niveau, capaciteMax, section)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, classe.getIdClasse());
-            stmt.setString(2, classe.getNom());
-
-            // MODIFICATION 1: Utiliser name() pour l'enum NiveauClasse
-            stmt.setString(3, classe.getNiveau() != null
-                    ? classe.getNiveau().name() : null);
-
-            stmt.setInt(4, classe.getCapaciteMax());
-
-            // MODIFICATION 2: Utiliser name() pour l'enum SectionClass
-            stmt.setString(5, classe.getSection() != null
-                    ? classe.getSection().name() : null);
+            stmt.setString(2, classe.getIdEcole());
+            stmt.setString(3, classe.getNom());
+            stmt.setString(4, classe.getNiveau() != null ? classe.getNiveau().name() : null);
+            stmt.setInt(5, classe.getCapaciteMax());
+            stmt.setString(6, classe.getSection() != null ? classe.getSection().name() : null);
 
             stmt.executeUpdate();
-            System.out.println("Classe ajoutée : " + classe.getNom());
         }
     }
 
@@ -59,17 +49,9 @@ public class ClasseDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, classe.getNom());
-
-            // MODIFICATION 3: Utiliser name() pour l'enum NiveauClasse
-            stmt.setString(2, classe.getNiveau() != null
-                    ? classe.getNiveau().name() : null);
-
+            stmt.setString(2, classe.getNiveau() != null ? classe.getNiveau().name() : null);
             stmt.setInt(3, classe.getCapaciteMax());
-
-            // MODIFICATION 4: Utiliser name() pour l'enum SectionClass
-            stmt.setString(4, classe.getSection() != null
-                    ? classe.getSection().name() : null);
-
+            stmt.setString(4, classe.getSection() != null ? classe.getSection().name() : null);
             stmt.setString(5, classe.getIdClasse());
 
             int lignes = stmt.executeUpdate();
@@ -93,7 +75,6 @@ public class ClasseDAO {
             if (lignes == 0) {
                 throw new SQLException("Aucune classe trouvée avec l'id : " + idClasse);
             }
-            System.out.println("Classe supprimée : " + idClasse);
         }
     }
 
@@ -118,16 +99,14 @@ public class ClasseDAO {
     }
 
     // ================================================================
-    // LISTER toutes les classes
+    // LISTER TOUTES LES CLASSES GLOBALES (Optionnel / Rétrocompatibilité)
     // ================================================================
     public List<Classe> listerToutes() throws SQLException {
-        String sql = "SELECT * FROM Classe ORDER BY niveau, nom";
+        String sql = "SELECT * FROM Classe ORDER BY nom ASC";
         List<Classe> classes = new ArrayList<>();
-
         try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 classes.add(construireClasse(rs));
             }
@@ -136,131 +115,14 @@ public class ClasseDAO {
     }
 
     // ================================================================
-    // LISTER les classes par niveau
+    // VÉRIFIER EXISTENCE NOM PAR ÉCOLE (Corrigé pour éviter les conflits inter-écoles)
     // ================================================================
-    public List<Classe> listerParNiveau(NiveauClasse niveau) throws SQLException {
-        String sql = "SELECT * FROM Classe WHERE niveau = ? ORDER BY nom";
-        List<Classe> classes = new ArrayList<>();
-
+    public boolean nomExiste(String nom, String idEcole) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idEcole = ?";
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, niveau.name());
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    classes.add(construireClasse(rs));
-                }
-            }
-        }
-        return classes;
-    }
-
-    // ================================================================
-    // LISTER les classes par catégorie (Maternelle/Primaire)
-    // ================================================================
-    public List<Classe> listerParCategorie(CategoryClasse categorie) throws SQLException {
-        String sql = """
-                SELECT * FROM Classe 
-                WHERE niveau IN (?, ?, ?) 
-                   OR niveau IN (?, ?, ?, ?, ?, ?)
-                ORDER BY niveau, nom
-                """;
-
-        List<Classe> classes = new ArrayList<>();
-        List<String> niveaux = new ArrayList<>();
-
-        if (categorie == CategoryClasse.MATERNELLE) {
-            niveaux.add(NiveauClasse.PETITE_SECTION.name());
-            niveaux.add(NiveauClasse.MOYENNE_SECTION.name());
-            niveaux.add(NiveauClasse.GRANDE_SECTION.name());
-        } else if (categorie == CategoryClasse.PRIMAIRE) {
-            niveaux.add(NiveauClasse.SIL.name());
-            niveaux.add(NiveauClasse.CP.name());
-            niveaux.add(NiveauClasse.CE1.name());
-            niveaux.add(NiveauClasse.CE2.name());
-            niveaux.add(NiveauClasse.CM1.name());
-            niveaux.add(NiveauClasse.CM2.name());
-        }
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            for (int i = 0; i < niveaux.size(); i++) {
-                stmt.setString(i + 1, niveaux.get(i));
-            }
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    classes.add(construireClasse(rs));
-                }
-            }
-        }
-        return classes;
-    }
-
-    // ================================================================
-    // COMPTER le nombre total de classes (pour le tableau de bord)
-    // ================================================================
-    public int compterToutes() throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Classe";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            if (rs.next()) return rs.getInt(1);
-        }
-        return 0;
-    }
-
-    // ================================================================
-    // COMPTER les classes par catégorie
-    // ================================================================
-    public int compterParCategorie(CategoryClasse categorie) throws SQLException {
-        List<String> niveaux = new ArrayList<>();
-
-        if (categorie == CategoryClasse.MATERNELLE) {
-            niveaux.add(NiveauClasse.PETITE_SECTION.name());
-            niveaux.add(NiveauClasse.MOYENNE_SECTION.name());
-            niveaux.add(NiveauClasse.GRANDE_SECTION.name());
-        } else if (categorie == CategoryClasse.PRIMAIRE) {
-            niveaux.add(NiveauClasse.SIL.name());
-            niveaux.add(NiveauClasse.CP.name());
-            niveaux.add(NiveauClasse.CE1.name());
-            niveaux.add(NiveauClasse.CE2.name());
-            niveaux.add(NiveauClasse.CM1.name());
-            niveaux.add(NiveauClasse.CM2.name());
-        }
-
-        String sql = "SELECT COUNT(*) FROM Classe WHERE niveau IN (" +
-                String.join(",", niveaux.stream().map(n -> "?").toArray(String[]::new)) +
-                ")";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            for (int i = 0; i < niveaux.size(); i++) {
-                stmt.setString(i + 1, niveaux.get(i));
-            }
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getInt(1);
-            }
-        }
-        return 0;
-    }
-
-    // ================================================================
-    // VÉRIFIER si une classe existe déjà par nom
-    // ================================================================
-    public boolean nomExiste(String nom) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?)";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, nom);
+            stmt.setString(2, idEcole);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
@@ -268,17 +130,13 @@ public class ClasseDAO {
         return false;
     }
 
-    // ================================================================
-    // VÉRIFIER si une classe existe déjà par nom (sauf pour une classe donnée)
-    // ================================================================
-    public boolean nomExiste(String nom, String idClasseExclu) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idClasse != ?";
-
+    public boolean nomExiste(String nom, String idClasseExclu, String idEcole) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idClasse != ? AND idEcole = ?";
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, nom);
             stmt.setString(2, idClasseExclu);
+            stmt.setString(3, idEcole);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) return rs.getInt(1) > 0;
             }
@@ -287,96 +145,104 @@ public class ClasseDAO {
     }
 
     // ================================================================
-    // MÉTHODE PRIVÉE : construire un objet Classe depuis un ResultSet
+    // MÉTHODES DE FILTRAGE PAR ÉCOLE (Pour affichage fluide JavaFX)
+    // ================================================================
+    public List<Classe> listerToutesPourEcole(String idEcole) throws SQLException {
+        String sql = "SELECT * FROM Classe WHERE idEcole = ? ORDER BY niveau, nom";
+        List<Classe> classes = new ArrayList<>();
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idEcole);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    classes.add(construireClasse(rs));
+                }
+            }
+        }
+        return classes;
+    }
+
+    // ================================================================
+    // LOGIQUE MÉTIER COHÉRENTE (Bulletins, Insolvables, Titulaires)
+    // ================================================================
+    public List<String> getEleveNonEnRegle(String idClasse) throws SQLException {
+        String sql = """
+            SELECT i.matriculeEleve FROM Inscription i
+            INNER JOIN Classe c ON i.idClasse = c.idClasse
+            INNER JOIN TarisScolaire t ON c.niveau = t.niveauClasse AND c.idEcole = t.idEcole
+            WHERE i.idClasse = ? AND i.montantPayer < t.pension
+            """;
+        List<String> matricules = new ArrayList<>();
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idClasse);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) { matricules.add(rs.getString("matriculeEleve")); }
+            }
+        }
+        return matricules;
+    }
+
+    public double getMoyenneGenerale(String idClasse, String idSequence) throws SQLException {
+        String sql = """
+            SELECT AVG(n.valeur) as moyenneClasse FROM Notes n
+            WHERE n.idMatiere IN (SELECT idMatiere FROM Matiere WHERE idClasse = ?) AND n.idSequence = ?
+            """;
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idClasse);
+            stmt.setString(2, idSequence);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getDouble("moyenneClasse");
+            }
+        }
+        return 0.0;
+    }
+
+    public String getProfTitulaire(String idClasse) throws SQLException {
+        String sql = "SELECT nom, prenom FROM Enseignant WHERE idClasse = ? LIMIT 1";
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idClasse);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getString("nom") + " " + rs.getString("prenom");
+            }
+        }
+        return "Aucun titulaire";
+    }
+
+    // ================================================================
+    // LOGIQUE DE SOUCHE INTERNE
     // ================================================================
     private Classe construireClasse(ResultSet rs) throws SQLException {
         Classe classe = new Classe();
-
         classe.setIdClasse(rs.getString("idClasse"));
+        classe.setIdEcole(rs.getString("idEcole"));
         classe.setNom(rs.getString("nom"));
         classe.setCapaciteMax(rs.getInt("capaciteMax"));
 
-        // MODIFICATION 5: Conversion du niveau (TEXT SQLite → enum NiveauClasse)
         String niveauStr = rs.getString("niveau");
         if (niveauStr != null && !niveauStr.isEmpty()) {
-            try {
-                classe.setNiveau(NiveauClasse.valueOf(niveauStr));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Niveau inconnu : " + niveauStr);
-            }
+            try { classe.setNiveau(NiveauClasse.valueOf(niveauStr)); } catch (IllegalArgumentException e) {}
         }
-
-        // MODIFICATION 6: Conversion de la section (TEXT SQLite → enum SectionClass)
         String sectionStr = rs.getString("section");
         if (sectionStr != null && !sectionStr.isEmpty()) {
-            try {
-                classe.setSection(SectionClass.valueOf(sectionStr));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Section inconnue : " + sectionStr);
-            }
+            try { classe.setSection(SectionClass.valueOf(sectionStr)); } catch (IllegalArgumentException e) {}
         }
 
-        // MODIFICATION 7: Déterminer la catégorie en fonction du niveau
-        if (classe.getNiveau() != null) {
-            switch (classe.getNiveau()) {
-                case PETITE_SECTION:
-                case MOYENNE_SECTION:
-                case GRANDE_SECTION:
-                case NURSERY_1:
-                case NURSERY_2:
-                case NURSERY_3:
-                    classe.setCategorieClasse(CategoryClasse.MATERNELLE);
-                    break;
-                case SIL:
-                case CP:
-                case CE1:
-                case CE2:
-                case CM1:
-                case CM2:
-                case CLASS_1:
-                case CLASS_2:
-                case CLASS_3:
-                case CLASS_4:
-                case CLASS_5:
-                case CLASS_6:
-                    classe.setCategorieClasse(CategoryClasse.PRIMAIRE);
-                    break;
-                default:
-                    classe.setCategorieClasse(CategoryClasse.MATERNELLE);
-                    break;
+        // Stratégie d'injection : récupération du titulaire via EnseignantDAO
+        String sqlProf = "SELECT idEnseignant FROM Enseignant WHERE idClasse = ? LIMIT 1";
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmtProf = conn.prepareStatement(sqlProf)) {
+            stmtProf.setString(1, classe.getIdClasse());
+            try (ResultSet rsProf = stmtProf.executeQuery()) {
+                if (rsProf.next()) {
+                    EnseignantDAO ensDAO = new EnseignantDAO();
+                    classe.setEnseignant(ensDAO.trouverParId(rsProf.getString("idEnseignant")));
+                }
             }
         }
 
         return classe;
-    }
-    // ================================================================
-// LISTER toutes les classes avec leur effectif réel (Jointure Inscription)
-// ================================================================
-    public List<Classe> listerToutesAvecEffectifs() throws SQLException {
-        // Compte le nombre d'élèves liés à chaque classe dans la table Inscription
-        String sql = """
-            SELECT c.*, 
-                   (SELECT COUNT(*) FROM Inscription i WHERE i.idClasse = c.idClasse) AS effectifReel
-            FROM Classe c
-            ORDER BY c.nom
-            """;
-        List<Classe> classes = new ArrayList<>();
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                Classe classe = construireClasse(rs);
-
-                // Si ta classe modèle 'Classe' possède une propriété de stockage temporaire pour l'effectif :
-                // classe.setNombreEleves(rs.getInt("effectifReel"));
-                // Sinon, nous stockerons ou utiliserons directement cette valeur à l'affichage via une propriété utilisateur.
-                classe.setCapaciteMax(rs.getInt("effectifReel")); // Utilisons transitoirement capaciteMax ou une Map si l'attribut n'existe pas.
-
-                classes.add(classe);
-            }
-        }
-        return classes;
     }
 }

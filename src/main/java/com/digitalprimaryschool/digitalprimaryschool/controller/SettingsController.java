@@ -23,10 +23,12 @@ public class SettingsController {
     @FXML private Button btnTabTarif;
     @FXML private Button btnTabTranche;
     @FXML private Button btnTabClasse;
+    @FXML private Button btnTabEcole;
 
     private final Map<Button, String> tabViewsMap = new HashMap<>();
     private Button currentActiveButton = null;
 
+//    fth-book-open
     @FXML
     public void initialize() {
         // Liaison entre boutons et fichiers FXML correspondants
@@ -36,6 +38,8 @@ public class SettingsController {
         tabViewsMap.put(btnTabTarif, "/com/digitalprimaryschool/digitalprimaryschool/view/tarif-view.fxml");
         tabViewsMap.put(btnTabTranche, "/com/digitalprimaryschool/digitalprimaryschool/view/tranches.fxml");
         tabViewsMap.put(btnTabClasse, "/com/digitalprimaryschool/digitalprimaryschool/view/classe-config.fxml");
+        tabViewsMap.put(btnTabEcole, "/com/digitalprimaryschool/digitalprimaryschool/view/ecole-view.fxml");
+
 
         // Focus et chargement automatique du premier onglet (Années Scolaires) au démarrage
         mettreEnValeurBouton(btnTabAnnee);

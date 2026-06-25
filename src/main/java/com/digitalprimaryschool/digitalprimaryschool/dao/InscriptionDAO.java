@@ -15,20 +15,21 @@ public class InscriptionDAO {
     public void ajouter(Inscription inscription) throws SQLException {
         String sql = """
                 INSERT INTO Inscription (
-                    idInscription, idAnnescolaire, idClasse, 
+                    idInscription, idEcole, idAnnescolaire, idClasse, 
                     matriculeEleve, montantPayer, estReinscript
-                ) VALUES (?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, inscription.getIdInscription());
-            stmt.setString(2, inscription.getIdAnnescolaire());
-            stmt.setString(3, inscription.getIdClasse());
-            stmt.setString(4, inscription.getMatriculeEleve());
-            stmt.setDouble(5, inscription.getMontantPayer());
-            stmt.setInt(6, inscription.getEstReinscript());
+            stmt.setInt(2, inscription.getIdEcole()); // Injection de la variable d'environnement de session
+            stmt.setString(3, inscription.getIdAnnescolaire());
+            stmt.setString(4, inscription.getIdClasse());
+            stmt.setString(5, inscription.getMatriculeEleve());
+            stmt.setDouble(6, inscription.getMontantPayer());
+            stmt.setInt(7, inscription.getEstReinscript());
 
             stmt.executeUpdate();
         }
@@ -72,18 +73,7 @@ public class InscriptionDAO {
             stmt.setString(1, matricule);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Inscription ins = new Inscription();
-                    ins.setIdInscription(rs.getString("idInscription"));
-                    ins.setIdAnnescolaire(rs.getString("idAnnescolaire"));
-                    ins.setIdClasse(rs.getString("idClasse"));
-                    ins.setMatriculeEleve(rs.getString("matriculeEleve"));
-                    ins.setMontantPayer(rs.getDouble("montantPayer"));
-                    ins.setEstReinscript(rs.getInt("estReinscript"));
-
-                    // Récupération de la date d'inscription depuis le schéma SQLite
-                    ins.setDateInscription(rs.getString("dateInscription"));
-
-                    inscriptions.add(ins);
+                    inscriptions.add(construireInscription(rs));
                 }
             }
         }
@@ -108,10 +98,7 @@ public class InscriptionDAO {
     // LISTER toutes les inscriptions d'une classe pour une année
     // ================================================================
     public List<Inscription> listerParClasseEtAnnee(String idClasse, String idAnnee) throws SQLException {
-        String sql = """
-                SELECT * FROM Inscription 
-                WHERE idClasse = ? AND idAnnescolaire = ?
-                """;
+        String sql = "SELECT * FROM Inscription WHERE idClasse = ? AND idAnnescolaire = ?";
         List<Inscription> inscriptions = new ArrayList<>();
 
         try (Connection conn = Database.getConnexion();
@@ -121,21 +108,46 @@ public class InscriptionDAO {
             stmt.setString(2, idAnnee);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    Inscription ins = new Inscription();
-                    ins.setIdInscription(rs.getString("idInscription"));
-                    ins.setIdAnnescolaire(rs.getString("idAnnescolaire"));
-                    ins.setIdClasse(rs.getString("idClasse"));
-                    ins.setMatriculeEleve(rs.getString("matriculeEleve"));
-                    ins.setMontantPayer(rs.getDouble("montantPayer"));
-                    ins.setEstReinscript(rs.getInt("estReinscript"));
-
-                    // Récupération de la date d'inscription depuis le schéma SQLite
-                    ins.setDateInscription(rs.getString("dateInscription"));
-
-                    inscriptions.add(ins);
+                    inscriptions.add(construireInscription(rs));
                 }
             }
         }
         return inscriptions;
+    }
+
+    // ================================================================
+    // LISTER toutes les inscriptions d'une école entière (Nouveau)
+    // ================================================================
+    public List<Inscription> listerToutesPourEcole(int idEcole) throws SQLException {
+        String sql = "SELECT * FROM Inscription WHERE idEcole = ?";
+        List<Inscription> inscriptions = new ArrayList<>();
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idEcole);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    inscriptions.add(construireInscription(rs));
+                }
+            }
+        }
+        return inscriptions;
+    }
+
+    // ================================================================
+    // LOGIQUE INTERNE DE CONSTRUCTION
+    // ================================================================
+    private Inscription construireInscription(ResultSet rs) throws SQLException {
+        Inscription ins = new Inscription();
+        ins.setIdInscription(rs.getString("idInscription"));
+        ins.setIdEcole(rs.getInt("idEcole"));
+        ins.setIdAnnescolaire(rs.getString("idAnnescolaire"));
+        ins.setIdClasse(rs.getString("idClasse"));
+        ins.setMatriculeEleve(rs.getString("matriculeEleve"));
+        ins.setMontantPayer(rs.getDouble("montantPayer"));
+        ins.setEstReinscript(rs.getInt("estReinscript"));
+        ins.setDateInscription(rs.getString("dateInscription"));
+        return ins;
     }
 }

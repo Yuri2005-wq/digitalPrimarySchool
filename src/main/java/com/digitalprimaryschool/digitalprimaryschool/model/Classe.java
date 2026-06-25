@@ -4,17 +4,17 @@ import java.util.*;
 
 public class Classe {
    private String idClasse;
+   private String idEcole; // Liaison multi-écoles gérée par ContextApp
    private String nom;
    private NiveauClasse niveau;
    private int capaciteMax;
    private SectionClass section;
    private CategoryClasse categorieClasse;
-   public Enseignant enseignant;
 
+   public Enseignant enseignant;
    public Inscription inscription;
    public TarisScolaire tarisScolaire;
    public Collection<Matiere> matiere;
-
 
    public Classe(){
       super();
@@ -23,9 +23,14 @@ public class Classe {
 
    public String getIdClasse() { return idClasse; }
    public void setIdClasse(String idClasse) { this.idClasse = idClasse; }
+
+   public String getIdEcole() { return idEcole; }
+   public void setIdEcole(String idEcole) { this.idEcole = idEcole; }
+
    public String getnombreEleve(){
       return "0";
    }
+
    public String getNom() { return nom; }
    public void setNom(String nom) { this.nom = nom; }
 
@@ -35,10 +40,14 @@ public class Classe {
    public Enseignant getEnseignant(){
       return this.enseignant;
    }
-   public String getEnseignantNom(){
-      return this.enseignant != null ? enseignant.getFullName() : "Aucun Enseignant Affecté a cette Classe";
+   public void setEnseignant(Enseignant enseignant) {
+      this.enseignant = enseignant;
    }
-   // Setter pour NiveauClasse (prend un String et le convertit en enum)
+
+   public String getEnseignantNom(){
+      return this.enseignant != null ? enseignant.getFullName() : "Aucun Enseignant Affecté à cette Classe";
+   }
+
    public void setNiveau(String niveau) {
       if (niveau != null && !niveau.isEmpty()) {
          try {
@@ -49,7 +58,6 @@ public class Classe {
       }
    }
 
-   // Setter pour NiveauClasse (prend le libellé)
    public void setNiveauParLibelle(String libelle) {
       if (libelle != null && !libelle.isEmpty()) {
          for (NiveauClasse n : NiveauClasse.values()) {
@@ -67,7 +75,6 @@ public class Classe {
    public SectionClass getSection() { return section; }
    public void setSection(SectionClass section) { this.section = section; }
 
-   // Setter pour SectionClass (prend un String et le convertit en enum)
    public void setSection(String section) {
       if (section != null && !section.isEmpty()) {
          try {
@@ -86,7 +93,6 @@ public class Classe {
       this.categorieClasse = categorieClasse;
    }
 
-   // Setter pour CategoryClasse (prend un String et le convertit en enum)
    public void setCategorieClasse(String categorieClasse) {
       if (categorieClasse != null && !categorieClasse.isEmpty()) {
          try {
@@ -97,7 +103,6 @@ public class Classe {
       }
    }
 
-   // Setter pour CategoryClasse (prend le libellé)
    public void setCategorieClasseParLibelle(String libelle) {
       if (libelle != null && !libelle.isEmpty()) {
          for (CategoryClasse c : CategoryClasse.values()) {
@@ -109,7 +114,6 @@ public class Classe {
       }
    }
 
-   // Méthode pour obtenir le libellé de la catégorie
    public String getCategorieClasseLibelle() {
       return this.categorieClasse != null ? this.categorieClasse.getLibelle() : "";
    }
@@ -118,78 +122,36 @@ public class Classe {
       return tarisScolaire != null ? tarisScolaire.getIdTarifScolaire() : null;
    }
 
-   public void getEleveNonEnRegle() {
-      // TODO: implement
-   }
-
-   public void getMoyenneGenerale() {
-      // TODO: implement
-   }
-
-   public void getClassement() {
-      // TODO: implement
-   }
-
-   public char getProfTitulaire() {
-      // TODO: implement
-      return 0;
-   }
-
-   public double totalFraisClasse() {
-      // TODO: implement
-      return 0;
-   }
-
-
-   public TarisScolaire getTarisScolaire() {
-      return tarisScolaire;
-   }
-
-   public void setTarisScolaire(TarisScolaire newTarisScolaire) {
-      this.tarisScolaire = newTarisScolaire;
-   }
+   public TarisScolaire getTarisScolaire() { return tarisScolaire; }
+   public void setTarisScolaire(TarisScolaire newTarisScolaire) { this.tarisScolaire = newTarisScolaire; }
 
    public Collection<Matiere> getMatiere() {
-      if (matiere == null)
-         matiere = new HashSet<Matiere>();
+      if (matiere == null) matiere = new HashSet<Matiere>();
       return matiere;
    }
 
-   public Iterator getIteratorMatiere() {
-      if (matiere == null)
-         matiere = new HashSet<Matiere>();
+   public Iterator<Matiere> getIteratorMatiere() {
+      if (matiere == null) matiere = new HashSet<Matiere>();
       return matiere.iterator();
    }
 
-
    public void setMatiere(Collection<Matiere> newMatiere) {
       removeAllMatiere();
-      for (Iterator iter = newMatiere.iterator(); iter.hasNext();)
-         addMatiere((Matiere)iter.next());
+      if (newMatiere != null) {
+         for (Matiere m : newMatiere) addMatiere(m);
+      }
    }
-
 
    public void addMatiere(Matiere newMatiere) {
-      if (newMatiere == null)
-         return;
-      if (this.matiere == null)
-         this.matiere = new HashSet<Matiere>();
-      if (!this.matiere.contains(newMatiere))
-         this.matiere.add(newMatiere);
+      if (newMatiere == null) return;
+      if (this.matiere == null) this.matiere = new HashSet<Matiere>();
+      this.matiere.add(newMatiere);
    }
-
 
    public void removeMatiere(Matiere oldMatiere) {
-      if (oldMatiere == null)
-         return;
-      if (this.matiere != null)
-         if (this.matiere.contains(oldMatiere))
-            this.matiere.remove(oldMatiere);
+      if (oldMatiere == null) return;
+      if (this.matiere != null) this.matiere.remove(oldMatiere);
    }
 
-   public void removeAllMatiere() {
-      if (matiere != null)
-         matiere.clear();
-   }
-
+   public void removeAllMatiere() { if (matiere != null) matiere.clear(); }
 }

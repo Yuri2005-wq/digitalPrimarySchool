@@ -1,11 +1,10 @@
-//
-
 package com.digitalprimaryschool.digitalprimaryschool.model;
 
 import java.util.UUID;
 
 public class Inscription {
    private String idInscription;
+   private int idEcole; // Intégration pour le cloisonnement invisible de la session
    private String idAnnescolaire;
    private String idClasse;
    private String matriculeEleve;
@@ -13,18 +12,18 @@ public class Inscription {
    private int estReinscript;
    private String dateInscription;
 
-   public String getDateInscription() {
-      return this.dateInscription;
-   }
-
-   public void setDateInscription(String dateInscription) {
-      this.dateInscription = dateInscription;
-   }
    public Inscription() {
       this.idInscription = UUID.randomUUID().toString();
    }
 
-   // Getters et Setters
+   // --- Getter et Setter pour l'école ---
+   public int getIdEcole() { return idEcole; }
+   public void setIdEcole(int idEcole) { this.idEcole = idEcole; }
+
+   // --- Getters et Setters existants ---
+   public String getDateInscription() { return this.dateInscription; }
+   public void setDateInscription(String dateInscription) { this.dateInscription = dateInscription; }
+
    public String getIdInscription() { return idInscription; }
    public void setIdInscription(String idInscription) { this.idInscription = idInscription; }
 

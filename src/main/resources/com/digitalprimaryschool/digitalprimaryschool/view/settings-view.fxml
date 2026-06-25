@@ -46,6 +46,11 @@
                             <FontIcon iconLiteral="fth-layers" iconSize="16"/>
                         </graphic>
                     </Button>
+                    <Button fx:id="btnTabEcole" onAction="#switchTab" styleClass="top-tab-btn" text="Classes">
+                        <graphic>
+                            <FontIcon iconLiteral="fth-book-open" iconSize="16"/>
+                        </graphic>
+                    </Button>
                 </children>
             </HBox>
 

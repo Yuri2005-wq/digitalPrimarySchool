@@ -1,6 +1,8 @@
 package com.digitalprimaryschool.digitalprimaryschool.controller;
 
+import com.digitalprimaryschool.digitalprimaryschool.dao.EcoleDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.AnneeScolaire;
+import com.digitalprimaryschool.digitalprimaryschool.model.Ecole;
 import com.digitalprimaryschool.digitalprimaryschool.service.EnregistrementService;
 import com.digitalprimaryschool.digitalprimaryschool.service.EnregistrementService.Resultat;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -123,42 +125,26 @@ public class AnneeScolaireController {
         chargerDonnees();
     }
 
-//    private void chargerDonnees() {
-//        try {
-//            List<AnneeScolaire> list = enregistrementService.getTousLesAnneesScolaires();
-//            listeAnnees.clear();
-//            if (list != null) {
-//                list.sort((annee1, annee2) -> {
-//                    String libelle1 = annee1.getLibelle() != null ? annee1.getLibelle() : "";
-//                    String libelle2 = annee2.getLibelle() != null ? annee2.getLibelle() : "";
-//                    return String.CASE_INSENSITIVE_ORDER.compare(libelle2, libelle1);
-//                });
-//                listeAnnees.addAll(list);
-//            }
-//        } catch (Exception e) {
-//            showErrorAlert("Erreur Base", "Impossible de lire la table AnneeScolaire : " + e.getMessage());
-//        }
-//    }
-private void chargerDonnees() {
-    try {
-        // Récupération sécurisée via le DAO/Service
-        List<AnneeScolaire> list = enregistrementService.getTousLesAnneesScolaires();
-        listeAnnees.clear();
+    private void chargerDonnees() {
+        try {
+            // Récupération sécurisée via le DAO/Service
+            List<AnneeScolaire> list = enregistrementService.getTousLesAnneesScolaires();
+            listeAnnees.clear();
 
-        if (list != null) {
-            // CORRECTION DU TRI : Tri décroissant sur le libellé sans le .get() erroné
-            list.sort((annee1, annee2) -> {
-                String l1 = (annee1.getLibelle() != null) ? annee1.getLibelle() : "";
-                String l2 = (annee2.getLibelle() != null) ? annee2.getLibelle() : "";
-                return String.CASE_INSENSITIVE_ORDER.compare(l2, l1); // Tri décroissant (ex: 2026 avant 2025)
-            });
+            if (list != null) {
+                // Tri décroissant sur le libellé
+                list.sort((annee1, annee2) -> {
+                    String l1 = (annee1.getLibelle() != null) ? annee1.getLibelle() : "";
+                    String l2 = (annee2.getLibelle() != null) ? annee2.getLibelle() : "";
+                    return String.CASE_INSENSITIVE_ORDER.compare(l2, l1); // Tri décroissant (ex: 2026 avant 2025)
+                });
 
-            listeAnnees.addAll(list);
+                listeAnnees.addAll(list);
+            }
+        } catch (Exception e) {
+            showErrorAlert("Erreur Base", "Impossible de lire la table AnneeScolaire : " + e.getMessage());
         }
-    } catch (Exception e) {
-        showErrorAlert("Erreur Base", "Impossible de lire la table AnneeScolaire : " + e.getMessage());
     }
-}
 
     @FXML
     private void handleToggleActive() {
@@ -204,7 +190,7 @@ private void chargerDonnees() {
             return;
         }
 
-        // Récupération et formatage explicite en chaîne yyyy-MM-dd pour SQLite
+        // Récupération et formatage explicite en chaîne yyyy-MM-dd
         String debutStr = (dpDebut.getValue() != null) ? dpDebut.getValue().format(formatter) : null;
         String finStr = (dpFin.getValue() != null) ? dpFin.getValue().format(formatter) : null;
         boolean statutActiveValue = btnToggleStatut.isSelected();
@@ -219,6 +205,18 @@ private void chargerDonnees() {
                 nouvelle.setDateDebut(debutStr);
                 nouvelle.setDateFin(finStr);
                 nouvelle.setEstActive(statutActiveValue);
+
+                // --- CORRECTION CLÉ ÉTRANGÈRE : Récupération de l'école ---
+                EcoleDAO ecoleDAO = new EcoleDAO();
+                Ecole ecoleActuelle = ecoleDAO.getPremiereEcole();
+
+                if (ecoleActuelle != null) {
+                    // Injecte l'ID numérique de l'école (parsing car le modèle Ecole utilise un String)
+                    nouvelle.setIdEcole(Integer.parseInt(ecoleActuelle.getIdEcole()));
+                } else {
+                    showErrorAlert("Configuration manquante", "Aucune école n'existe en base de données. Créez d'abord une école.");
+                    return;
+                }
 
                 res = enregistrementService.enregistrerAnneeScolaire(nouvelle);
             } else {

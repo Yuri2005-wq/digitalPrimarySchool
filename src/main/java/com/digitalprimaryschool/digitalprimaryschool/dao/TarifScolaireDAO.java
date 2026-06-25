@@ -16,21 +16,22 @@ public class TarifScolaireDAO {
     public void ajouter(TarisScolaire tarif) throws SQLException {
         String sql = """
                 INSERT INTO TarisScolaire (
-                    idTarifScolaire, niveauClasse, libelle, pension,
+                    idTarifScolaire, idEcole, niveauClasse, libelle, pension,
                     fraistenueScolaire, fraistenueSport, fraisInscription
-                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tarif.getIdTarifScolaire());
-            stmt.setString(2, tarif.getNiveauClasse() != null ? tarif.getNiveauClasse().name() : null);
-            stmt.setString(3, tarif.getLibelle());
-            stmt.setDouble(4, tarif.getMontantPension());
-            stmt.setDouble(5, tarif.getFraistenueScolaire());
-            stmt.setDouble(6, tarif.getFraistenueSport());
-            stmt.setDouble(7, tarif.getFraisInscription());
+            stmt.setInt(2, tarif.getIdEcole()); // Injection invisible multi-école
+            stmt.setString(3, tarif.getNiveauClasse() != null ? tarif.getNiveauClasse().name() : null);
+            stmt.setString(4, tarif.getLibelle());
+            stmt.setDouble(5, tarif.getMontantPension());
+            stmt.setDouble(6, tarif.getFraistenueScolaire());
+            stmt.setDouble(7, tarif.getFraistenueSport());
+            stmt.setDouble(8, tarif.getFraisInscription());
 
             stmt.executeUpdate();
         }
@@ -71,21 +72,18 @@ public class TarifScolaireDAO {
     // ================================================================
     public void supprimer(String idTarif) throws SQLException {
         String sql = "DELETE FROM TarisScolaire WHERE idTarifScolaire = ?";
-
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, idTarif);
             stmt.executeUpdate();
         }
     }
 
     // ================================================================
-    // TROUVER le tarif d'une classe par niveauClasse
+    // TROUVER le tarif d'une classe par niveauClasse (Surcharge String)
     // ================================================================
     public TarisScolaire trouverParClasse(String niveauClasse) throws SQLException {
         String sql = "SELECT * FROM TarisScolaire WHERE niveauClasse = ?";
-
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -104,7 +102,6 @@ public class TarifScolaireDAO {
     // ================================================================
     public TarisScolaire trouverParId(String idTarif) throws SQLException {
         String sql = "SELECT * FROM TarisScolaire WHERE idTarifScolaire = ?";
-
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -119,80 +116,58 @@ public class TarifScolaireDAO {
     }
 
     // ================================================================
-    // LISTER tous les tarifs
+    // LISTER tous les tarifs de la base de données
     // ================================================================
     public List<TarisScolaire> listerTous() throws SQLException {
-        String sql = """
-                SELECT *
-                FROM TarisScolaire
-                ORDER BY niveauClasse
-                """;
+        String sql = "SELECT * FROM TarisScolaire ORDER BY niveauClasse";
         List<TarisScolaire> tarifs = new ArrayList<>();
-
         try (Connection conn = Database.getConnexion();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                TarisScolaire tarif = construireTarif(rs);
-                tarifs.add(tarif);
+                tarifs.add(construireTarif(rs));
             }
         }
         return tarifs;
     }
 
     // ================================================================
-    // CALCULER le total des frais d'une classe
+    // VÉRIFIER si un tarif existe pour une classe (Accepte un String)
     // ================================================================
-    public double calculerTotalFrais(String niveauClasse) throws SQLException {
-        String sql = """
-                SELECT (pension + fraistenueScolaire + fraistenueSport + fraisInscription) as total
-                FROM TarisScolaire WHERE niveauClasse = ?
-                """;
-
+    public boolean tarifExistePourClasse(String niveauClasse) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM TarisScolaire WHERE niveauClasse = ?";
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, niveauClasse);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getDouble("total");
-            }
-        }
-        return 0.0;
-    }
-
-    // ================================================================
-    // VÉRIFIER si un tarif existe pour une classe
-    // ================================================================
-    public boolean tarifExistePourClasse(NiveauClasse niveauClasse) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM TarisScolaire WHERE niveauClasse = ?";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, niveauClasse.name());
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
+                if (rs.next()) return rs.getInt(1) > 0;
             }
         }
         return false;
     }
 
+    // Surcharge acceptant un type Enum NiveauClasse (Requis par EnregistrementService)
+    public boolean tarifExistePourClasse(NiveauClasse niveauClasse) throws SQLException {
+        if (niveauClasse == null) return false;
+        return tarifExistePourClasse(niveauClasse.name());
+    }
+
     // ================================================================
-    // MÉTHODE PRIVÉE
+    // LOGIQUE INTERNE DE CONSTRUCTION
     // ================================================================
     private TarisScolaire construireTarif(ResultSet rs) throws SQLException {
         TarisScolaire tarif = new TarisScolaire();
         tarif.setIdTarifScolaire(rs.getString("idTarifScolaire"));
+        tarif.setIdEcole(rs.getInt("idEcole")); // Hydratation de la clé école
 
         String niveauStr = rs.getString("niveauClasse");
         if (niveauStr != null && !niveauStr.isEmpty()) {
             try {
                 tarif.setNiveauClasse(NiveauClasse.valueOf(niveauStr));
             } catch (IllegalArgumentException e) {
-                System.err.println("Niveau inconnu : " + niveauStr);
+                System.err.println("Niveau de classe inconnu à la lecture : " + niveauStr);
             }
         }
 
