@@ -9,16 +9,10 @@ import java.util.List;
 
 public class EleveDAO {
 
-    // ================================================================
-    // CRÉER / AJOUTER un élève (Version standard)
-    // ================================================================
     public void inserer(Eleve eleve) throws SQLException {
         ajouter(eleve, eleve.getIdParent());
     }
 
-    // ================================================================
-    // AJOUTER un élève avec ID Parent explicite (Appelé par le Service)
-    // ================================================================
     public void ajouter(Eleve eleve, String idParent) throws SQLException {
         String sql = """
             INSERT INTO Eleve (matriculeEleve, idParent, nom, prenom, dateNaissance, lieuNaissance, 
@@ -46,9 +40,6 @@ public class EleveDAO {
         }
     }
 
-    // ================================================================
-    // MODIFIER un élève
-    // ================================================================
     public boolean modifier(Eleve eleve) throws SQLException {
         String sql = """
             UPDATE Eleve SET 
@@ -78,9 +69,6 @@ public class EleveDAO {
         }
     }
 
-    // ================================================================
-    // SUPPRIMER un élève
-    // ================================================================
     public boolean supprimer(String matricule) throws SQLException {
         String sql = "DELETE FROM Eleve WHERE matriculeEleve = ?";
         try (Connection conn = Database.getConnexion();
@@ -90,9 +78,6 @@ public class EleveDAO {
         }
     }
 
-    // ================================================================
-    // TROUVER par Matricule
-    // ================================================================
     public Eleve trouverParMatricule(String matricule) throws SQLException {
         String sql = "SELECT * FROM Eleve WHERE matriculeEleve = ?";
         try (Connection conn = Database.getConnexion();
@@ -108,38 +93,38 @@ public class EleveDAO {
         return null;
     }
 
-    // ================================================================
-    // LISTER TOUS LES ÉLÈVES (Requis par le Service)
-    // ================================================================
     public List<Eleve> listerTous() throws SQLException {
-        String sql = "SELECT * FROM Eleve ORDER BY nom ASC, prenom ASC";
+        // Jointure : on récupère toutes les colonnes de l'élève et le prénom du parent
+        String sql = """
+        SELECT e.*, p.prenom AS prenomParent 
+        FROM Eleve e
+        LEFT JOIN Parent p ON e.idParent = p.idParent
+        ORDER BY e.nom ASC, e.prenom ASC
+        """;
+
         List<Eleve> liste = new ArrayList<>();
         try (Connection conn = Database.getConnexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
-                liste.add(construireEleve(rs, false));
+                // On appelle une méthode modifiée qui extrait le parent directement du JOIN
+                liste.add(construireEleveAvecJoin(rs));
             }
         }
         return liste;
     }
 
-    // ================================================================
-    // COMPTER TOUS LES ÉLÈVES (Requis par le Service)
-    // ================================================================
     public int compterTous() throws SQLException {
         String sql = "SELECT COUNT(*) FROM Eleve";
         try (Connection conn = Database.getConnexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) return rs.getInt(1);
         }
         return 0;
     }
 
-    // ================================================================
-    // LISTER les élèves d'une classe spécifique (Via Inscription)
-    // ================================================================
     public List<Eleve> listerParClasse(String idClasse) throws SQLException {
         String sql = """
             SELECT e.* FROM Eleve e
@@ -154,41 +139,13 @@ public class EleveDAO {
             stmt.setString(1, idClasse);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    liste.add(construireEleve(rs, true));
+                    liste.add(construireEleve(rs, false)); // Bug résolu ici
                 }
             }
         }
         return liste;
     }
 
-    // ================================================================
-    // LISTER tous les élèves d'une École entière
-    // ================================================================
-    public List<Eleve> listerToutPourEcole(String idEcole) throws SQLException {
-        String sql = """
-            SELECT DISTINCT e.* FROM Eleve e
-            INNER JOIN Inscription i ON e.matriculeEleve = i.matriculeEleve
-            INNER JOIN Classe c ON i.idClasse = c.idClasse
-            WHERE c.idEcole = ?
-            ORDER BY e.nom ASC, e.prenom ASC
-            """;
-        List<Eleve> liste = new ArrayList<>();
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    liste.add(construireEleve(rs, false));
-                }
-            }
-        }
-        return liste;
-    }
-
-    // ================================================================
-    // INTERNE : Construction de l'objet Eleve
-    // ================================================================
     private Eleve construireEleve(ResultSet rs, boolean chargerParent) throws SQLException {
         Eleve eleve = new Eleve();
         eleve.setMatricule(rs.getString("matriculeEleve"));
@@ -210,6 +167,52 @@ public class EleveDAO {
         if (chargerParent && idParent != null && !idParent.isEmpty()) {
             ParentDAO parentDAO = new ParentDAO();
             eleve.parent = parentDAO.findById(idParent);
+        }
+        return eleve;
+    }
+
+
+
+
+    private Eleve construireEleveAvecJoin(ResultSet rs) throws SQLException {
+        // 1. On construit d'abord l'élève (exactement comme votre code actuel)
+        Eleve eleve = new Eleve();
+        eleve.setMatricule(rs.getString("matriculeEleve"));
+        eleve.setNom(rs.getString("nom"));
+        eleve.setPrenom(rs.getString("prenom"));
+        eleve.setDateNaissance(rs.getDate("dateNaissance"));
+        eleve.setPhoto(rs.getString("photo"));
+        eleve.setaTerminerPension(rs.getInt("aTerminerPension") == 1);
+        eleve.setAntecedentsMedicaux(rs.getString("antecedentsMedicaux"));
+        eleve.setIsSynced(rs.getInt("is_synced"));
+        eleve.setDerniereModification(rs.getString("derniere_modification"));
+
+        eleve.setLieuNaissance(rs.getString("lieuNaissance"));
+        eleve.setSexe(rs.getString("sexe"));
+        eleve.setNationalite(rs.getString("nationalite"));
+        eleve.setRegionOrigine(rs.getString("regionOrigine"));
+
+        // 2. EXTRACTION DU PARENT VIA LA JOINTURE (Pas de requête SQL supplémentaire !)
+        String idParent = rs.getString("idParent");
+        String prenomParent = rs.getString("prenomParent"); // Extrait de l'alias 'AS prenomParent'
+
+        if (idParent != null && !idParent.isEmpty()) {
+            Parent parentVolatile = new Parent();
+
+            // On lui attribue son prénom récupéré par le JOIN
+            parentVolatile.setPrenom(prenomParent);
+
+            // Optionnel : Si vous avez besoin de l'idParent dans l'objet parent
+            try {
+                java.lang.reflect.Field fieldIdParent = Parent.class.getDeclaredField("idParent");
+                fieldIdParent.setAccessible(true);
+                fieldIdParent.set(parentVolatile, idParent);
+            } catch (Exception e) {
+                // Ignorer ou logger
+            }
+
+            // On associe ce parent directement à l'élève
+            eleve.parent = parentVolatile;
         }
 
         return eleve;

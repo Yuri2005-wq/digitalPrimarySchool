@@ -4,7 +4,6 @@ import java.util.*;
 
 public class AnneeScolaire extends BaseModel {
    private String idAnnescolaire;
-   private int idEcole; // AJOUT : ID de l'école rattachée
    private String libelle;
    private String dateDebut;
    private String dateFin;
@@ -20,8 +19,6 @@ public class AnneeScolaire extends BaseModel {
    public String getIdAnnescolaire() { return idAnnescolaire; }
    public void setIdAnnescolaire(String idAnnescolaire) { this.idAnnescolaire = idAnnescolaire; }
 
-   public int getIdEcole() { return idEcole; } // AJOUT
-   public void setIdEcole(int idEcole) { this.idEcole = idEcole; } // AJOUT
 
    public String getLibelle() { return libelle; }
    public void setLibelle(String libelle) { this.libelle = libelle; }

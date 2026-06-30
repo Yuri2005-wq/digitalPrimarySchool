@@ -10,13 +10,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class ClasseController {
@@ -51,7 +48,7 @@ public class ClasseController {
         colCategorie.setCellValueFactory(cell -> new SimpleStringProperty(cell.getValue().getCategorieClasseLibelle()));
         colCapacite.setCellValueFactory(cell -> new SimpleIntegerProperty(cell.getValue().getCapaciteMax()).asObject());
 
-        // Remplissage des ComboBoxes avec vos Enums
+        // Remplissage des ComboBoxes avec les Enums
         comboNiveau.setItems(FXCollections.observableArrayList(NiveauClasse.values()));
         comboSection.setItems(FXCollections.observableArrayList(SectionClass.values()));
 
@@ -94,7 +91,7 @@ public class ClasseController {
     }
 
     @FXML
-    private void handleEnregistrer() {
+    private void handleEnregistrer() throws SQLException {
         if (!validerChamps()) return;
 
         String nom = txtNom.getText();
@@ -103,7 +100,7 @@ public class ClasseController {
         int capacite = Integer.parseInt(txtCapacite.getText());
 
         if (selectedClasse == null) {
-            // AJOUT
+            // --- CRÉATION ---
             Classe nouvelleClasse = new Classe(); // Génère un UUID automatique interne
             nouvelleClasse.setNom(nom);
             nouvelleClasse.setNiveau(niveau.name());
@@ -111,6 +108,7 @@ public class ClasseController {
             nouvelleClasse.setCapaciteMax(capacite);
 
             Resultat res = enregistrementService.enregistrerClasse(nouvelleClasse);
+
             if (res.isSuccess()) {
                 Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
                 confirmation.setTitle("CONFIRMATION");
@@ -120,13 +118,13 @@ public class ClasseController {
                 if (confirmation.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
                     masterData.add(nouvelleClasse);
                     handleAnnuler();
+                    rafraichirListe(); // Assure l'exactitude visuelle de l'affichage
                 }
-
             } else {
                 afficherAlerte(Alert.AlertType.ERROR, "Erreur", res.getMessage());
             }
         } else {
-            // MODIFICATION
+            // --- MODIFICATION ---
             selectedClasse.setNom(nom);
             selectedClasse.setNiveau(niveau.name());
             selectedClasse.setSection(section.name());
@@ -157,7 +155,6 @@ public class ClasseController {
         confirmation.showAndWait();
 
         if (confirmation.getResult() == ButtonType.YES) {
-
             Resultat res = enregistrementService.supprimerClasse(selectedClasse.getIdClasse());
             if (res.isSuccess()) {
                 masterData.remove(selectedClasse);
@@ -202,6 +199,4 @@ public class ClasseController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-
 }

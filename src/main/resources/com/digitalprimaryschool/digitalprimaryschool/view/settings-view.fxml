@@ -36,6 +36,11 @@
                             <FontIcon iconLiteral="fth-credit-card" iconSize="16"/>
                         </graphic>
                     </Button>
+
+                    <Button fx:id="btnEnseignant" onAction="#switchTab" styleClass="top-tab-btn" text="Enseignants">
+                        <graphic><FontIcon iconLiteral="fth-award" iconSize="16" /></graphic>
+                    </Button>
+
                     <Button fx:id="btnTabTranche" onAction="#switchTab" styleClass="top-tab-btn" text="Tranches">
                         <graphic>
                             <FontIcon iconLiteral="fth-dollar-sign" iconSize="16"/>
@@ -46,9 +51,9 @@
                             <FontIcon iconLiteral="fth-layers" iconSize="16"/>
                         </graphic>
                     </Button>
-                    <Button fx:id="btnTabEcole" onAction="#switchTab" styleClass="top-tab-btn" text="Classes">
+                    <Button fx:id="btnTabEcole" onAction="#switchTab" styleClass="top-tab-btn" text="Infos Ecole">
                         <graphic>
-                            <FontIcon iconLiteral="fth-book-open" iconSize="16"/>
+                            <FontIcon iconLiteral="fth-home" iconSize="16"/>
                         </graphic>
                     </Button>
                 </children>

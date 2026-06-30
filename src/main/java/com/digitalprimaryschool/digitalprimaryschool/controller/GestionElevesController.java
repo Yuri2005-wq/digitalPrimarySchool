@@ -6,6 +6,7 @@ import com.digitalprimaryschool.digitalprimaryschool.dao.ClasseDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.Eleve;
 import com.digitalprimaryschool.digitalprimaryschool.model.Classe;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -33,21 +34,19 @@ public class GestionElevesController {
     @FXML private ComboBox<String> comboStatut;
     @FXML private Label lblCompteur;
 
-    // Déclaration de la TableView mise à jour selon tes exigences
     @FXML private TableView<Eleve> tableEleves;
-    @FXML private TableColumn<Eleve, String> colPhoto; // Contient l'aperçu de la photo
-    @FXML private TableColumn<Eleve, String> colNom;
-    @FXML private TableColumn<Eleve, String> colPrenom;
-    @FXML private TableColumn<Eleve, String> colDateNaissance;
-    @FXML private TableColumn<Eleve, String> colClasse;
-    @FXML private TableColumn<Eleve, String> colStatut;
+    @FXML private TableColumn<Eleve, Object> colPhoto;
+    @FXML private TableColumn<Eleve, Object> colNom;
+    @FXML private TableColumn<Eleve, Object> colPrenom;
+    @FXML private TableColumn<Eleve, Object> colDateNaissance;
+    @FXML private TableColumn<Eleve, Object> colClasse;
+    @FXML private TableColumn<Eleve, Object> colStatut;
 
     private final EleveDAO eleveDAO = new EleveDAO();
     private final ClasseDAO classeDAO = new ClasseDAO();
-    private ObservableList<Eleve> masterData = FXCollections.observableArrayList();
+    private final ObservableList<Eleve> masterData = FXCollections.observableArrayList();
     private FilteredList<Eleve> filteredData;
 
-    // Dictionnaire d'ID Classe vers Nom Classe
     private final Map<String, String> mapIdClasseVersNom = new HashMap<>();
 
     @FXML
@@ -64,16 +63,22 @@ public class GestionElevesController {
     }
 
     private void configurerColonnes() {
-        // 1. Colonne Aperçu Photo Élève
+        colPhoto.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        colNom.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        colPrenom.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        colDateNaissance.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        colClasse.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+        colStatut.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+
         colPhoto.setCellFactory(column -> new TableCell<>() {
             private final ImageView imageView = new ImageView();
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    Eleve e = getTableRow().getItem();
+                    Eleve e = (Eleve) item;
                     imageView.setFitHeight(40);
                     imageView.setFitWidth(40);
                     imageView.setPreserveRatio(true);
@@ -81,91 +86,87 @@ public class GestionElevesController {
                     if (e.getPhoto() != null && !e.getPhoto().isEmpty()) {
                         try {
                             String photoPath = e.getPhoto();
-
                             if (photoPath.contains(":") || photoPath.startsWith("/") || photoPath.startsWith("\\")) {
                                 File file = new File(photoPath);
                                 if (file.exists()) {
                                     imageView.setImage(new Image(file.toURI().toString()));
                                 } else {
-                                    chargerAvatarDefaut();
+                                    chargerAvatarDefaut(e);
                                 }
                             } else {
                                 imageView.setImage(new Image(photoPath));
                             }
                         } catch (Exception ex) {
-                            System.out.println("Erreur lors du chargement de l'image de l'eleve : " + ex);
-                            chargerAvatarDefaut();
+                            chargerAvatarDefaut(e);
                         }
                     } else {
-                        chargerAvatarDefaut();
+                        chargerAvatarDefaut(e);
                     }
                     setGraphic(imageView);
                 }
             }
-            private void chargerAvatarDefaut() {
-                Eleve eleve = getTableRow().getItem();
+            private void chargerAvatarDefaut(Eleve eleve) {
                 try {
-                    // Utilisation de .equals() plutôt que == pour la comparaison de chaînes de caractères
                     if(eleve != null && eleve.getSexe() != null && "Masculin".equalsIgnoreCase(eleve.getSexe().getLibelle())){
                         imageView.setImage(new Image(getClass().getResourceAsStream("/com/digitalprimaryschool/digitalprimaryschool/images/avatar.png")));
                     } else {
                         imageView.setImage(new Image(getClass().getResourceAsStream("/com/digitalprimaryschool/digitalprimaryschool/images/img.png")));
                     }
                 } catch (Exception e) {
-                    imageView.setImage(null); // Protection si l'image par défaut manque
+                    imageView.setImage(null);
                 }
             }
         });
 
-        // 2. Colonne pour le nom complet
         colNom.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(getTableRow().getItem().getMatricule());
+                    setText(((Eleve) item).getMatricule());
                 }
             }
         });
 
-        // 3. Colonne Prénom
         colPrenom.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
-                    setText(getTableRow().getItem().getFullName());
+                    setText(((Eleve) item).getFullName());
                 }
             }
         });
 
-        // 4. Colonne Date de naissance
         colDateNaissance.setCellFactory(column -> new TableCell<>() {
             private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null || getTableRow().getItem().getDateNaissance() == null) {
+                if (empty || item == null || ((Eleve) item).getDateNaissance() == null) {
                     setText(null);
                 } else {
-                    setText(formatter.format(getTableRow().getItem().getDateNaissance()));
+                    try {
+                        setText(formatter.format(((Eleve) item).getDateNaissance()));
+                    } catch (Exception ex) {
+                        setText("Date Invalide");
+                    }
                 }
             }
         });
 
-        // 5. Colonne Classe (via correspondance ID -> Nom)
         colClasse.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
-                    Eleve e = getTableRow().getItem();
+                    Eleve e = (Eleve) item;
                     if (e.getInscription() != null) {
                         String nomClasse = mapIdClasseVersNom.get(e.getInscription().getIdClasse());
                         setText(nomClasse != null ? nomClasse : "Inconnue");
@@ -176,15 +177,14 @@ public class GestionElevesController {
             }
         });
 
-        // 6. Colonne Statut (Badge graphique)
         colStatut.setCellFactory(column -> new TableCell<>() {
             @Override
-            protected void updateItem(String item, boolean empty) {
+            protected void updateItem(Object item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                if (empty || item == null) {
                     setGraphic(null);
                 } else {
-                    Eleve e = getTableRow().getItem();
+                    Eleve e = (Eleve) item;
                     boolean estInscrit = (e.getInscription() != null);
                     Label badge = new Label(estInscrit ? "Actif" : "Non Inscrit");
                     badge.setStyle(estInscrit
@@ -239,9 +239,9 @@ public class GestionElevesController {
 
         filteredData.setPredicate(eleve -> {
             if (!recherche.isEmpty()) {
-                boolean match = eleve.getNom().toLowerCase().contains(recherche)
-                        || eleve.getPrenom().toLowerCase().contains(recherche)
-                        || eleve.getMatricule().toLowerCase().contains(recherche);
+                boolean match = (eleve.getNom() != null && eleve.getNom().toLowerCase().contains(recherche))
+                        || (eleve.getPrenom() != null && eleve.getPrenom().toLowerCase().contains(recherche))
+                        || (eleve.getMatricule() != null && eleve.getMatricule().toLowerCase().contains(recherche));
                 if (!match) return false;
             }
 
@@ -287,7 +287,7 @@ public class GestionElevesController {
             rootStackPane.getChildren().add(ficheView);
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR, "Impossible de charger le fichier FXML de la fiche détaillée. Vérifiez son emplacement.", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Impossible de charger le fichier FXML de la fiche détaillée.", ButtonType.OK);
             alert.showAndWait();
         }
     }

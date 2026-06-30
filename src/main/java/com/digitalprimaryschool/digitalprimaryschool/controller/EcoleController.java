@@ -101,7 +101,6 @@ public class EcoleController {
 
         try {
             if (ecoleSelectionnee == null) {
-                // --- CREATE ---
                 Ecole nouvelle = new Ecole();
                 nouvelle.setNomEcole(nom);
                 nouvelle.setAdresseEcole(adresse);

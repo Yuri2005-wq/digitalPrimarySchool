@@ -9,32 +9,25 @@ import java.util.List;
 
 public class ClasseDAO {
 
-    // ================================================================
-    // AJOUTER une classe
-    // ================================================================
     public void ajouter(Classe classe) throws SQLException {
         String sql = """
-                INSERT INTO Classe (idClasse, idEcole, nom, niveau, capaciteMax, section)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT INTO Classe (idClasse, nom, niveau, capaciteMax, section)
+                VALUES (?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, classe.getIdClasse());
-            stmt.setString(2, classe.getIdEcole());
-            stmt.setString(3, classe.getNom());
-            stmt.setString(4, classe.getNiveau() != null ? classe.getNiveau().name() : null);
-            stmt.setInt(5, classe.getCapaciteMax());
-            stmt.setString(6, classe.getSection() != null ? classe.getSection().name() : null);
+            stmt.setString(2, classe.getNom());
+            stmt.setString(3, classe.getNiveau() != null ? classe.getNiveau().name() : null);
+            stmt.setInt(4, classe.getCapaciteMax());
+            stmt.setString(5, classe.getSection() != null ? classe.getSection().name() : null);
 
             stmt.executeUpdate();
         }
     }
 
-    // ================================================================
-    // MODIFIER une classe
-    // ================================================================
     public void modifier(Classe classe) throws SQLException {
         String sql = """
                 UPDATE Classe SET
@@ -56,14 +49,11 @@ public class ClasseDAO {
 
             int lignes = stmt.executeUpdate();
             if (lignes == 0) {
-                throw new SQLException("Aucune classe trouvée avec l'id : " + classe.getIdClasse());
+                throw new SQLException("Aucune classe trouvée avec l'id spécifié.");
             }
         }
     }
 
-    // ================================================================
-    // SUPPRIMER une classe
-    // ================================================================
     public void supprimer(String idClasse) throws SQLException {
         String sql = "DELETE FROM Classe WHERE idClasse = ?";
 
@@ -73,14 +63,11 @@ public class ClasseDAO {
             stmt.setString(1, idClasse);
             int lignes = stmt.executeUpdate();
             if (lignes == 0) {
-                throw new SQLException("Aucune classe trouvée avec l'id : " + idClasse);
+                throw new SQLException("Aucune classe trouvée.");
             }
         }
     }
 
-    // ================================================================
-    // TROUVER une classe par ID
-    // ================================================================
     public Classe trouverParId(String idClasse) throws SQLException {
         String sql = "SELECT * FROM Classe WHERE idClasse = ?";
 
@@ -88,7 +75,6 @@ public class ClasseDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idClasse);
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return construireClasse(rs);
@@ -98,15 +84,16 @@ public class ClasseDAO {
         return null;
     }
 
-    // ================================================================
-    // LISTER TOUTES LES CLASSES GLOBALES (Optionnel / Rétrocompatibilité)
-    // ================================================================
+    /**
+     * Récupère toutes les classes SANS les effectifs
+     */
     public List<Classe> listerToutes() throws SQLException {
-        String sql = "SELECT * FROM Classe ORDER BY nom ASC";
+        String sql = "SELECT * FROM Classe ORDER BY niveau, nom";
         List<Classe> classes = new ArrayList<>();
         try (Connection conn = Database.getConnexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 classes.add(construireClasse(rs));
             }
@@ -114,73 +101,207 @@ public class ClasseDAO {
         return classes;
     }
 
-    // ================================================================
-    // VÉRIFIER EXISTENCE NOM PAR ÉCOLE (Corrigé pour éviter les conflits inter-écoles)
-    // ================================================================
-    public boolean nomExiste(String nom, String idEcole) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idEcole = ?";
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nom);
-            stmt.setString(2, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getInt(1) > 0;
-            }
-        }
-        return false;
-    }
+    /**
+     * Récupère toutes les classes AVEC les effectifs (nombre d'élèves actifs)
+     * Utilise estReinscript = 1 pour les élèves actifs
+     */
+    public List<Classe> listerToutesAvecEffectif() throws SQLException {
+        String sql = """
+            SELECT c.*, 
+                   COALESCE(
+                       (SELECT COUNT(*) 
+                        FROM Inscription i 
+                        WHERE i.idClasse = c.idClasse 
+                          AND i.estReinscript = 1
+                       ), 0
+                   ) as totalEleves
+            FROM Classe c
+            ORDER BY c.niveau, c.nom
+            """;
 
-    public boolean nomExiste(String nom, String idClasseExclu, String idEcole) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idClasse != ? AND idEcole = ?";
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, nom);
-            stmt.setString(2, idClasseExclu);
-            stmt.setString(3, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getInt(1) > 0;
-            }
-        }
-        return false;
-    }
-
-    // ================================================================
-    // MÉTHODES DE FILTRAGE PAR ÉCOLE (Pour affichage fluide JavaFX)
-    // ================================================================
-    public List<Classe> listerToutesPourEcole(String idEcole) throws SQLException {
-        String sql = "SELECT * FROM Classe WHERE idEcole = ? ORDER BY niveau, nom";
         List<Classe> classes = new ArrayList<>();
         try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    classes.add(construireClasse(rs));
-                }
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Classe classe = construireClasse(rs);
+                int totalEleves = rs.getInt("totalEleves");
+                classe.setNombreEleve(totalEleves);
+                classes.add(classe);
             }
         }
         return classes;
     }
 
-    // ================================================================
-    // LOGIQUE MÉTIER COHÉRENTE (Bulletins, Insolvables, Titulaires)
-    // ================================================================
+    /**
+     * Récupère une classe AVEC son effectif
+     * Utilise estReinscript = 1 pour les élèves actifs
+     */
+    public Classe trouverParIdAvecEffectif(String idClasse) throws SQLException {
+        String sql = """
+            SELECT c.*, 
+                   COALESCE(
+                       (SELECT COUNT(*) 
+                        FROM Inscription i 
+                        WHERE i.idClasse = c.idClasse 
+                          AND i.estReinscript = 1
+                       ), 0
+                   ) as totalEleves
+            FROM Classe c
+            WHERE c.idClasse = ?
+            """;
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idClasse);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Classe classe = construireClasse(rs);
+                int totalEleves = rs.getInt("totalEleves");
+                classe.setNombreEleve(totalEleves);
+                return classe;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Compte le nombre d'élèves actifs dans une classe
+     * Utilise estReinscript = 1 pour les élèves actifs
+     */
+    public int compterElevesParClasse(String idClasse) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Inscription WHERE idClasse = ? AND estReinscript = 1";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, idClasse);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Compte le nombre total d'élèves actifs dans toutes les classes
+     * Utilise estReinscript = 1 pour les élèves actifs
+     */
+    public int compterTotalEleves() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Inscription WHERE estReinscript = 1";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Compte le nombre total de classes
+     */
+    public int compterTotalClasses() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Classe";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Compte le nombre de niveaux distincts
+     */
+    public int compterNiveauxDistincts() throws SQLException {
+        String sql = "SELECT COUNT(DISTINCT niveau) FROM Classe WHERE niveau IS NOT NULL";
+
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public boolean nomExiste(String nom, String idClasseExclu) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Classe WHERE LOWER(nom) = LOWER(?) AND idClasse != ?";
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nom);
+            stmt.setString(2, idClasseExclu);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Récupère les élèves non en règle (montant payé < pension)
+     */
     public List<String> getEleveNonEnRegle(String idClasse) throws SQLException {
         String sql = """
-            SELECT i.matriculeEleve FROM Inscription i
+            SELECT i.matriculeEleve 
+            FROM Inscription i
             INNER JOIN Classe c ON i.idClasse = c.idClasse
-            INNER JOIN TarisScolaire t ON c.niveau = t.niveauClasse AND c.idEcole = t.idEcole
-            WHERE i.idClasse = ? AND i.montantPayer < t.pension
+            INNER JOIN TarisScolaire t ON c.niveau = t.niveauClasse
+            WHERE i.idClasse = ? 
+              AND i.estReinscript = 1
+              AND i.montantPayer < t.pension
             """;
         List<String> matricules = new ArrayList<>();
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, idClasse);
             try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) { matricules.add(rs.getString("matriculeEleve")); }
+                while (rs.next()) {
+                    matricules.add(rs.getString("matriculeEleve"));
+                }
             }
         }
         return matricules;
+    }
+
+    /**
+     * Récupère le nombre d'élèves non en règle dans une classe
+     */
+    public int compterElevesNonEnRegle(String idClasse) throws SQLException {
+        String sql = """
+            SELECT COUNT(*) 
+            FROM Inscription i
+            INNER JOIN Classe c ON i.idClasse = c.idClasse
+            INNER JOIN TarisScolaire t ON c.niveau = t.niveauClasse
+            WHERE i.idClasse = ? 
+              AND i.estReinscript = 1
+              AND i.montantPayer < t.pension
+            """;
+        try (Connection conn = Database.getConnexion();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, idClasse);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
 
     public double getMoyenneGenerale(String idClasse, String idSequence) throws SQLException {
@@ -200,7 +321,7 @@ public class ClasseDAO {
     }
 
     public String getProfTitulaire(String idClasse) throws SQLException {
-        String sql = "SELECT nom, prenom FROM Enseignant WHERE idClasse = ? LIMIT 1";
+        String sql = "SELECT nom, prenom FROM Enseignant WHERE idClasse = ?";
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, idClasse);
@@ -211,13 +332,12 @@ public class ClasseDAO {
         return "Aucun titulaire";
     }
 
-    // ================================================================
-    // LOGIQUE DE SOUCHE INTERNE
-    // ================================================================
+    /**
+     * Construit un objet Classe à partir d'un ResultSet
+     */
     private Classe construireClasse(ResultSet rs) throws SQLException {
         Classe classe = new Classe();
         classe.setIdClasse(rs.getString("idClasse"));
-        classe.setIdEcole(rs.getString("idEcole"));
         classe.setNom(rs.getString("nom"));
         classe.setCapaciteMax(rs.getInt("capaciteMax"));
 
@@ -230,8 +350,7 @@ public class ClasseDAO {
             try { classe.setSection(SectionClass.valueOf(sectionStr)); } catch (IllegalArgumentException e) {}
         }
 
-        // Stratégie d'injection : récupération du titulaire via EnseignantDAO
-        String sqlProf = "SELECT idEnseignant FROM Enseignant WHERE idClasse = ? LIMIT 1";
+        String sqlProf = "SELECT idEnseignant FROM Enseignant WHERE idClasse = ?";
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmtProf = conn.prepareStatement(sqlProf)) {
             stmtProf.setString(1, classe.getIdClasse());
@@ -242,7 +361,6 @@ public class ClasseDAO {
                 }
             }
         }
-
         return classe;
     }
 }

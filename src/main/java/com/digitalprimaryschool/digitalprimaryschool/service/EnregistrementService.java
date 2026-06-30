@@ -231,16 +231,15 @@ public class EnregistrementService {
     }
 
     // ================================================================
-    // SERVICE : GESTION DES CLASSES (Correction de la signature multi-école)
+    // SERVICE : GESTION DES CLASSES (Mono-établissement)
     // ================================================================
 
     public Resultat enregistrerClasse(Classe classe) {
         try {
             if (classe == null) return new Resultat(false, "La classe ne peut pas être nulle.");
 
-            // CORRECTION EFFECTUÉE ICI : Ajout du paramètre classe.getIdEcole()
-            if (classeDAO.nomExiste(classe.getNom(), classe.getIdEcole())) {
-                return new Resultat(false, "Une classe portant le nom '" + classe.getNom() + "' existe déjà dans cet établissement.");
+            if (classeDAO.nomExiste(classe.getNom(), classe.getIdClasse())) {
+                return new Resultat(false, "Une classe portant le nom '" + classe.getNom() + "' existe déjà dans l'établissement.");
             }
             classeDAO.ajouter(classe);
             return new Resultat(true, "Classe enregistrée avec succès.");
@@ -253,8 +252,7 @@ public class EnregistrementService {
         try {
             if (classe == null) return new Resultat(false, "La classe ne peut pas être nulle.");
 
-            // CORRECTION EFFECTUÉE ICI : Ajout du paramètre classe.getIdEcole()
-            if (classeDAO.nomExiste(classe.getNom(), classe.getIdClasse(), classe.getIdEcole())) {
+            if (classeDAO.nomExiste(classe.getNom(), classe.getIdClasse())) {
                 return new Resultat(false, "Le nom '" + classe.getNom() + "' est déjà utilisé par une autre classe de l'établissement.");
             }
             classeDAO.modifier(classe);

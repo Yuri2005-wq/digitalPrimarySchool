@@ -1,5 +1,7 @@
 package com.digitalprimaryschool.digitalprimaryschool;
 
+import com.digitalprimaryschool.digitalprimaryschool.model.Utilisateur;
+import com.digitalprimaryschool.digitalprimaryschool.security.AccessManager;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,21 +32,38 @@ public class HelloController {
 
     @FXML
     public void initialize() {
-        // Au démarrage de l'application, on charge la vue Inscription par défaut
+        Utilisateur user = Session.get();
+        if (user != null) {
+            // Restriction d'affichage des boutons FXML selon les droits
+            btnSettings.setVisible(AccessManager.estAutorise("ACTION_CONFIG_ECOLE"));
+            btnInscription.setVisible(AccessManager.estAutorise("ACTION_INSCRIRE_ELEVE"));
+            btnEnregistrement.setVisible(AccessManager.estAutorise("ACTION_INSCRIRE_ELEVE"));
+            btnNotes.setVisible(AccessManager.estAutorise("ACTION_SAISIE_NOTES"));
+        }
+
+        // Chargement de l'accueil par défaut
         loadPage("Dashboard.fxml", btnDashboard);
     }
+
     @FXML
     void handleListEleve(ActionEvent event){
         loadPage("view/listeEleve.fxml", btnStudents);
     }
+
     @FXML
     void handleInscriptionMenu(ActionEvent event) {
-        loadPage("inscription-view.fxml", btnInscription);
+        if (AccessManager.estAutorise("ACTION_INSCRIRE_ELEVE")) {
+            loadPage("inscription-view.fxml", btnInscription);
+        }
     }
+
     @FXML
     void handleEnregistrement(ActionEvent event){
-        loadPage("view/EnregistrementEleveParent.fxml", btnEnregistrement);
+        if (AccessManager.estAutorise("ACTION_INSCRIRE_ELEVE")) {
+            loadPage("view/EnregistrementEleveParent.fxml", btnEnregistrement);
+        }
     }
+
     @FXML
     void handleClassesMenu(ActionEvent event) {
         loadPage("view/classe-view.fxml", btnClasses);
@@ -54,14 +73,21 @@ public class HelloController {
     void handleDashboardHome(ActionEvent event) {
         loadPage("Dashboard.fxml", btnDashboard);
     }
+
     @FXML
     void handleSettings(ActionEvent event){
-        loadPage("view/settings-view.fxml", btnSettings);
+        if (AccessManager.estAutorise("ACTION_CONFIG_ECOLE")) {
+            loadPage("view/settings-view.fxml", btnSettings);
+        }
     }
+
     @FXML
     void handleNotes(ActionEvent event){
-        loadPage("view/listeEleve.fxml", btnNotes);
+        if (AccessManager.estAutorise("ACTION_SAISIE_NOTES")) {
+            loadPage("view/listeEleve.fxml", btnNotes);
+        }
     }
+
     @FXML
     void handleLogout(ActionEvent event) throws IOException {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
@@ -70,26 +96,24 @@ public class HelloController {
         confirmation.setContentText("Voulez-vous vraiment vous déconnecter ?");
 
         if (confirmation.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            // Nettoyage de la session globale avant retour
+            Session.fermer();
             Stage stageActuel = (Stage) btnLogout.getScene().getWindow();
             returnVerLogin(stageActuel);
         }
-
     }
+
     private void loadPage(String fxmlFile, Button activeButton) {
         try {
-            // 1. Charger la nouvelle vue
             Node newNode = FXMLLoader.load(getClass().getResource(fxmlFile));
 
-            // 2. Appliquer l'animation de fondu fluide (Fade In)
             FadeTransition fadeIn = new FadeTransition(Duration.millis(250), newNode);
             fadeIn.setFromValue(0.0);
             fadeIn.setToValue(1.0);
 
-            // 3. Injecter la vue au centre
             contentArea.getChildren().setAll(newNode);
             fadeIn.play();
 
-            // 4. Gestion de la Navbar lumineuse
             btnDashboard.getStyleClass().remove("active");
             btnStudents.getStyleClass().remove("active");
             btnClasses.getStyleClass().remove("active");
@@ -97,7 +121,6 @@ public class HelloController {
             btnNotes.getStyleClass().remove("active");
             btnEnregistrement.getStyleClass().remove("active");
             btnInscription.getStyleClass().remove("active");
-
 
             if (activeButton != null && !activeButton.getStyleClass().contains("active")) {
                 activeButton.getStyleClass().add("active");
@@ -107,24 +130,21 @@ public class HelloController {
             e.printStackTrace();
         }
     }
+
     private void returnVerLogin(Stage currentStage) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/Login.fxml"));
         Scene mainScene = new Scene(loader.load(), 1000, 640);
 
+        Stage loginStage = new Stage();
+        loginStage.getIcons().add(new javafx.scene.image.Image(HelloApplication.class.getResourceAsStream("oh.png")));
 
-        Stage LoginStage = new Stage();
-        LoginStage.getIcons().add(new javafx.scene.image.Image(HelloApplication.class.getResourceAsStream("oh.png")));
-
-        LoginStage.setTitle("DigitalPrimarySchool");
-        LoginStage.setScene(mainScene);
-        LoginStage.initStyle(StageStyle.UNDECORATED);
-        LoginStage.setWidth(1000);
-        LoginStage.setHeight(640);
-
-
+        loginStage.setTitle("DigitalPrimarySchool");
+        loginStage.setScene(mainScene);
+        loginStage.initStyle(StageStyle.UNDECORATED);
+        loginStage.setWidth(1000);
+        loginStage.setHeight(640);
 
         currentStage.close();
-        LoginStage.show();
+        loginStage.show();
     }
-
 }

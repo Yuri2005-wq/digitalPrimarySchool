@@ -1,49 +1,99 @@
 package com.digitalprimaryschool.digitalprimaryschool.controller;
 
-import com.digitalprimaryschool.digitalprimaryschool.dao.EleveDAO;
-import com.digitalprimaryschool.digitalprimaryschool.dao.TarifScolaireDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.Classe;
 import com.digitalprimaryschool.digitalprimaryschool.model.Eleve;
-import com.digitalprimaryschool.digitalprimaryschool.model.TarisScolaire;
+import com.digitalprimaryschool.digitalprimaryschool.dao.EleveDAO;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class DetailClasseController {
 
     @FXML private Label lblNomClasse;
-    @FXML private Label lblMontantPension;
-    @FXML private Label lblFraisInscription;
-    @FXML private TableView<Eleve> tableEleves; // Assigne tes colonnes (Matricule, Nom, Prénom) dans Scene Builder
+    @FXML private Label lblNiveauClasse;
+    @FXML private Label lblSection;
+    @FXML private Label lblEnseignant;
+    @FXML private Label lblNombreEleves;
+    @FXML private Label lblStatutClasse;
+    @FXML private Label lblMoyenneClasse;
 
-    private final TarifScolaireDAO tarifDAO = new TarifScolaireDAO();
+    @FXML private TableView<Eleve> tableEleves;
+    @FXML private TableColumn<Eleve, String> colMatricule;
+    @FXML private TableColumn<Eleve, String> colNomEleve;
+    @FXML private TableColumn<Eleve, String> colPrenomEleve;
+    @FXML private TableColumn<Eleve, String> colSexe;
+    @FXML private TableColumn<Eleve, Double> colMoyenne;
+
+    private Classe classeActuelle;
+    private Runnable actionRetour;
     private final EleveDAO eleveDAO = new EleveDAO();
+    private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-    public void initialiserDonnees(Classe classe) {
-        lblNomClasse.setText("Détails - " + classe.getNom());
+    public void setClasse(Classe classe) {
+        this.classeActuelle = classe;
+        afficherInformationsClasse();
+        chargerEleves();
+    }
 
+    public void setActionRetour(Runnable actionRetour) {
+        this.actionRetour = actionRetour;
+    }
+
+    private void afficherInformationsClasse() {
+        if (classeActuelle == null) return;
+
+        lblNomClasse.setText(classeActuelle.getNom());
+        lblNiveauClasse.setText(classeActuelle.getNiveau().getLibelle());
+        lblSection.setText(classeActuelle.getSection().getLibelle());
+        lblEnseignant.setText(classeActuelle.getEnseignantNom() != null ? classeActuelle.getEnseignantNom() : "Non assigné");
+
+        int nbEleves = classeActuelle.getNombreEleve();
+        lblNombreEleves.setText(String.valueOf(nbEleves));
+
+        boolean estActive = nbEleves > 0;
+        lblStatutClasse.setText(estActive ? "Active" : "Vide");
+        lblStatutClasse.setStyle(estActive
+                ? "-fx-text-fill: #137333; -fx-font-weight: bold;"
+                : "-fx-text-fill: #c5221f; -fx-font-weight: bold;");
+
+        lblMoyenneClasse.setText("--");
+    }
+
+    private void chargerEleves() {
         try {
-            // 1. Chargement et affichage des tarifs réels de la BD basés sur le niveau de la classe
-            if (classe.getNiveau() != null) {
-                TarisScolaire tarif = tarifDAO.trouverParClasse(classe.getNiveau().name());
-                if (tarif != null) {
-                    lblMontantPension.setText(tarif.getMontantPension() + " FCFA");
-                    lblFraisInscription.setText(tarif.getFraisInscription() + " FCFA");
-                } else {
-                    lblMontantPension.setText("Non défini");
-                    lblFraisInscription.setText("Non défini");
-                }
-            }
+            List<Eleve> eleves = eleveDAO.listerParClasse(classeActuelle.getIdClasse());
 
-            // 2. Chargement de la liste complète des élèves inscrits dans cette classe spécifique
-            List<Eleve> listeEleves = eleveDAO.listerParClasse(classe.getIdClasse());
+            colMatricule.setCellValueFactory(new PropertyValueFactory<>("matricule"));
+            colNomEleve.setCellValueFactory(new PropertyValueFactory<>("nom"));
+            colPrenomEleve.setCellValueFactory(new PropertyValueFactory<>("prenom"));
+            colSexe.setCellValueFactory(new PropertyValueFactory<>("sexe"));
+            colMoyenne.setCellValueFactory(new PropertyValueFactory<>("moyenne"));
+
             tableEleves.getItems().clear();
-            tableEleves.getItems().addAll(listeEleves);
+            tableEleves.getItems().addAll(eleves);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleRetour() {
+        if (actionRetour != null) {
+            actionRetour.run();
+        }
+    }
+
+    @FXML
+    private void handleModifier() {
+        // À implémenter selon votre formulaire de classe
+        System.out.println("Modification de la classe : " + classeActuelle.getNom());
     }
 }

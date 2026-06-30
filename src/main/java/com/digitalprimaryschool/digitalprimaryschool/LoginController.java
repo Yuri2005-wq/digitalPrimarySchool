@@ -32,7 +32,6 @@ public class LoginController {
     private double yOffset = 0;
     private boolean motDePasseVisible = false;
 
-    // Icônes (œil ouvert / œil barré)
     private static final String OEIL_OUVERT =
             "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z";
     private static final String OEIL_FERME =
@@ -42,7 +41,6 @@ public class LoginController {
 
     @FXML
     public void initialize() {
-        // --- Drag de la fenêtre via l'AppBar ---
         loginAppBar.setOnMousePressed(event -> {
             Stage stage = (Stage) loginAppBar.getScene().getWindow();
             xOffset = stage.getX() - event.getScreenX();
@@ -61,9 +59,6 @@ public class LoginController {
         stage.close();
     }
 
-    /**
-     * Affiche/masque le mot de passe en alternant entre PasswordField et TextField.
-     */
     @FXML
     public void toggleMotDePasse() {
         motDePasseVisible = !motDePasseVisible;
@@ -85,15 +80,11 @@ public class LoginController {
         }
     }
 
-    /**
-     * Vérifie les identifiants et ouvre le tableau de bord si corrects.
-     */
     @FXML
     public void handleLogin() {
         String login = champEmail.getText().trim();
         String motDePasse = motDePasseVisible ? champMotDePasseVisible.getText() : champMotDePasse.getText();
 
-        // Validation simple des champs
         if (login.isEmpty() || motDePasse.isEmpty()) {
             afficherErreur("Veuillez remplir tous les champs.");
             return;
@@ -104,10 +95,13 @@ public class LoginController {
             Utilisateur utilisateur = utilisateurDAO.verifierIdentifiants(login, motDePasse);
 
             if (utilisateur != null) {
+                // Ouverture globale de la session
+                Session.ouvrir(utilisateur);
+                utilisateur.seConnecter();
+
                 Stage currentStage = (Stage) btnConnecter.getScene().getWindow();
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
                 Scene mainScene = new Scene(loader.load(), 1080, 740);
-
 
                 Stage appStage = new Stage();
                 appStage.getIcons().add(new javafx.scene.image.Image(HelloApplication.class.getResourceAsStream("oh.png")));
@@ -115,8 +109,6 @@ public class LoginController {
                 appStage.setTitle("DigitalPrimarySchool");
                 appStage.setScene(mainScene);
                 appStage.initStyle(StageStyle.UNDECORATED);
-
-
 
                 currentStage.close();
                 appStage.show();
@@ -138,5 +130,4 @@ public class LoginController {
         labelErreur.setVisible(true);
         labelErreur.setManaged(true);
     }
-
 }

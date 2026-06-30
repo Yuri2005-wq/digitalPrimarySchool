@@ -492,7 +492,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(245, 165, 36, 0.2), 6, 0, 0, 0);
 }
 
-
 /* ============================================================
    Stylisation des DatePicker (Champs de Date) - Version Stable
    ============================================================ */
@@ -617,6 +616,9 @@
     -fx-icon-color: #64748B;
 }
 
+.top-tab-btn.active .ikonli-font-icon {
+    -fx-icon-color: #F5A524;
+}
 /* Effet au survol */
 .top-tab-btn:hover {
     -fx-text-fill: white;

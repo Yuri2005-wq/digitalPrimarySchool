@@ -1,12 +1,11 @@
 -- ==============================================================
--- [NIVEAU 0] CONFIGURATION ET ÉTABLISSEMENT
+-- CONFIGURATION GLOBALE DE L'ÉTABLISSEMENT (Ligne unique attendue)
 -- ==============================================================
-
 CREATE TABLE IF NOT EXISTS Ecole
 (
-    idEcole               INT AUTO_INCREMENT NOT NULL,
+    idEcole               VARCHAR(50) NOT NULL,
     nomEcole              VARCHAR(150) NOT NULL,
-    numeroArreteOuverture VARCHAR(100), -- Très important au Cameroun (Légalisation)
+    numeroArreteOuverture VARCHAR(100), -- Légalisation Cameroun (MINEDUB / MINESEC)
     nomPromoteur          VARCHAR(100),
     inspectionRef         VARCHAR(100), -- Ex: Inspection d'Arrondissement de Yaoundé IV
     delegationDept        VARCHAR(100), -- Ex: Délégation Départementale du Mfoundi
@@ -15,39 +14,46 @@ CREATE TABLE IF NOT EXISTS Ecole
     contactEcole          VARCHAR(30),
     emailEcole            VARCHAR(100),
     adressePhysique       VARCHAR(150),
-    devise                VARCHAR(150), -- Utile pour le bas des bulletins
-    logoPath              VARCHAR(255), -- Chemin local de l'image pour les impressions
+    devise                VARCHAR(150), -- Pour le bas des bulletins
+    logoPath              VARCHAR(255), -- Chemin local ou URL du logo
     PRIMARY KEY (idEcole)
     ) ENGINE=InnoDB;
 
 -- ==============================================================
--- [NIVEAU 1] TABLES DE BASE DÉPENDANTES DE L'ÉCOLE
+-- [NIVEAU 1] AUTHENTIFICATION ET STRUCTURES DE BASE
 -- ==============================================================
+
+CREATE TABLE IF NOT EXISTS Utilisateur
+(
+    idUtilisateur         VARCHAR(50) NOT NULL,
+    username              VARCHAR(100) NOT NULL UNIQUE,
+    motDePasseUtilisateur VARCHAR(255) NOT NULL,
+    role                  ENUM('DIRECTEUR', 'PROMOTEUR', 'ENSEIGNANT', 'ECONOME') NOT NULL,
+    is_synced             TINYINT(1) DEFAULT 0,
+    derniere_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (idUtilisateur)
+    ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS AnneeScolaire
 (
     idAnnescolaire        VARCHAR(50) NOT NULL,
-    idEcole               INT NOT NULL,
-    libelle               VARCHAR(100),
+    libelle               VARCHAR(100) NOT NULL, -- Ex: "2025-2026"
     dateDebut             DATE,
     dateFin               DATE,
     estActive             TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (idAnnescolaire),
-    FOREIGN KEY (idEcole) REFERENCES Ecole (idEcole) ON DELETE CASCADE
+    PRIMARY KEY (idAnnescolaire)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS TarisScolaire
 (
     idTarifScolaire       VARCHAR(50) NOT NULL,
-    idEcole               INT NOT NULL,
     niveauClasse          VARCHAR(100),
     libelle               VARCHAR(100),
-    pension               DOUBLE,
-    fraistenueScolaire    DOUBLE,
-    fraistenueSport       DOUBLE,
-    fraisInscription      DOUBLE,
-    PRIMARY KEY (idTarifScolaire),
-    FOREIGN KEY (idEcole) REFERENCES Ecole (idEcole) ON DELETE CASCADE
+    pension               DECIMAL(15,2) DEFAULT 0.00,
+    fraistenueScolaire    DECIMAL(15,2) DEFAULT 0.00,
+    fraistenueSport       DECIMAL(15,2) DEFAULT 0.00,
+    fraisInscription      DECIMAL(15,2) DEFAULT 0.00,
+    PRIMARY KEY (idTarifScolaire)
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Tranche
@@ -55,31 +61,18 @@ CREATE TABLE IF NOT EXISTS Tranche
     idTranche             VARCHAR(50) NOT NULL,
     idTarifScolaire       VARCHAR(50) NOT NULL,
     libelleTranche        VARCHAR(100),
-    montantTranche        DOUBLE,
+    montantTranche        DECIMAL(15,2) DEFAULT 0.00,
     dateEcheance          DATE,
     estPaye               TINYINT(1) DEFAULT 0,
     PRIMARY KEY (idTranche),
     FOREIGN KEY (idTarifScolaire) REFERENCES TarisScolaire (idTarifScolaire) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS Utilisateur
-(
-    idUtilisateur         VARCHAR(50) NOT NULL,
-    idEcole               INT NOT NULL,
-    username              VARCHAR(100),
-    motDePasseUtilisateur VARCHAR(255),
-    role                  VARCHAR(50),
-    is_synced             TINYINT(1) DEFAULT 0,
-    derniere_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (idUtilisateur),
-    FOREIGN KEY (idEcole) REFERENCES Ecole (idEcole) ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS Parent
 (
     idParent              VARCHAR(50) NOT NULL,
     prenom                VARCHAR(100),
-    contactParent         INTEGER,
+    contactParent         VARCHAR(30),
     emailParent           VARCHAR(150),
     profession            VARCHAR(100),
     adresse               VARCHAR(150),
@@ -92,17 +85,15 @@ CREATE TABLE IF NOT EXISTS Parent
 CREATE TABLE IF NOT EXISTS Classe
 (
     idClasse              VARCHAR(50) NOT NULL,
-    idEcole               INT NOT NULL,
-    nom                   VARCHAR(100),
+    nom                   VARCHAR(100) NOT NULL, -- Ex: "SIL A", "CM2 B"
     niveau                VARCHAR(50),
-    capaciteMax           INTEGER,
-    section               VARCHAR(50),
-    PRIMARY KEY (idClasse),
-    FOREIGN KEY (idEcole) REFERENCES Ecole (idEcole) ON DELETE CASCADE
+    capaciteMax           INTEGER DEFAULT 50,
+    section               VARCHAR(50),           -- Ex: "Maternelle", "Primaire"
+    PRIMARY KEY (idClasse)
     ) ENGINE=InnoDB;
 
 -- ==============================================================
--- [NIVEAU 2] TABLES ASSOCIÉES ET DOCUMENTS
+-- [NIVEAU 2] ACTEURS, ACADÉMIQUE ET FINANCE
 -- ==============================================================
 
 CREATE TABLE IF NOT EXISTS Econome
@@ -113,16 +104,34 @@ CREATE TABLE IF NOT EXISTS Econome
     FOREIGN KEY (idUtilisateur) REFERENCES Utilisateur (idUtilisateur) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
+CREATE TABLE IF NOT EXISTS Enseignant
+(
+    idEnseignant          VARCHAR(50) NOT NULL,
+    idClasse              VARCHAR(50) NOT NULL,
+    idUtilisateur         VARCHAR(50) DEFAULT NULL,
+    nom                   VARCHAR(100) NOT NULL,
+    prenom                VARCHAR(100),
+    contactEnseignant     VARCHAR(30),
+    qualification         VARCHAR(100),
+    grade                 VARCHAR(50),
+    photo                 VARCHAR(400),
+    is_synced             TINYINT(1) DEFAULT 0,
+    derniere_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (idEnseignant),
+    FOREIGN KEY (idClasse) REFERENCES Classe (idClasse),
+    FOREIGN KEY (idUtilisateur) REFERENCES Utilisateur (idUtilisateur) ON DELETE SET NULL
+    ) ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS Eleve
 (
     matriculeEleve        VARCHAR(50) NOT NULL UNIQUE,
     idParent              VARCHAR(50) NOT NULL,
-    nom                   VARCHAR(100),
+    nom                   VARCHAR(100) NOT NULL,
     prenom                VARCHAR(100),
     dateNaissance         DATE,
     lieuNaissance         VARCHAR(100),
     sexe                  VARCHAR(10),
-    nationalite          VARCHAR(50),
+    nationalite           VARCHAR(50) DEFAULT 'Camerounaise',
     photo                 VARCHAR(255),
     aTerminerPension      TINYINT(1) DEFAULT 0,
     regionOrigine         VARCHAR(100),
@@ -135,31 +144,16 @@ CREATE TABLE IF NOT EXISTS Eleve
     CONSTRAINT chk_sexe CHECK (sexe IN ('FEMININ', 'MASCULIN'))
     ) ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS Enseignant
-(
-    idEnseignant          VARCHAR(50) NOT NULL,
-    idClasse              VARCHAR(50) NOT NULL,
-    nom                   VARCHAR(100),
-    prenom                VARCHAR(100),
-    contactEnseignant     INTEGER,
-    qualification         VARCHAR(100),
-    grade                 VARCHAR(50),
-    is_synced             TINYINT(1) DEFAULT 0,
-    derniere_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (idEnseignant),
-    FOREIGN KEY (idClasse) REFERENCES Classe (idClasse)
-    ) ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS Matiere
 (
     idMatiere             VARCHAR(50) NOT NULL,
     idClasse              VARCHAR(50) NOT NULL,
-    libelle               VARCHAR(100),
-    coefficient           DOUBLE,
+    libelle               VARCHAR(100) NOT NULL,
+    coefficient           DOUBLE DEFAULT 1.0,
     volumeHoraire         INTEGER,
     categorie             VARCHAR(100),
     PRIMARY KEY (idMatiere),
-    FOREIGN KEY (idClasse) REFERENCES Classe (idClasse)
+    FOREIGN KEY (idClasse) REFERENCES Classe (idClasse) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Inscription
@@ -167,8 +161,8 @@ CREATE TABLE IF NOT EXISTS Inscription
     idInscription         VARCHAR(50) NOT NULL,
     idAnnescolaire        VARCHAR(50) NOT NULL,
     idClasse              VARCHAR(50) NOT NULL,
-    matriculeEleve        VARCHAR(50),
-    montantPayer          DOUBLE,
+    matriculeEleve        VARCHAR(50) NOT NULL,
+    montantPayer          DECIMAL(15,2) DEFAULT 0.00,
     estReinscript         TINYINT(1) DEFAULT 0,
     dateInscription       DATETIME DEFAULT CURRENT_TIMESTAMP,
     is_synced             TINYINT(1) DEFAULT 0,
@@ -177,8 +171,12 @@ CREATE TABLE IF NOT EXISTS Inscription
     PRIMARY KEY (idInscription),
     FOREIGN KEY (idClasse) REFERENCES Classe (idClasse),
     FOREIGN KEY (idAnnescolaire) REFERENCES AnneeScolaire (idAnnescolaire),
-    FOREIGN KEY (matriculeEleve) REFERENCES Eleve (matriculeEleve)
+    FOREIGN KEY (matriculeEleve) REFERENCES Eleve (matriculeEleve) ON DELETE CASCADE
     ) ENGINE=InnoDB;
+
+-- ==============================================================
+-- [NIVEAU 3] EVALUATIONS, DOCUMENTS ET SUIVI FINANCIER
+-- ==============================================================
 
 CREATE TABLE IF NOT EXISTS DocumentScolaire
 (
@@ -187,12 +185,12 @@ CREATE TABLE IF NOT EXISTS DocumentScolaire
     type                  VARCHAR(10),
     dateGeneration        DATETIME DEFAULT CURRENT_TIMESTAMP,
     generePar             VARCHAR(100),
-    formatFichier         VARCHAR(10),
+    formatFichier         VARCHAR(10) DEFAULT 'PDF',
     is_synced             TINYINT(1) DEFAULT 0,
     date_creation         DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (matriculeEleve, idDocuments),
     FOREIGN KEY (matriculeEleve) REFERENCES Eleve (matriculeEleve) ON DELETE CASCADE,
-    CONSTRAINT chk_type CHECK (type IN ('fiche', 'certif'))
+    CONSTRAINT chk_type CHECK (type IN ('fiche', 'certif', 'recu'))
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS certificat_scolarite
@@ -231,7 +229,7 @@ CREATE TABLE IF NOT EXISTS Trimestre
     dateFin               DATE,
     estClos               TINYINT(1) DEFAULT 0,
     PRIMARY KEY (idAnnescolaire, idTrimestre),
-    FOREIGN KEY (idAnnescolaire) REFERENCES AnneeScolaire (idAnnescolaire)
+    FOREIGN KEY (idAnnescolaire) REFERENCES AnneeScolaire (idAnnescolaire) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Sequence
@@ -243,14 +241,14 @@ CREATE TABLE IF NOT EXISTS Sequence
     dateComposition       DATE,
     estSaisie             TINYINT(1) DEFAULT 0,
     PRIMARY KEY (idAnnescolaire, idTrimestre, idSequence),
-    FOREIGN KEY (idAnnescolaire, idTrimestre) REFERENCES Trimestre (idAnnescolaire, idTrimestre)
+    FOREIGN KEY (idAnnescolaire, idTrimestre) REFERENCES Trimestre (idAnnescolaire, idTrimestre) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Notes
 (
     idNote                VARCHAR(50) NOT NULL,
-    valeur                DOUBLE,
-    noteMax               INTEGER,
+    valeur                DOUBLE NOT NULL,
+    noteMax               INTEGER DEFAULT 20,
     observation           VARCHAR(255),
     dateSaisie            DATETIME DEFAULT CURRENT_TIMESTAMP,
     saisirPar             VARCHAR(100),
@@ -263,9 +261,9 @@ CREATE TABLE IF NOT EXISTS Notes
     date_creation         DATETIME DEFAULT CURRENT_TIMESTAMP,
     derniere_modification DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (idNote),
-    FOREIGN KEY (matriculeEleve) REFERENCES Eleve (matriculeEleve),
-    FOREIGN KEY (idMatiere) REFERENCES Matiere (idMatiere),
-    FOREIGN KEY (idAnnescolaire, idTrimestre, idSequence) REFERENCES Sequence (idAnnescolaire, idTrimestre, idSequence)
+    FOREIGN KEY (matriculeEleve) REFERENCES Eleve (matriculeEleve) ON DELETE CASCADE,
+    FOREIGN KEY (idMatiere) REFERENCES Matiere (idMatiere) ON DELETE CASCADE,
+    FOREIGN KEY (idAnnescolaire, idTrimestre, idSequence) REFERENCES Sequence (idAnnescolaire, idTrimestre, idSequence) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Bulletin
@@ -281,7 +279,7 @@ CREATE TABLE IF NOT EXISTS Bulletin
     rang                  INTEGER,
     PRIMARY KEY (idBulletin),
     FOREIGN KEY (matriculeEleve, idDocuments) REFERENCES DocumentScolaire (matriculeEleve, idDocuments) ON DELETE CASCADE,
-    FOREIGN KEY (idAnnescolaire, idTrimestre) REFERENCES Trimestre (idAnnescolaire, idTrimestre)
+    FOREIGN KEY (idAnnescolaire, idTrimestre) REFERENCES Trimestre (idAnnescolaire, idTrimestre) ON DELETE CASCADE
     ) ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS Bulletin_Notes
@@ -305,12 +303,12 @@ CREATE TABLE IF NOT EXISTS Trimestre_Bulletin
 
 CREATE TABLE IF NOT EXISTS Paiement
 (
-    reference             VARCHAR(100) NOT NULL,
-    montant               DOUBLE,
+    idPaiement            VARCHAR(50) NOT NULL,
+    reference             VARCHAR(100) NOT NULL UNIQUE,
+    montant               DECIMAL(15,2) NOT NULL,
     datePaiement          DATETIME DEFAULT CURRENT_TIMESTAMP,
     modePaiement          VARCHAR(50),
     encaisserPar          VARCHAR(100),
-    idPaiement            VARCHAR(50) NOT NULL,
     idTarifScolaire       VARCHAR(50) NOT NULL,
     matriculeEleve        VARCHAR(50) NOT NULL,
     idDocuments           VARCHAR(50) NOT NULL,
@@ -331,23 +329,5 @@ CREATE TABLE IF NOT EXISTS paiementTranche
     idTranche             VARCHAR(50) NOT NULL,
     PRIMARY KEY (idPaiement, idTranche),
     FOREIGN KEY (idPaiement) REFERENCES Paiement (idPaiement) ON DELETE CASCADE,
-    FOREIGN KEY (idTranche) REFERENCES Tranche (idTranche)
-    ) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS association6
-(
-    idInscription         VARCHAR(50) NOT NULL,
-    idClasse              VARCHAR(50) NOT NULL,
-    PRIMARY KEY (idInscription, idClasse),
-    FOREIGN KEY (idClasse) REFERENCES Classe (idClasse),
-    FOREIGN KEY (idInscription) REFERENCES Inscription (idInscription) ON DELETE CASCADE
-    ) ENGINE=InnoDB;
-
-CREATE TABLE IF NOT EXISTS association7
-(
-    idInscription         VARCHAR(50) NOT NULL,
-    idAnnescolaire        VARCHAR(50) NOT NULL,
-    PRIMARY KEY (idInscription, idAnnescolaire),
-    FOREIGN KEY (idAnnescolaire) REFERENCES AnneeScolaire (idAnnescolaire),
-    FOREIGN KEY (idInscription) REFERENCES Inscription (idInscription) ON DELETE CASCADE
+    FOREIGN KEY (idTranche) REFERENCES Tranche (idTranche) ON DELETE CASCADE
     ) ENGINE=InnoDB;

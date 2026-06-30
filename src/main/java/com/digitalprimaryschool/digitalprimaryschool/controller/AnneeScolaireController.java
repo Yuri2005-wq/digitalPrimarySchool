@@ -1,8 +1,6 @@
 package com.digitalprimaryschool.digitalprimaryschool.controller;
 
-import com.digitalprimaryschool.digitalprimaryschool.dao.EcoleDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.AnneeScolaire;
-import com.digitalprimaryschool.digitalprimaryschool.model.Ecole;
 import com.digitalprimaryschool.digitalprimaryschool.service.EnregistrementService;
 import com.digitalprimaryschool.digitalprimaryschool.service.EnregistrementService.Resultat;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -127,16 +125,16 @@ public class AnneeScolaireController {
 
     private void chargerDonnees() {
         try {
-            // Récupération sécurisée via le DAO/Service
+            // Récupération globale sécurisée (Mono-établissement)
             List<AnneeScolaire> list = enregistrementService.getTousLesAnneesScolaires();
             listeAnnees.clear();
 
             if (list != null) {
-                // Tri décroissant sur le libellé
+                // Tri décroissant sur le libellé (ex: 2026 avant 2025)
                 list.sort((annee1, annee2) -> {
                     String l1 = (annee1.getLibelle() != null) ? annee1.getLibelle() : "";
                     String l2 = (annee2.getLibelle() != null) ? annee2.getLibelle() : "";
-                    return String.CASE_INSENSITIVE_ORDER.compare(l2, l1); // Tri décroissant (ex: 2026 avant 2025)
+                    return String.CASE_INSENSITIVE_ORDER.compare(l2, l1);
                 });
 
                 listeAnnees.addAll(list);
@@ -206,18 +204,7 @@ public class AnneeScolaireController {
                 nouvelle.setDateFin(finStr);
                 nouvelle.setEstActive(statutActiveValue);
 
-                // --- CORRECTION CLÉ ÉTRANGÈRE : Récupération de l'école ---
-                EcoleDAO ecoleDAO = new EcoleDAO();
-                Ecole ecoleActuelle = ecoleDAO.getPremiereEcole();
-
-                if (ecoleActuelle != null) {
-                    // Injecte l'ID numérique de l'école (parsing car le modèle Ecole utilise un String)
-                    nouvelle.setIdEcole(Integer.parseInt(ecoleActuelle.getIdEcole()));
-                } else {
-                    showErrorAlert("Configuration manquante", "Aucune école n'existe en base de données. Créez d'abord une école.");
-                    return;
-                }
-
+                // Plus besoin de clé étrangère d'école ici, l'entité est globale au logiciel
                 res = enregistrementService.enregistrerAnneeScolaire(nouvelle);
             } else {
                 // --- UPDATE ---

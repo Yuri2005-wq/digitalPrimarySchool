@@ -1,27 +1,32 @@
 package com.digitalprimaryschool.digitalprimaryschool.model;
 
-import java.util.*;
+import java.util.UUID;
 
 public class Enseignant {
    private String idEnseignant;
-   private int idEcole; // Requis pour la gestion invisible par session
+   private String idEcole; // Corrigé en String (UUID) pour le cloisonnement Multi-Écoles
+   private String idUtilisateur; // Clé optionnelle reliant cet enseignant à ses identifiants
    private String nom;
    private String prenom;
-   private int contactEnseignant;
+   private String contactEnseignant; // Changé en String pour supporter les caractères (+237)
    private String qualification;
    private String grade;
-
-   public Classe classe; // Peut être null au départ selon ta logique métier
+   public Classe classe;
+   private String photo;
 
    public Enseignant(){
       this.idEnseignant = UUID.randomUUID().toString();
    }
 
-   // --- Getter et Setter pour l'école ---
-   public int getIdEcole() { return idEcole; }
-   public void setIdEcole(int idEcole) { this.idEcole = idEcole; }
+   // --- Getters & Setters ---
+   public String getIdEcole() { return idEcole; }
+   public void setIdEcole(String idEcole) { this.idEcole = idEcole; }
 
-   // --- Getters et Setters existants ---
+   public String getIdUtilisateur() { return idUtilisateur; }
+   public void setIdUtilisateur(String idUtilisateur) { this.idUtilisateur = idUtilisateur; }
+
+   public String getPhoto() { return this.photo; }
+   public void setPhoto(String photo) { this.photo = photo; }
    public String getIdEnseignant() { return idEnseignant; }
    public void setIdEnseignant(String idEnseignant) { this.idEnseignant = idEnseignant; }
 
@@ -31,8 +36,8 @@ public class Enseignant {
    public String getPrenom() { return prenom; }
    public void setPrenom(String prenom) { this.prenom = prenom; }
 
-   public int getContactEnseignant() { return contactEnseignant; }
-   public void setContactEnseignant(int contactEnseignant) { this.contactEnseignant = contactEnseignant; }
+   public String getContactEnseignant() { return contactEnseignant; }
+   public void setContactEnseignant(String contactEnseignant) { this.contactEnseignant = contactEnseignant; }
 
    public String getQualification() { return qualification; }
    public void setQualification(String qualification) { this.qualification = qualification; }

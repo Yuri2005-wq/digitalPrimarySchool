@@ -14,24 +14,23 @@ public class AnneeScolaireDAO {
     // ================================================================
     public void ajouter(AnneeScolaire anneeScolaire) {
         String sql = """
-            INSERT INTO AnneeScolaire(idAnnescolaire, idEcole, libelle, dateDebut, dateFin, estActive)
-            VALUES(?, ?, ?, ?, ?, ?)
+            INSERT INTO AnneeScolaire(idAnnescolaire, libelle, dateDebut, dateFin, estActive)
+            VALUES(?, ?, ?, ?, ?)
             """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, anneeScolaire.getIdAnnescolaire());
-            stmt.setInt(2, anneeScolaire.getIdEcole());
-            stmt.setString(3, anneeScolaire.getLibelle());
-            stmt.setString(4, anneeScolaire.getDateDebut());
-            stmt.setString(5, anneeScolaire.getDateFin());
-            stmt.setInt(6, anneeScolaire.isEstActive() ? 1 : 0);
+            stmt.setString(2, anneeScolaire.getLibelle());
+            stmt.setString(3, anneeScolaire.getDateDebut());
+            stmt.setString(4, anneeScolaire.getDateFin());
+            stmt.setInt(5, anneeScolaire.isEstActive() ? 1 : 0);
 
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Erreur lors de l'ajout de l'année scolaire : " + e.getMessage(), e);
         }
     }
 
@@ -76,11 +75,11 @@ public class AnneeScolaireDAO {
     }
 
     // ================================================================
-    // [RÉINTÉGRATION] MÉTHODES GLOBALES INITIALES (Demandées par le Service)
+    // MÉTHODES DE GESTION GLOBALE UNIQUE
     // ================================================================
 
     /**
-     * Désactive absolument toutes les années scolaires de la base (Global)
+     * Désactive absolument toutes les années scolaires de l'établissement
      */
     public void desactiverToutes() throws SQLException {
         String sql = "UPDATE AnneeScolaire SET estActive = 0";
@@ -91,7 +90,7 @@ public class AnneeScolaireDAO {
     }
 
     /**
-     * Liste toutes les années scolaires sans distinction d'école (Global)
+     * Liste toutes les années scolaires de l'établissement
      */
     public List<AnneeScolaire> listerToutes() throws SQLException {
         String sql = "SELECT * FROM AnneeScolaire ORDER BY dateDebut DESC";
@@ -107,7 +106,7 @@ public class AnneeScolaireDAO {
     }
 
     /**
-     * Trouve la première année active trouvée globalement (Global)
+     * Trouve l'année scolaire active unique de l'établissement
      */
     public AnneeScolaire trouverActive() throws SQLException {
         String sql = "SELECT * FROM AnneeScolaire WHERE estActive = 1 LIMIT 1";
@@ -121,70 +120,12 @@ public class AnneeScolaireDAO {
         return null;
     }
 
-
-    // ================================================================
-    // MÉTHODES AVEC FILTRE ÉCOLE (Multi-écoles)
-    // ================================================================
-
-    /**
-     * Désactive uniquement les années scolaires de l'école concernée
-     */
-    public void desactiverToutesPourEcole(int idEcole) throws SQLException {
-        String sql = "UPDATE AnneeScolaire SET estActive = 0 WHERE idEcole = ?";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, idEcole);
-            stmt.executeUpdate();
-        }
-    }
-
-    /**
-     * Récupère les années scolaires d'une école spécifique
-     */
-    public List<AnneeScolaire> listerToutesPourEcole(int idEcole) throws SQLException {
-        String sql = "SELECT * FROM AnneeScolaire WHERE idEcole = ? ORDER BY dateDebut DESC";
-        List<AnneeScolaire> annees = new ArrayList<>();
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    annees.add(construireAnnee(rs));
-                }
-            }
-        }
-        return annees;
-    }
-
-    /**
-     * Trouve l'année active pour une école spécifique
-     */
-    public AnneeScolaire trouverActivePourEcole(int idEcole) throws SQLException {
-        String sql = "SELECT * FROM AnneeScolaire WHERE estActive = 1 AND idEcole = ? LIMIT 1";
-
-        try (Connection conn = Database.getConnexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idEcole);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return construireAnnee(rs);
-                }
-            }
-        }
-        return null;
-    }
-
     // ================================================================
     // CONSTRUCTEUR D'OBJETS INTERNE
     // ================================================================
     private AnneeScolaire construireAnnee(ResultSet rs) throws SQLException {
         AnneeScolaire annee = new AnneeScolaire();
         annee.setIdAnnescolaire(rs.getString("idAnnescolaire"));
-        annee.setIdEcole(rs.getInt("idEcole"));
         annee.setLibelle(rs.getString("libelle"));
         annee.setDateDebut(rs.getString("dateDebut"));
         annee.setDateFin(rs.getString("dateFin"));

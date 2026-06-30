@@ -33,7 +33,6 @@ public class EcoleDAO {
         }
     }
 
-    // 2. Récupérer la première école enregistrée
     public Ecole getPremiereEcole() throws SQLException {
         String sql = "SELECT * FROM Ecole LIMIT 1";
 

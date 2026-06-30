@@ -1,8 +1,12 @@
 package com.digitalprimaryschool.digitalprimaryschool.controller;
 
+import com.digitalprimaryschool.digitalprimaryschool.model.Classe;
+import com.digitalprimaryschool.digitalprimaryschool.model.Eleve;
+import com.digitalprimaryschool.digitalprimaryschool.service.EnregistrementService;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -18,31 +22,114 @@ import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class EleveController {
 
-    @FXML private TableView<EleveRow> tableauEleves;
-    @FXML private ComboBox<String> comboClasse;
+    @FXML private TableView<Eleve> tableauEleves; // Utilise directement Eleve
+    @FXML private ComboBox<Classe> comboClasse;
+    @FXML private TextField txtRecherche;
+
+    private final EnregistrementService enregistrementService = new EnregistrementService();
+    private final ObservableList<Eleve> masterData = FXCollections.observableArrayList();
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     @FXML
     public void initialize() {
-        // 1. Initialiser et configurer les colonnes du tableau
+        // 1. Initialiser et configurer les colonnes pour le modèle Eleve
         configurerColonnes();
 
-        // 2. Charger les élèves de test dans le tableau
-        chargerDonneesExemple();
+        // 2. Charger dynamiquement les classes de l'école dans le ComboBox
+        chargerComboBoxClasses();
 
-        // 3. Configurer l'action de clic sur les lignes
+        // 3. Configurer le filtrage textuel (Barre de recherche)
+        configurerBarreRecherche();
+
+        // 4. Configurer l'action de double-clic
         configurerDoubleClicLigne();
+
+        // 5. Charger tous les élèves de l'école par défaut au démarrage
+        rafraichirListeEleves();
+    }
+
+    private void chargerComboBoxClasses() {
+        try {
+            List<Classe> listeClasses = enregistrementService.getToutesLesClasses();
+            comboClasse.setItems(FXCollections.observableArrayList(listeClasses));
+
+            comboClasse.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(Classe item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) setText(null);
+                    else setText(item.getNom());
+                }
+            });
+
+            comboClasse.setButtonCell(new ListCell<>() {
+                @Override
+                protected void updateItem(Classe item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) setText(null);
+                    else setText(item.getNom());
+                }
+            });
+
+            comboClasse.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    chargerElevesParClasse(newVal.getIdClasse());
+                }
+            });
+        } catch (SQLException e) {
+            afficherAlerte(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les classes : " + e.getMessage());
+        }
+    }
+
+    private void rafraichirListeEleves() {
+        try {
+            masterData.clear();
+            masterData.addAll(enregistrementService.getTousLesEleves());
+        } catch (SQLException e) {
+            afficherAlerte(Alert.AlertType.ERROR, "Erreur", "Impossible de charger les élèves : " + e.getMessage());
+        }
+    }
+
+    private void chargerElevesParClasse(String idClasse) {
+        try {
+            masterData.clear();
+            // Utilise la méthode d'enregistrementService liée au EleveDAO mis à jour
+            masterData.addAll(enregistrementService.getElevesParParent(idClasse));
+            // Note : Si tu as besoin d'une méthode dédiée par classe, utilise eleveDAO.listerParClasse(idClasse)
+        } catch (Exception e) {
+            afficherAlerte(Alert.AlertType.ERROR, "Erreur", "Erreur lors du filtrage par classe.");
+        }
+    }
+
+    private void configurerBarreRecherche() {
+        FilteredList<Eleve> filteredData = new FilteredList<>(masterData, p -> true);
+        txtRecherche.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(eleve -> {
+                if (newValue == null || newValue.isEmpty()) return true;
+                String lower = newValue.toLowerCase();
+                return eleve.getNom().toLowerCase().contains(lower) ||
+                        eleve.getPrenom().toLowerCase().contains(lower) ||
+                        eleve.getMatricule().toLowerCase().contains(lower);
+            });
+        });
+        tableauEleves.setItems(filteredData);
     }
 
     private void configurerColonnes() {
-        // COLONNE ELEVE (Avatar + Nom/Genre)
-        TableColumn<EleveRow, EleveRow> colEleve = new TableColumn<>("ÉLÈVE");
+        tableauEleves.getColumns().clear();
+
+        // COLONNE ELEVE (Génère l'avatar dynamiquement à partir du Nom/Prénom de l'entité)
+        TableColumn<Eleve, Eleve> colEleve = new TableColumn<>("ÉLÈVE");
         colEleve.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         colEleve.setCellFactory(param -> new TableCell<>() {
             @Override
-            protected void updateItem(EleveRow item, boolean empty) {
+            protected void updateItem(Eleve item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setGraphic(null);
@@ -50,15 +137,19 @@ public class EleveController {
                     HBox box = new HBox(10);
                     box.setAlignment(Pos.CENTER_LEFT);
 
-                    Circle circle = new Circle(16, Color.web(item.getColorHex()));
-                    Label initiales = new Label(item.getInitials());
+                    // Génération dynamique des initiales
+                    String init = (item.getNom().isEmpty() ? "" : item.getNom().substring(0,1)) +
+                            (item.getPrenom().isEmpty() ? "" : item.getPrenom().substring(0,1));
+
+                    Circle circle = new Circle(16, Color.web("#4F46E5")); // Couleur thématique unique
+                    Label initiales = new Label(init.toUpperCase());
                     initiales.setStyle("-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 11;");
                     StackPane avatar = new StackPane(circle, initiales);
 
                     VBox textVbox = new VBox(2);
-                    Label lblNom = new Label(item.getNom());
+                    Label lblNom = new Label(item.getNom() + " " + item.getPrenom());
                     lblNom.setStyle("-fx-font-weight: bold; -fx-text-fill: #1E293B;");
-                    Label lblGenre = new Label(item.getGenre());
+                    Label lblGenre = new Label(item.getSexe() != null ? item.getSexe().getLibelle() : "Non spécifié");
                     lblGenre.setStyle("-fx-text-fill: #94A3B8; -fx-font-size: 11;");
 
                     textVbox.getChildren().addAll(lblNom, lblGenre);
@@ -68,59 +159,25 @@ public class EleveController {
             }
         });
 
+        // COLONNE MATRICULE
+        TableColumn<Eleve, String> colMatricule = new TableColumn<>("MATRICULE");
+        colMatricule.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getMatricule()));
+
         // COLONNE DATE DE NAISSANCE
-        TableColumn<EleveRow, String> colDate = new TableColumn<>("DATE DE NAISSANCE");
-        colDate.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getDateNaissance()));
-
-        // COLONNE MOYENNE
-        TableColumn<EleveRow, Double> colMoyenne = new TableColumn<>("MOYENNE");
-        colMoyenne.setCellValueFactory(p -> new SimpleDoubleProperty(p.getValue().getMoyenne()).asObject());
-        colMoyenne.setCellFactory(param -> new TableCell<>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.valueOf(item));
-                    if (item >= 14) setStyle("-fx-text-fill: #10B981; -fx-font-weight: bold;");
-                    else if (item >= 11) setStyle("-fx-text-fill: #F59E0B; -fx-font-weight: bold;");
-                    else setStyle("-fx-text-fill: #EF4444; -fx-font-weight: bold;");
-                }
+        TableColumn<Eleve, String> colDate = new TableColumn<>("DATE DE NAISSANCE");
+        colDate.setCellValueFactory(p -> {
+            if (p.getValue().getDateNaissance() != null) {
+                return new SimpleStringProperty(dateFormat.format(p.getValue().getDateNaissance()));
             }
+            return new SimpleStringProperty("-");
         });
 
-        // COLONNE ABSENCES
-        TableColumn<EleveRow, Integer> colAbsences = new TableColumn<>("ABSENCES");
-        colAbsences.setCellValueFactory(p -> new SimpleIntegerProperty(p.getValue().getAbsences()).asObject());
-
-        // COLONNE STATUT
-        TableColumn<EleveRow, String> colStatut = new TableColumn<>("STATUT");
-        colStatut.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getStatut()));
-        colStatut.setCellFactory(param -> new TableCell<>() {
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setGraphic(null);
-                } else {
-                    Label badge = new Label(item);
-                    if (item.equalsIgnoreCase("Actif")) {
-                        badge.setStyle("-fx-background-color: #E6F4EA; -fx-text-fill: #137333; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 11;");
-                    } else {
-                        badge.setStyle("-fx-background-color: #F1F3F4; -fx-text-fill: #5F6368; -fx-padding: 3 10; -fx-background-radius: 10; -fx-font-weight: bold; -fx-font-size: 11;");
-                    }
-                    setGraphic(badge);
-                }
-            }
-        });
-
-        // COLONNE CONTACT PARENT
-        TableColumn<EleveRow, EleveRow> colContact = new TableColumn<>("CONTACT PARENT");
+        // COLONNE ACTIONS / CONTACT
+        TableColumn<Eleve, Eleve> colContact = new TableColumn<>("CONTACT PARENT");
         colContact.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
         colContact.setCellFactory(param -> new TableCell<>() {
             @Override
-            protected void updateItem(EleveRow item, boolean empty) {
+            protected void updateItem(Eleve item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setGraphic(null);
@@ -142,29 +199,15 @@ public class EleveController {
             }
         });
 
-        tableauEleves.getColumns().addAll(colEleve, colDate, colMoyenne, colAbsences, colStatut, colContact);
+        tableauEleves.getColumns().addAll(colEleve, colMatricule, colDate, colContact);
     }
 
-    private void chargerDonneesExemple() {
-        ObservableList<EleveRow> liste = FXCollections.observableArrayList(
-                new EleveRow("Amina Benali", "Fille", "12/03/2013", 15.2, 2, "Actif", "#60A5FA"),
-                new EleveRow("Lucas Dupont", "Garçon", "05/07/2013", 12.8, 5, "Actif", "#F87171"),
-                new EleveRow("Fatou Kone", "Fille", "18/11/2012", 16.4, 0, "Actif", "#34D399"),
-                new EleveRow("Hugo Martin", "Garçon", "22/01/2013", 11.5, 8, "Actif", "#A78BFA")
-        );
-        tableauEleves.setItems(liste);
-    }
-
-    /**
-     * Détecte le double-clic sur une ligne du tableau pour rediriger vers le profil de l'élève
-     */
     private void configurerDoubleClicLigne() {
         tableauEleves.setRowFactory(tv -> {
-            TableRow<EleveRow> row = new TableRow<>();
+            TableRow<Eleve> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                // Déclenchement sur un double-clic et s'il y a bien des données dans la ligne
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    EleveRow eleveSelectionne = row.getItem();
+                    Eleve eleveSelectionne = row.getItem();
                     redirigerVersProfilEleve(eleveSelectionne);
                 }
             });
@@ -172,53 +215,24 @@ public class EleveController {
         });
     }
 
-    private void redirigerVersProfilEleve(EleveRow eleve) {
+    private void redirigerVersProfilEleve(Eleve eleve) {
         try {
-            // 1. Charger le fichier FXML de la vue détaillée
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/digitalprimaryschool/digitalprimaryschool/view/FicheEleve.fxml"));
             Parent root = loader.load();
 
-            // 2. (Optionnel) Passer l'élève sélectionné au nouveau contrôleur de profil
-            // ProfilEleveController controller = loader.getController();
-            // controller.initialiserDonnees(eleve);
-
-            // 3. Récupérer la fenêtre actuelle (Stage) et changer la scène
             Stage stage = (Stage) tableauEleves.getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.setTitle("Profil de " + eleve.getNom());
-            stage.show();
-
         } catch (IOException e) {
-            System.err.println("Erreur lors du chargement de la page de profil : " + e.getMessage());
-            e.printStackTrace();
+            afficherAlerte(Alert.AlertType.ERROR, "Erreur d'affichage", "Impossible de charger l'écran FicheEleve.fxml.");
         }
     }
 
-    // ==========================================
-    // Classe modèle interne (Ajout des Getters nécessaires à JavaFX)
-    // ==========================================
-    public static class EleveRow {
-        private final String nom, genre, dateNaissance, statut, colorHex;
-        private final double moyenne;
-        private final int absences;
-
-        public EleveRow(String nom, String genre, String dateNaissance, double moyenne, int absences, String statut, String colorHex) {
-            this.nom = nom; this.genre = genre; this.dateNaissance = dateNaissance;
-            this.moyenne = moyenne; this.absences = absences; this.statut = statut; this.colorHex = colorHex;
-        }
-
-        public String getInitials() {
-            String[] parts = nom.split(" ");
-            if (parts.length >= 2) return "" + parts[0].charAt(0) + parts[1].charAt(0);
-            return "" + nom.charAt(0);
-        }
-
-        public String getNom() { return nom; }
-        public String getGenre() { return genre; }
-        public String getDateNaissance() { return dateNaissance; }
-        public double getMoyenne() { return moyenne; }
-        public int getAbsences() { return absences; }
-        public String getStatut() { return statut; }
-        public String getColorHex() { return colorHex; }
+    private void afficherAlerte(Alert.AlertType type, String titre, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titre);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

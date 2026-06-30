@@ -3,122 +3,115 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.ClassesViewController">
+<StackPane fx:id="rootStackPane" prefHeight="750.0" prefWidth="1100.0" style="-fx-background-color: #f8fafc;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.digitalprimaryschool.digitalprimaryschool.controller.ClassesViewController">
     <children>
-        <HBox alignment="CENTER_LEFT" maxHeight="96.0" prefHeight="82.0" prefWidth="1100.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
+        <VBox spacing="20.0">
             <padding>
-                <Insets left="30.0" right="30.0" />
+                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
             </padding>
             <children>
-                <VBox alignment="CENTER_LEFT">
-                    <children>
-                        <Label text="Classes" textFill="#0f172a">
-                            <font>
-                                <Font name="Segoe UI Bold" size="24.0" />
-                            </font>
-                        </Label>
-                        <Label text="Gestion des classes de l'établissement" textFill="#64748b">
-                            <font>
-                                <Font name="Segoe UI" size="14.0" />
-                            </font>
-                        </Label>
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
-
-        <HBox maxHeight="176.0" prefHeight="176.0" prefWidth="1100.0" spacing="20.0" style="-fx-padding: 20 30 10 30;">
-            <children>
-                <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="📖 Total classes" textFill="#64748b" />
-                        <Label fx:id="lblTotalClasses" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="8" textFill="#0f172a" />
-                    </children>
-                </VBox>
-                <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="👥 Total élèves" textFill="#64748b" />
-                        <Label fx:id="lblTotalEleves" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="240" textFill="#0f172a" />
-                    </children>
-                </VBox>
-                <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="📈 Moy. générale" textFill="#64748b" />
-                        <Label fx:id="lblMoyenneGenerale" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="13.3" textFill="#0f172a" />
-                    </children>
-                </VBox>
-                <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
-                    <children>
-                        <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="🕒 Niveaux" textFill="#64748b" />
-                        <Label fx:id="lblTotalNiveaux" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="4" textFill="#0f172a" />
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
-
-        <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefWidth="750.0" style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-padding: 0;" VBox.vgrow="ALWAYS">
-            <content>
-                <VBox fx:id="vboxConteneurNiveaux" spacing="30.0">
+                <!-- En-tête -->
+                <HBox alignment="CENTER_LEFT" maxHeight="96.0" prefHeight="82.0" prefWidth="1100.0" spacing="20.0" style="-fx-background-color: #ffffff; -fx-border-color: #e2e8f0; -fx-border-width: 0 0 1 0;">
                     <padding>
-                        <Insets bottom="30.0" left="30.0" right="30.0" top="10.0" />
+                        <Insets left="30.0" right="30.0" />
                     </padding>
                     <children>
-                        <VBox spacing="20.0">
-                            <padding>
-                                <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
-                            </padding>
+                        <VBox alignment="CENTER_LEFT">
                             <children>
-                                <VBox spacing="5.0">
-                                    <children>
-                                        <Label fx:id="lblCompteur" text="0 classe(s) trouvée(s)" textFill="#64748b">
-                                            <font>
-                                                <Font name="Segoe UI" size="13.0" />
-                                            </font>
-                                        </Label>
-                                    </children>
-                                </VBox>
-
-                                <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                    <children>
-                                        <TextField fx:id="txtRecherche" prefHeight="40.0" prefWidth="469.0" promptText="🔍 Rechercher une classe (Nom, enseignant...)" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-background-color: #ffffff; -fx-padding: 0 10;" />
-
-                                        <Region HBox.hgrow="ALWAYS" />
-
-                                        <ComboBox fx:id="comboClasse" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" />
-                                        <ComboBox fx:id="comboStatut" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" />
-                                    </children>
-                                </HBox>
-
-                                <TableView fx:id="tableEleves" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0;" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="colNom" maxWidth="100.0" minWidth="65.0" prefWidth="80.0" style="-fx-alignment: CENTER;" text="NOM" />
-                                        <TableColumn fx:id="colNiveauClasse" prefWidth="200.0" text="NIVEAU DE LA CLASSE" />
-                                        <TableColumn fx:id="colSection" prefWidth="200.0" text="SECTION" />
-                                        <TableColumn fx:id="colEnseignant" prefWidth="150.0" style="-fx-alignment: CENTER;" text="ENSEIGNANT" />
-                                        <TableColumn fx:id="colNombreEleve" prefWidth="150.0" style="-fx-alignment: CENTER;" text="NOMBRE ELEVE" />
-                                        <TableColumn fx:id="colStatut" prefWidth="150.0" style="-fx-alignment: CENTER;" text="STATUT" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                </TableView>
+                                <Label text="Classes" textFill="#0f172a">
+                                    <font>
+                                        <Font name="Segoe UI Bold" size="24.0" />
+                                    </font>
+                                </Label>
+                                <Label text="Gestion des classes de l'établissement" textFill="#64748b">
+                                    <font>
+                                        <Font name="Segoe UI" size="14.0" />
+                                    </font>
+                                </Label>
                             </children>
                         </VBox>
                     </children>
+                </HBox>
+
+                <!-- Statistiques -->
+                <HBox maxHeight="176.0" prefHeight="176.0" prefWidth="1100.0" spacing="20.0" style="-fx-padding: 20 30 10 30;">
+                    <children>
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="Total classes" textFill="#64748b" />
+                                <Label fx:id="lblTotalClasses" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="0" textFill="#0f172a" />
+                            </children>
+                        </VBox>
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="Total élèves" textFill="#64748b" />
+                                <Label fx:id="lblTotalEleves" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="0" textFill="#0f172a" />
+                            </children>
+                        </VBox>
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="Moyenne générale" textFill="#64748b" />
+                                <Label fx:id="lblMoyenneGenerale" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="--" textFill="#0f172a" />
+                            </children>
+                        </VBox>
+                        <VBox style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label style="-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;" text="Niveaux" textFill="#64748b" />
+                                <Label fx:id="lblTotalNiveaux" style="-fx-font-family: 'Segoe UI'; -fx-font-size: 24px; -fx-font-weight: bold; -fx-padding: 4 0 0 0;" text="0" textFill="#0f172a" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <!-- Filtres et tableau -->
+                <VBox spacing="20.0" style="-fx-padding: 0 30 30 30;" VBox.vgrow="ALWAYS">
+                    <children>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label fx:id="lblCompteur" text="0 classe(s) trouvée(s)" textFill="#64748b">
+                                    <font>
+                                        <Font name="Segoe UI" size="13.0" />
+                                    </font>
+                                </Label>
+                            </children>
+                        </VBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="15.0">
+                            <children>
+                                <TextField fx:id="txtRecherche" prefHeight="40.0" prefWidth="469.0" promptText="Rechercher une classe (Nom, enseignant...)" style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-background-color: #ffffff; -fx-padding: 0 10;" />
+
+                                <Region HBox.hgrow="ALWAYS" />
+
+                                <ComboBox fx:id="comboClasse" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" promptText="Filtrer par classe" />
+                                <ComboBox fx:id="comboStatut" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #ffffff; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;" promptText="Filtrer par statut" />
+                            </children>
+                        </HBox>
+
+                        <TableView fx:id="tableClasse" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #e2e8f0;" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colNom" prefWidth="200.0" text="NOM" />
+                                <TableColumn fx:id="colNiveauClasse" prefWidth="150.0" text="NIVEAU" />
+                                <TableColumn fx:id="colSection" prefWidth="150.0" text="SECTION" />
+                                <TableColumn fx:id="colEnseignant" prefWidth="200.0" text="ENSEIGNANT" />
+                                <TableColumn fx:id="colNombreEleve" prefWidth="120.0" style="-fx-alignment: CENTER;" text="ÉLÈVES" />
+                                <TableColumn fx:id="colStatut" prefWidth="120.0" style="-fx-alignment: CENTER;" text="STATUT" />
+                            </columns>
+                            <columnResizePolicy>
+                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                            </columnResizePolicy>
+                        </TableView>
+                    </children>
                 </VBox>
-            </content>
-         <padding>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </padding>
-        </ScrollPane>
+            </children>
+        </VBox>
     </children>
-</VBox>
+</StackPane>

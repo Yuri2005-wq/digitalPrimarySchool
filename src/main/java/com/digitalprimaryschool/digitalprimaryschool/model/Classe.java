@@ -4,12 +4,12 @@ import java.util.*;
 
 public class Classe {
    private String idClasse;
-   private String idEcole; // Liaison multi-écoles gérée par ContextApp
    private String nom;
    private NiveauClasse niveau;
    private int capaciteMax;
    private SectionClass section;
    private CategoryClasse categorieClasse;
+   private int nombreEleve; // Champ pour stocker le nombre d'élèves
 
    public Enseignant enseignant;
    public Inscription inscription;
@@ -19,16 +19,28 @@ public class Classe {
    public Classe(){
       super();
       this.idClasse = UUID.randomUUID().toString();
+      this.nombreEleve = 0;
    }
 
    public String getIdClasse() { return idClasse; }
    public void setIdClasse(String idClasse) { this.idClasse = idClasse; }
 
-   public String getIdEcole() { return idEcole; }
-   public void setIdEcole(String idEcole) { this.idEcole = idEcole; }
+   /**
+    * Retourne le nombre d'élèves dans cette classe
+    */
+   public int getNombreEleve() {
+      return nombreEleve;
+   }
 
-   public String getnombreEleve(){
-      return "0";
+   public void setNombreEleve(int nombreEleve) {
+      this.nombreEleve = nombreEleve;
+   }
+
+   /**
+    * Méthode pour le tableau (format String)
+    */
+   public String getnombreEleve() {
+      return String.valueOf(nombreEleve);
    }
 
    public String getNom() { return nom; }

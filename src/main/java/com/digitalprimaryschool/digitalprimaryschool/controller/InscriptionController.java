@@ -5,6 +5,7 @@ import com.digitalprimaryschool.digitalprimaryschool.dao.PaiementDAO;
 import com.digitalprimaryschool.digitalprimaryschool.dao.TarifScolaireDAO;
 import com.digitalprimaryschool.digitalprimaryschool.dao.ClasseDAO;
 import com.digitalprimaryschool.digitalprimaryschool.dao.EleveDAO;
+import com.digitalprimaryschool.digitalprimaryschool.dao.AnneeScolaireDAO;
 import com.digitalprimaryschool.digitalprimaryschool.model.*;
 import com.digitalprimaryschool.digitalprimaryschool.service.PDFService;
 
@@ -34,22 +35,21 @@ public class InscriptionController {
     @FXML private ComboBox<String> comboModePaiement;
     @FXML private Button btnValiderInscription;
 
-    // Tes instances de DAOs réelles
+    // Instances des DAOs
     private final InscriptionDAO inscriptionDAO = new InscriptionDAO();
     private final PaiementDAO paiementDAO = new PaiementDAO();
     private final TarifScolaireDAO tarifScolaireDAO = new TarifScolaireDAO();
     private final ClasseDAO classeDAO = new ClasseDAO();
     private final EleveDAO eleveDAO = new EleveDAO();
+    private final AnneeScolaireDAO anneeScolaireDAO = new AnneeScolaireDAO(); // Ajout du DAO d'année scolaire
 
     // Liste pour la recherche d'élèves
     private ObservableList<Eleve> tousLesEleves = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-        // 1. Initialisation des dates et années
+        // 1. Initialisation de la date du jour
         txtDateInscription.setText(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        comboAnneeScolaire.setItems(FXCollections.observableArrayList("2025-2026", "2026-2027"));
-        comboAnneeScolaire.getSelectionModel().select("2025-2026");
 
         // 2. Types d'inscription
         comboTypeInscription.setItems(FXCollections.observableArrayList("Nouvelle Inscription", "Réinscription"));
@@ -67,7 +67,7 @@ public class InscriptionController {
         // 4. Gestion des événements graphiques
         attacherEvenements();
 
-        // 5. Chargement initial de la Base de Données
+        // 5. Chargement initial de la Base de Données (Classes, Élèves et Année active)
         chargerDonneesInitiales();
     }
 
@@ -135,10 +135,26 @@ public class InscriptionController {
 
     private void chargerDonneesInitiales() {
         try {
+            // Chargement des classes et des élèves
             comboClasseInscription.setItems(FXCollections.observableArrayList(classeDAO.listerToutes()));
             tousLesEleves.clear();
             tousLesEleves.addAll(eleveDAO.listerTous());
             comboEleveSearch.setItems(tousLesEleves);
+
+            // Récupération dynamique de l'année scolaire active unique
+            AnneeScolaire anneeActive = anneeScolaireDAO.trouverActive();
+            if (anneeActive != null) {
+                // On affiche le libellé propre (ex: 2025-2026)
+                comboAnneeScolaire.setItems(FXCollections.observableArrayList(anneeActive.getLibelle()));
+                comboAnneeScolaire.getSelectionModel().select(anneeActive.getLibelle());
+
+                // On cache l'identifiant réel de la BDD (idAnnescolaire) dans l'userData pour l'insertion
+                comboAnneeScolaire.setUserData(anneeActive.getIdAnnescolaire());
+            } else {
+                afficherAlerte(Alert.AlertType.WARNING, "Configuration manquante",
+                        "Aucune année scolaire active n'a été trouvée en base de données.");
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             afficherAlerte(Alert.AlertType.ERROR, "Erreur BDD", "Impossible de charger les données initiales : " + e.getMessage());
@@ -158,7 +174,15 @@ public class InscriptionController {
         try {
             String matricule = eleveSelectionne.getMatricule();
             String idClasse = classeSelectionne.getIdClasse();
-            String idAnnee = comboAnneeScolaire.getValue();
+
+            // Récupération sécurisée de la clé primaire idAnnescolaire stockée dans le UserData
+            String idAnnee = (String) comboAnneeScolaire.getUserData();
+
+            if (idAnnee == null) {
+                afficherAlerte(Alert.AlertType.ERROR, "Erreur de configuration", "Impossible d'enregistrer l'inscription. L'identifiant de l'année scolaire active n'est pas détecté.");
+                return;
+            }
+
             double montant = Double.parseDouble(txtFraisInscription.getText());
             boolean estReinscript = "Réinscription".equals(comboTypeInscription.getValue());
 
@@ -178,14 +202,14 @@ public class InscriptionController {
 
             inscriptionDAO.ajouter(inscription);
 
-            // 3. CRÉATION DU PAIEMENT (Instanciation explicite corrigée)
+            // 3. CRÉATION DU PAIEMENT
             Paiement paiement = new Paiement();
             paiement.setReference("REG-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
             paiement.setMontant(montant);
             paiement.setModePaiementParLibelle(comboModePaiement.getValue());
             paiement.setEncaisserPar("Econome Principal");
 
-            // 4. CRÉATION DU REÇU (Contrainte SQLite type 'certif' appliquée)
+            // 4. CRÉATION DU REÇU
             recue_paiement recu = new recue_paiement();
             recu.setIdDocuments(UUID.randomUUID().toString());
             recu.setIdRecu(UUID.randomUUID().toString());
@@ -198,10 +222,10 @@ public class InscriptionController {
             TarisScolaire tarifApplique = tarifScolaireDAO.trouverParClasse(classeSelectionne.getNiveau().name());
             String idTarif = (tarifApplique != null) ? tarifApplique.getIdTarifScolaire() : "TARIF-INCONNU";
 
-            // 5. Sauvegarde conjointe du Paiement et du Recu via ton PaiementDAO
+            // 5. Sauvegarde conjointe du Paiement et du Recu
             paiementDAO.enregistrerAvecRecu(paiement, recu, idTarif, "USER-ACTIVE", "ECO-ACTIVE");
 
-            // 6. GÉNÉRATION DIRECTE DU REÇU PDF (Via iText 7)
+            // 6. GÉNÉRATION DIRECTE DU REÇU PDF
             PDFService.genererRecuInscription(eleveSelectionne, classeSelectionne, paiement, txtDateInscription.getText());
 
             // 7. Affichage du pop-up de succès de l'opération
@@ -229,6 +253,9 @@ public class InscriptionController {
         lblNomEleve.setText("Aucun sélectionné");
         lblParentEleve.setText("-");
         txtFraisInscription.clear();
+
+        // Rafraîchir dynamiquement l'année au cas où la BDD a changé entre-temps
+        chargerDonneesInitiales();
     }
 
     private void afficherPopUpSucces(Eleve eleve, Classe classe, Paiement paiement) {

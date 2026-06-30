@@ -16,22 +16,21 @@ public class TarifScolaireDAO {
     public void ajouter(TarisScolaire tarif) throws SQLException {
         String sql = """
                 INSERT INTO TarisScolaire (
-                    idTarifScolaire, idEcole, niveauClasse, libelle, pension,
+                    idTarifScolaire, niveauClasse, libelle, pension,
                     fraistenueScolaire, fraistenueSport, fraisInscription
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection conn = Database.getConnexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, tarif.getIdTarifScolaire());
-            stmt.setInt(2, tarif.getIdEcole()); // Injection invisible multi-école
-            stmt.setString(3, tarif.getNiveauClasse() != null ? tarif.getNiveauClasse().name() : null);
-            stmt.setString(4, tarif.getLibelle());
-            stmt.setDouble(5, tarif.getMontantPension());
-            stmt.setDouble(6, tarif.getFraistenueScolaire());
-            stmt.setDouble(7, tarif.getFraistenueSport());
-            stmt.setDouble(8, tarif.getFraisInscription());
+            stmt.setString(2, tarif.getNiveauClasse() != null ? tarif.getNiveauClasse().name() : null);
+            stmt.setString(3, tarif.getLibelle());
+            stmt.setDouble(4, tarif.getMontantPension());
+            stmt.setDouble(5, tarif.getFraistenueScolaire());
+            stmt.setDouble(6, tarif.getFraistenueSport());
+            stmt.setDouble(7, tarif.getFraisInscription());
 
             stmt.executeUpdate();
         }
@@ -148,7 +147,6 @@ public class TarifScolaireDAO {
         return false;
     }
 
-    // Surcharge acceptant un type Enum NiveauClasse (Requis par EnregistrementService)
     public boolean tarifExistePourClasse(NiveauClasse niveauClasse) throws SQLException {
         if (niveauClasse == null) return false;
         return tarifExistePourClasse(niveauClasse.name());
@@ -160,7 +158,6 @@ public class TarifScolaireDAO {
     private TarisScolaire construireTarif(ResultSet rs) throws SQLException {
         TarisScolaire tarif = new TarisScolaire();
         tarif.setIdTarifScolaire(rs.getString("idTarifScolaire"));
-        tarif.setIdEcole(rs.getInt("idEcole")); // Hydratation de la clé école
 
         String niveauStr = rs.getString("niveauClasse");
         if (niveauStr != null && !niveauStr.isEmpty()) {

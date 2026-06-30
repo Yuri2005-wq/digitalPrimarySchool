@@ -24,6 +24,7 @@ public class SettingsController {
     @FXML private Button btnTabTranche;
     @FXML private Button btnTabClasse;
     @FXML private Button btnTabEcole;
+    @FXML private Button btnEnseignant;
 
     private final Map<Button, String> tabViewsMap = new HashMap<>();
     private Button currentActiveButton = null;
@@ -39,6 +40,8 @@ public class SettingsController {
         tabViewsMap.put(btnTabTranche, "/com/digitalprimaryschool/digitalprimaryschool/view/tranches.fxml");
         tabViewsMap.put(btnTabClasse, "/com/digitalprimaryschool/digitalprimaryschool/view/classe-config.fxml");
         tabViewsMap.put(btnTabEcole, "/com/digitalprimaryschool/digitalprimaryschool/view/ecole-view.fxml");
+        tabViewsMap.put(btnEnseignant, "/com/digitalprimaryschool/digitalprimaryschool/view/enseignant-view.fxml");
+
 
 
         // Focus et chargement automatique du premier onglet (Années Scolaires) au démarrage
